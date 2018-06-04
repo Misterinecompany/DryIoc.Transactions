@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <AssemblyName>Castle.Transactions.Tests</AssemblyName>
-    <RootNamespace>Castle.Transactions.Tests</RootNamespace>
+    <AssemblyName>DryIoc.Transactions.Tests</AssemblyName>
+    <RootNamespace>DryIoc.Transactions.Tests</RootNamespace>
     <AssemblyOriginatorKeyFile>..\..\buildscripts\CastleKey.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
@@ -17,8 +17,8 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-    <Product>Castle Transactions</Product>
-    <Description>Castle Transactions enables a common interface to both .Net Transactions with LTM/Lightweight Transaction Manager.</Description>
+    <Product>DryIoc Transactions</Product>
+    <Description>DryIoc Transactions enables a common interface to both .Net Transactions with LTM/Lightweight Transaction Manager.</Description>
     <Version>3.3.0</Version>
     <Copyright>Apache 2.0 Licensed. (c) The Castle Project 2004-2011</Copyright>
     <Authors>Henrik Feldt</Authors>
@@ -43,8 +43,8 @@
     <PackageReference Include="SharpTestsEx.MVC" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Castle.IO\Castle.IO.csproj" />
-    <ProjectReference Include="..\Castle.Transactions\Castle.Transactions.csproj" />
+    <ProjectReference Include="..\DryIoc.IO\DryIoc.IO.csproj" />
+    <ProjectReference Include="..\DryIoc.Transactions\DryIoc.Transactions.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Transactions" />

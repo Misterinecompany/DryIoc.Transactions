@@ -1,43 +1,10 @@
-Documentation on [Wiki!](https://github.com/haf/Castle.Services.Transaction/wiki)
+# DryIoc Transactions (port from Castle.Transactions https://github.com/castleproject/Castle.Transactions)
 
-*v3.1*
-
-# Castle Transactions
-
-A project for transaction management on .Net and mono.
+A project for transaction management on .NET Standard.
 
 ## Quick Start
 
-You have a few major options. The first option is to install the Windsor integration:
-
-`install-package Castle.Facilities.AutoTx`,
-
- - -> Castle.Facilities.AutoTx
- - -> Castle.Transactions.IO
- - -> Castle.Transactions
- - -> Castle.Core
-
-another option is if you're using Autofac:
-
-`install-package Castle.Transactions.Autofac`
-
- - -> Autofac ~> 2.5
- - -> Castle.Transactions.Autofac
- - -> Castle.Transactions.IO
- - -> Castle.Transactions
- - -> Castle.Core
-
-another option is that you only care about the transactions API as a stand-alone:
-
-`install-package Castle.Transactions` -> Castle.Core
-
-another option is that you care about the transactions API + transactional NTFS:
-
-`install-package Castle.Transactions.IO`
-
- - -> Castle.Transactions
- - -> Castle.IO
- - -> Castle.Core
+NuGet package is currently not exist.
 
 ### Castle Transactions
 
@@ -66,8 +33,3 @@ A project for adding a transactional file system to the mix!
 
  * Provides an `Castle.IO.IFileSystem` implementation that adds transactionality to common operations.
 
-
-
-### Remarks
-
-See also the [Castle.IO](https://github.com/haf/Castle.IO) project.

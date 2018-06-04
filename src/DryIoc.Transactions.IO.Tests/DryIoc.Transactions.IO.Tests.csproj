@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <AssemblyName>Castle.Transactions.IO.Tests</AssemblyName>
-    <PackageId>Castle.Transactions.IO.Tests</PackageId>
+    <AssemblyName>DryIoc.Transactions.IO.Tests</AssemblyName>
+    <PackageId>DryIoc.Transactions.IO.Tests</PackageId>
     <Version>3.3.0</Version>
     <Company></Company>
   </PropertyGroup>
@@ -23,9 +23,9 @@
     <PackageReference Include="SharpTestsEx.MVC" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Castle.IO\Castle.IO.csproj" />
-    <ProjectReference Include="..\Castle.Transactions.IO\Castle.Transactions.IO.csproj" />
-    <ProjectReference Include="..\Castle.Transactions\Castle.Transactions.csproj" />
+    <ProjectReference Include="..\DryIoc.IO\DryIoc.IO.csproj" />
+    <ProjectReference Include="..\DryIoc.Transactions.IO\DryIoc.Transactions.IO.csproj" />
+    <ProjectReference Include="..\DryIoc.Transactions\DryIoc.Transactions.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Transactions" />
