@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <AssemblyName>Castle.Transactions.IO.Tests</AssemblyName>
+    <PackageId>Castle.Transactions.IO.Tests</PackageId>
+    <Version>3.3.0</Version>
+    <Company></Company>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="FileTransactions_Directory_Tests.cs" />
+    <Compile Remove="File_Specs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="4.2.1" />
+    <PackageReference Include="NLog" Version="4.5.4" />
+    <PackageReference Include="NUnit" Version="2.6.4" />
+    <PackageReference Include="SharpTestsEx.MVC" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Castle.IO\Castle.IO.csproj" />
+    <ProjectReference Include="..\Castle.Transactions.IO\Castle.Transactions.IO.csproj" />
+    <ProjectReference Include="..\Castle.Transactions\Castle.Transactions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Transactions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+</Project>

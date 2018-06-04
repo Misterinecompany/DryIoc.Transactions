@@ -1,0 +1,19 @@
+/build
+/wraps/_cache
+src/*/obj
+src/*/bin
+src/*AssemblyInfo.cs
+*.csproj.user
+*ReSharper.user
+_ReSharper*
+*.ReSharper
+*.DotSettings.user
+*.suo
+*.cache
+Castle.Transactions.user
+* Thumbs.db
+*.nupkg
+NUGET_KEY
+packages/
+.vs/
+

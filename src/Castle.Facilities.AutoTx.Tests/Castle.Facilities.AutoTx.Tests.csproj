@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <AssemblyName>Castle.Facilities.AutoTx.Tests</AssemblyName>
+    <PackageId>Castle.Facilities.AutoTx.Tests</PackageId>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\..\buildscripts\CastleKey.snk</AssemblyOriginatorKeyFile>
+    <Version>3.3.0</Version>
+    <Product>Castle AutoTx Facility</Product>
+    <Description>This facility enables ambient easy-to-use declarative transactions through the [Transaction] attribute. This is the glue that holds the bits and pieces from Castle Transactions together and the stuff that will make your co-workers googly-eyed and impressed.</Description>
+    <Copyright>Apache 2.0 Licensed. (c) The Castle Project 2004-2011</Copyright>
+    <Authors>Henrik Feldt</Authors>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/castleproject/Castle.Transactions</PackageProjectUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\buildscripts\CastleKey.snk">
+      <Link>CastleKey.snk</Link>
+    </None>
+    <None Include="App.config" />
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="4.2.1" />
+    <PackageReference Include="Castle.FactorySupportFacility" Version="4.1.0" />
+    <PackageReference Include="Castle.Windsor" Version="4.1.0" />
+    <PackageReference Include="NLog" Version="4.5.4" />
+    <PackageReference Include="NUnit" Version="2.6.4" />
+    <PackageReference Include="SharpTestsEx.MVC" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Castle.Facilities.AutoTx\Castle.Facilities.AutoTx.csproj" />
+    <ProjectReference Include="..\Castle.Transactions\Castle.Transactions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+</Project>
