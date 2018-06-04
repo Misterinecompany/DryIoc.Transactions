@@ -23,11 +23,13 @@ using System.Threading.Tasks;
 using System.Transactions;
 using Castle.Core;
 using Castle.Core.Interceptor;
-using Castle.Core.Logging;
 using Castle.DynamicProxy;
 using Castle.MicroKernel;
 using Castle.Transactions;
 using Castle.Transactions.Internal;
+using DryIoc.Transactions.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using TransactionException = Castle.Transactions.TransactionException;
 using TransactionManager = Castle.Transactions.TransactionManager;
 
@@ -46,6 +48,7 @@ namespace Castle.Facilities.AutoTx
 		private readonly IKernel _Kernel;
 		private readonly ITransactionMetaInfoStore _Store;
 		private Maybe<TransactionalClassMetaInfo> _MetaInfo;
+		private ILoggerFactory _LoggerFactory = NullLoggerFactory.Instance;
 		private ILogger _Logger = NullLogger.Instance;
 
 		public ILogger Logger
@@ -60,7 +63,7 @@ namespace Castle.Facilities.AutoTx
 			Contract.Requires(store != null, "store must be non null");
 			Contract.Ensures(_State == InterceptorState.Constructed);
 
-			_Logger.Debug("created transaction interceptor");
+			_Logger.LogDebug("created transaction interceptor");
 
 			_Kernel = kernel;
 			_Store = store;
@@ -93,11 +96,11 @@ namespace Castle.Facilities.AutoTx
 				{
 					if (mTxMethod.HasValue && mTxMethod.Value.Mode == TransactionScopeOption.Suppress)
 					{
-						_Logger.Info("supressing ambient transaction");
-						if (_Logger.IsInfoEnabled)
-							_Logger.Info("supressing ambient transaction");
+						_Logger.LogInformation("supressing ambient transaction");
+						if (_Logger.IsEnabled(LogLevel.Information))
+							_Logger.LogInformation("supressing ambient transaction");
 
-						using (new TxScope(null, _Logger.CreateChildLogger("TxScope")))
+						using (new TxScope(null, _LoggerFactory.CreateChildLogger("TxScope", GetType())))
 							invocation.Proceed();
 					}
 					else invocation.Proceed();
@@ -126,7 +129,7 @@ namespace Castle.Facilities.AutoTx
 		{
 			Contract.Requires(transaction.State == TransactionState.Active);
 
-			using (new TxScope(transaction.Inner, _Logger.CreateChildLogger("TxScope")))
+			using (new TxScope(transaction.Inner, _LoggerFactory.CreateChildLogger("TxScope", GetType())))
 			{
 				var localIdentifier = transaction.LocalIdentifier;
 
@@ -136,36 +139,36 @@ namespace Castle.Facilities.AutoTx
 
 					if (transaction.State == TransactionState.Active)
 						transaction.Complete();
-					else if (_Logger.IsWarnEnabled)
-						_Logger.WarnFormat(
+					else if (_Logger.IsEnabled(LogLevel.Warning))
+						_Logger.LogWarning(
 							"transaction was in state {0}, so it cannot be completed. the 'consumer' method, so to speak, might have rolled it back.",
 							transaction.State);
 				}
 				catch (TransactionAbortedException)
 				{
 					// if we have aborted the transaction, we both warn and re-throw the exception
-					if (_Logger.IsWarnEnabled)
-						_Logger.WarnFormat("transaction aborted - synchronized case, tx#{0}", localIdentifier);
+					if (_Logger.IsEnabled(LogLevel.Warning))
+						_Logger.LogWarning("transaction aborted - synchronized case, tx#{0}", localIdentifier);
 
 					throw;
 				}
 				catch (TransactionException ex)
 				{
-					if (_Logger.IsFatalEnabled)
-						_Logger.Fatal("internal error in transaction system - synchronized case", ex);
+					if (_Logger.IsEnabled(LogLevel.Critical))
+						_Logger.LogCritical("internal error in transaction system - synchronized case", ex);
 
 					throw;
 				}
 				catch (AggregateException ex)
 				{
-					if (_Logger.IsWarnEnabled)
-						_Logger.Warn("one or more dependent transactions failed, re-throwing exceptions!", ex);
+					if (_Logger.IsEnabled(LogLevel.Warning))
+						_Logger.LogWarning("one or more dependent transactions failed, re-throwing exceptions!", ex);
 
 					throw;
 				}
 				catch (Exception)
 				{
-					_Logger.ErrorFormat("caught exception, transaction will roll back - synchronized case - tx#{0}",
+					_Logger.LogError("caught exception, transaction will roll back - synchronized case - tx#{0}",
 								  localIdentifier);
 
 					// the transaction rolls back itself on exceptions, so just throw it
@@ -173,7 +176,7 @@ namespace Castle.Facilities.AutoTx
 				}
 				finally
 				{
-					_Logger.DebugFormat("dispoing transaction - synchronized case - tx#{0}", localIdentifier);
+					_Logger.LogDebug("dispoing transaction - synchronized case - tx#{0}", localIdentifier);
 					transaction.Dispose();
 				}
 			}
@@ -190,8 +193,8 @@ namespace Castle.Facilities.AutoTx
 			Contract.Ensures(Contract.Result<Task>() != null);
 			Contract.Assume(txData.Transaction.Inner is DependentTransaction);
 
-			if (_Logger.IsDebugEnabled)
-				_Logger.DebugFormat("fork case");
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("fork case");
 
 			return Task.Factory.StartNew(t =>
 			{
@@ -203,12 +206,16 @@ namespace Castle.Facilities.AutoTx
 				{
 					try
 					{
-						_Logger.Debug(() => string.Format("calling proceed on tx#{0}", tuple.Item3));
+						if (_Logger.IsEnabled(LogLevel.Debug))
+							_Logger.LogDebug($"calling proceed on tx#{tuple.Item3}");
 
 						using (var ts = new TransactionScope(dependent))
 						{
 							tuple.Item1.Proceed();
-							_Logger.Debug(() => string.Format("calling complete on TransactionScope for tx#{0}", tuple.Item3));
+
+							if (_Logger.IsEnabled(LogLevel.Debug))
+								_Logger.LogDebug($"calling complete on TransactionScope for tx#{tuple.Item3}");
+
 							ts.Complete();
 						}
 					}
@@ -217,8 +224,8 @@ namespace Castle.Facilities.AutoTx
 						// if we have aborted the transaction, we both warn and re-throw the exception
 						hasException = true;
 
-						if (_Logger.IsWarnEnabled)
-							_Logger.Warn("transaction aborted", ex);
+						if (_Logger.IsEnabled(LogLevel.Warning))
+							_Logger.LogWarning("transaction aborted", ex);
 
 						throw new TransactionAbortedException(
 							"Parallel/forked transaction aborted! See inner exception for details.", ex);
@@ -230,8 +237,8 @@ namespace Castle.Facilities.AutoTx
 					}
 					finally
 					{
-						if (_Logger.IsDebugEnabled)
-							_Logger.Debug("in finally-clause, completing dependent if it didn't throw exception");
+						if (_Logger.IsEnabled(LogLevel.Debug))
+							_Logger.LogDebug("in finally-clause, completing dependent if it didn't throw exception");
 
 						if (!hasException)
 							dependent.Complete();

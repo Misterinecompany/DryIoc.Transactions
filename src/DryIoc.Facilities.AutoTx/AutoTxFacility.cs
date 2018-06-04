@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using System.Diagnostics;
-using Castle.Core.Logging;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.Registration;
@@ -21,6 +20,8 @@ using Castle.MicroKernel.SubSystems.Naming;
 using Castle.Transactions;
 using Castle.Transactions.Activities;
 using Castle.Transactions.Helpers;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Facilities.AutoTx
 {
@@ -43,11 +44,11 @@ namespace Castle.Facilities.AutoTx
 				// get logger factory
 				var loggerFactory = Kernel.Resolve<ILoggerFactory>();
 				// get logger
-				_Logger = loggerFactory.Create(typeof (AutoTxFacility));
+				_Logger = loggerFactory.CreateLogger(typeof (AutoTxFacility));
 			}
 
-			if (_Logger.IsDebugEnabled)
-				_Logger.Debug("initializing AutoTxFacility");
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("initializing AutoTxFacility");
 
 			if (!Kernel.HasComponent(typeof(ILogger)))
 			{
@@ -87,7 +88,7 @@ namespace Castle.Facilities.AutoTx
 
 			Kernel.ComponentModelBuilder.AddContributor(componentInspector);
 
-			_Logger.Debug(
+			_Logger.LogDebug(
 				"inspecting previously registered components; this might throw if you have configured your components in the wrong way");
 
 			((INamingSubSystem) Kernel.GetSubSystem(SubSystemConstants.NamingKey))
@@ -95,7 +96,7 @@ namespace Castle.Facilities.AutoTx
 				.Do(x => componentInspector.ProcessModel(Kernel, x.ComponentModel))
 				.Run();
 
-			_Logger.Debug(
+			_Logger.LogDebug(
 				@"Initialized AutoTxFacility:
 
 If you are experiencing problems, go to https://github.com/castleproject/Castle.Transactions and file a ticket for the Transactions project.

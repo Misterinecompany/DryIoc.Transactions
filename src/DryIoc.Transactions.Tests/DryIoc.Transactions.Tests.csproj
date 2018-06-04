@@ -19,7 +19,7 @@
     <SignAssembly>true</SignAssembly>
     <Product>DryIoc Transactions</Product>
     <Description>DryIoc Transactions enables a common interface to both .Net Transactions with LTM/Lightweight Transaction Manager.</Description>
-    <Version>3.3.0</Version>
+    <Version>1.0.0</Version>
     <Copyright>Apache 2.0 Licensed. (c) The Castle Project 2004-2011</Copyright>
     <Authors>Henrik Feldt</Authors>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
@@ -38,7 +38,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="4.2.1" />
     <PackageReference Include="NUnit" Version="2.6.4" />
     <PackageReference Include="SharpTestsEx.MVC" Version="1.1.1" />
   </ItemGroup>

@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Castle.Core.Logging;
 using Castle.IO.Extensions;
 using Castle.Transactions.Activities;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace Castle.Transactions.IO.Tests
@@ -29,7 +29,7 @@ namespace Castle.Transactions.IO.Tests
 		public void given_manager()
 		{
 			test_file = ".".Combine("test.txt");
-			subject = new TransactionManager(new ThreadLocalActivityManager(), NullLogger.Instance);
+			subject = new TransactionManager(new ThreadLocalActivityManager(), NullLoggerFactory.Instance);
 		}
 
 		[Test]

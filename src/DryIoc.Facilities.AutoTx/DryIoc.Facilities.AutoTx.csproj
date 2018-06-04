@@ -48,7 +48,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>..\..\build\nuget\</PackageOutputPath>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>3.3.0</Version>
+    <Version>1.0.0</Version>
     <Product>DryIoc AutoTx Facility</Product>
     <Authors>Henrik Feldt</Authors>
     <Company />

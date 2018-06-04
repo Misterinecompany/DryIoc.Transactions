@@ -21,11 +21,12 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using Castle.Core;
-using Castle.Core.Logging;
 using Castle.MicroKernel;
 using Castle.MicroKernel.Context;
 using Castle.MicroKernel.Lifestyle;
 using Castle.MicroKernel.Registration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Facilities.AutoTx.Lifestyles
 {
@@ -67,13 +68,13 @@ namespace Castle.Facilities.AutoTx.Lifestyles
 				// get logger factory instance
 				var loggerFactory = kernel.Resolve<ILoggerFactory>();
 				// create logger
-				_Logger = loggerFactory.Create(typeof(WrapperResolveLifestyleManager<T>));
+				_Logger = loggerFactory.CreateLogger(typeof(WrapperResolveLifestyleManager<T>));
 			}
 			else
 				_Logger = NullLogger.Instance;
 
-			if (_Logger.IsDebugEnabled)
-				_Logger.DebugFormat("initializing (for component: {0})", string.Join(",", model.Services));
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("initializing (for component: {0})", string.Join(",", model.Services));
 
 			_LifestyleKernel.Register(Component.For<T>().LifeStyle.Transient.Named("T.lifestyle"));
 			kernel.AddChildKernel(_LifestyleKernel);
@@ -94,7 +95,7 @@ namespace Castle.Facilities.AutoTx.Lifestyles
 			Contract.Assume(_Lifestyle1 != null,
 			                "lifestyle1 can't be null because the Resolve<T> call will throw an exception if a matching service wasn't found");
 
-			_Logger.Debug("initialized");
+			_Logger.LogDebug("initialized");
 
 			_Initialized = true;
 		}
@@ -124,15 +125,12 @@ namespace Castle.Facilities.AutoTx.Lifestyles
 
 			if (_Disposed)
 			{
-				_Logger.Info("repeated call to Dispose. will show stack-trace in debug mode next. this method call is idempotent");
-				if (_Logger.IsInfoEnabled)
+				if (_Logger.IsEnabled(LogLevel.Information))
 				{
-					_Logger.Info("repeated call to Dispose. will show stack-trace in debug mode next. this method call is idempotent");
+					_Logger.LogInformation("repeated call to Dispose. will show stack-trace in debug mode next. this method call is idempotent");
 
-				if (_Logger.IsDebugEnabled)
-					_Logger.Debug(new StackTrace().ToString());
-					if (_Logger.IsDebugEnabled)
-						_Logger.Debug(new StackTrace().ToString());
+					if (_Logger.IsEnabled(LogLevel.Debug))
+						_Logger.LogDebug(new StackTrace().ToString());
 				}
 
 				_Initialized = false;

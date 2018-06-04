@@ -21,8 +21,9 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
-using Castle.Core.Logging;
 using Castle.Transactions.Internal;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Transactions
 {
@@ -167,7 +168,8 @@ namespace Castle.Transactions
 
 			try
 			{
-				_Logger.Info(() => string.Format("rolling back tx#{0}", _LocalIdentifier));
+				if (_Logger.IsEnabled(LogLevel.Information))
+					_Logger.LogInformation($"rolling back tx#{_LocalIdentifier}");
 				Inner.Rollback();
 			}
 			finally
@@ -183,7 +185,8 @@ namespace Castle.Transactions
 			{
 				if (_Committable != null)
 				{
-					_Logger.Debug(() => string.Format("committing committable tx#{0}", _LocalIdentifier));
+					if (_Logger.IsEnabled(LogLevel.Debug))
+						_Logger.LogDebug($"committing committable tx#{_LocalIdentifier}");
 
 					if (beforeTopComplete != null) 
 						beforeTopComplete();
@@ -197,7 +200,7 @@ namespace Castle.Transactions
 				}
 				else
 				{
-					_Logger.Debug(string.Format("completing dependent tx#{0}", _LocalIdentifier));
+					_Logger.LogDebug($"completing dependent tx#{_LocalIdentifier}");
 
 					_Dependent.Complete();
 				}
@@ -213,18 +216,18 @@ namespace Castle.Transactions
 			catch (TimeoutException e)
 			{
 				_State = TransactionState.Aborted;
-				_Logger.Warn("transaction timed out", e);
+				_Logger.LogWarning("transaction timed out", e);
 			}
 			catch (TransactionAbortedException e)
 			{
 				_State = TransactionState.Aborted;
-				_Logger.Warn("transaction aborted", e);
+				_Logger.LogWarning("transaction aborted", e);
 				throw;
 			}
 			catch (AggregateException e)
 			{
 				_State = TransactionState.Aborted;
-				_Logger.Warn("dependent transactions failed, so we are not performing the rollback (as they will have notified their parent!)", e);
+				_Logger.LogWarning("dependent transactions failed, so we are not performing the rollback (as they will have notified their parent!)", e);
 				throw;
 			}
 			catch (Exception e)
@@ -261,7 +264,7 @@ namespace Castle.Transactions
 			if (!isManaged)
 				return;
 
-			_Logger.Debug("disposing");
+			_Logger.LogDebug("disposing");
 
 			if (_DependentTasks != null) 
 				_DependentTasks.Clear();

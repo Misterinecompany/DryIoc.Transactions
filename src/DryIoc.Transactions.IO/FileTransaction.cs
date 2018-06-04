@@ -1,4 +1,4 @@
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Transactions.IO
 {

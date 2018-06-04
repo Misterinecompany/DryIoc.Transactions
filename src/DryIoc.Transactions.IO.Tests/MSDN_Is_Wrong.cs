@@ -15,8 +15,8 @@
 using System;
 using System.IO;
 using System.Threading;
-using Castle.Core.Logging;
 using Castle.Transactions.Activities;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace Castle.Transactions.IO.Tests
@@ -28,7 +28,7 @@ namespace Castle.Transactions.IO.Tests
 		[SetUp]
 		public void given_manager()
 		{
-			subject = new TransactionManager(new ThreadLocalActivityManager(), NullLogger.Instance);
+			subject = new TransactionManager(new ThreadLocalActivityManager(), NullLoggerFactory.Instance);
 		}
 
 		[TearDown]

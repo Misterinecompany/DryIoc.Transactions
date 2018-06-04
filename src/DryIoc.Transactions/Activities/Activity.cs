@@ -20,8 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
-using Castle.Core.Logging;
-using Castle.Transactions.Internal;
+using Microsoft.Extensions.Logging;
 
 namespace Castle.Transactions.Activities
 {
@@ -78,7 +77,7 @@ namespace Castle.Transactions.Activities
 
 			if (aware != null) 
 				aware.RegisterDependent(task);
-			else _Logger.WarnFormat("The transaction#{0} did not implement Castle.Services.Transaction.Internal.IDependentAware, " 
+			else _Logger.LogWarning("The transaction#{0} did not implement Castle.Services.Transaction.Internal.IDependentAware, " 
 				+ "yet a Task to await was registered. If you have created your own custom ITransaction implementation, verify that it implements IDependentAware.",
 				_TopMost.LocalIdentifier);
 		}
@@ -111,7 +110,7 @@ namespace Castle.Transactions.Activities
 			// I can't prove this because I can't reason about value/reference equality using reflection in Maybe
 			//Contract.Ensures(object.ReferenceEquals(CurrentTransaction.Value, transaction));
 
-			_Logger.DebugFormat("pushing tx#{0}", transaction.LocalIdentifier);
+			_Logger.LogDebug("pushing tx#{0}", transaction.LocalIdentifier);
 
 			if (Count == 0)
 				_TopMost = transaction;
@@ -133,7 +132,8 @@ namespace Castle.Transactions.Activities
 
 			var ret = _Txs.Pop();
 
-			_Logger.Debug(() => string.Format("popping tx#{0}", ret.Item2));
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug($"popping tx#{ret.Item2}");
 
 			if (Count == 0)
 				_TopMost = null;

@@ -13,9 +13,9 @@
 // limitations under the License.
 
 using System.Transactions;
-using Castle.Core.Logging;
 using Castle.Transactions.Activities;
 using Castle.Transactions.Tests.TestClasses;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace Castle.Transactions.Tests.TransactionManager
@@ -27,7 +27,7 @@ namespace Castle.Transactions.Tests.TransactionManager
 		[SetUp]
 		public void given_manager()
 		{
-			subject = new Transactions.TransactionManager(new ThreadLocalActivityManager(), NullLogger.Instance);
+			subject = new Transactions.TransactionManager(new ThreadLocalActivityManager(), NullLoggerFactory.Instance);
 		}
 
 		[TearDown]

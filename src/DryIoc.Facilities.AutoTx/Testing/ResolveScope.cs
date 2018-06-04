@@ -14,8 +14,9 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using Castle.Core.Logging;
 using Castle.Windsor;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Facilities.AutoTx.Testing
 {
@@ -41,10 +42,10 @@ namespace Castle.Facilities.AutoTx.Testing
 			var loggerFactory = container.Kernel.HasComponent(typeof (ILoggerFactory))
 			                    	? container.Resolve<ILoggerFactory>()
 			                    	: null;
-			_Logger = loggerFactory != null ? loggerFactory.Create(GetType()) : NullLogger.Instance;
+			_Logger = loggerFactory != null ? loggerFactory.CreateLogger(GetType()) : NullLogger.Instance;
 
-			if (_Logger.IsDebugEnabled)
-				_Logger.Debug("creating");
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("creating");
 
 			Container = container;
 			_Service = Container.Resolve<T>();
@@ -79,8 +80,8 @@ namespace Castle.Facilities.AutoTx.Testing
 			if (!managed)
 				return;
 
-			if (_Logger.IsDebugEnabled)
-				_Logger.Debug("disposing resolve scope");
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("disposing resolve scope");
 
 			try
 			{

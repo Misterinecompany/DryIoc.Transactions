@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System.Threading;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Transactions.Activities
 {

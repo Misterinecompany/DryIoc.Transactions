@@ -1,8 +1,8 @@
 using System;
 using System.Threading;
 using System.Transactions;
-using Castle.Core.Logging;
 using Castle.Transactions.Internal;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace Castle.Transactions.Tests.ExternalSources

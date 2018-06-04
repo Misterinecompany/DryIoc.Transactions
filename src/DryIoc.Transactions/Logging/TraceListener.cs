@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Transactions.Logging
-{
-	using System;
-	using System.IO;
-	using System.Text.RegularExpressions;
-	using System.Xml.Serialization;
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
+namespace DryIoc.Transactions.Logging
+{
 	[Serializable]
 	public class TraceRecord
 	{

@@ -18,7 +18,7 @@
 
 using System;
 using System.Transactions;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Castle.Transactions.Internal
 {
@@ -61,7 +61,7 @@ namespace Castle.Transactions.Internal
 		{
 			if (!isManaged)
 			{
-				_Logger.Warn("TxScope Dispose wasn't called from managed context! You need to make sure that you dispose the scope, "
+				_Logger.LogWarning("TxScope Dispose wasn't called from managed context! You need to make sure that you dispose the scope, "
 				             +
 				             "or you will break the Transaction.Current invariant of the framework and your own code by extension.");
 

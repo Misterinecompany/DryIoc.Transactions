@@ -17,8 +17,10 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
-using Castle.Core.Logging;
 using Castle.Transactions.Internal;
+using DryIoc.Transactions.Logging;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Transactions
 {
@@ -27,16 +29,18 @@ namespace Castle.Transactions
 	/// </summary>
 	public class TransactionManager : ITransactionManager
 	{
-		readonly ILogger _logger = NullLogger.Instance;
+		private readonly ILogger _logger = NullLogger.Instance;
+		private readonly ILoggerFactory _loggerFactory;
 
 		readonly IActivityManager _activityManager;
 
-		public TransactionManager(IActivityManager activityManager, ILogger logger)
+		public TransactionManager(IActivityManager activityManager, ILoggerFactory loggerFactory)
 		{
 			Contract.Requires(activityManager != null);
 
 			_activityManager = activityManager;
-			_logger = logger;
+			_loggerFactory = loggerFactory;
+			_logger = loggerFactory.CreateLogger(GetType());
 		}
 
 		[ContractInvariantMethod]
@@ -87,7 +91,7 @@ namespace Castle.Transactions
 						IsolationLevel = transactionOptions.IsolationLevel,
 						Timeout = transactionOptions.Timeout
 					}), nextStackDepth, transactionOptions, () => activity.Pop(),
-				                     _logger.CreateChildLogger("Transaction"));
+				                     _loggerFactory.CreateChildLogger("Transaction", GetType()));
 			else
 			{
 				var clone = activity
@@ -98,7 +102,7 @@ namespace Castle.Transactions
 
 				Action onDispose = () => activity.Pop();
 				tx = new Transaction(clone, nextStackDepth, transactionOptions, shouldFork ? null : onDispose,
-				                     _logger.CreateChildLogger("Transaction"));
+				                     _loggerFactory.CreateChildLogger("Transaction", GetType()));
 			}
 
 			if (!shouldFork) // forked transactions should not be on the current context's activity stack
@@ -111,7 +115,7 @@ namespace Castle.Transactions
 
 			// warn if fork and the top transaction was just created
 			if (transactionOptions.Fork && nextStackDepth == 1)
-				_logger.WarnFormat("transaction {0} created with Fork=true option, but was top-most "
+				_logger.LogWarning("transaction {0} created with Fork=true option, but was top-most "
 				                   + "transaction in invocation chain. running transaction sequentially",
 				                   tx.LocalIdentifier);
 
@@ -129,7 +133,7 @@ namespace Castle.Transactions
 			Contract.Requires(task != null);
 			_activityManager.GetCurrentActivity().EnlistDependentTask(task);
 		}
-
+		
 		[SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
 		public class DisposableScope : IDisposable
 		{

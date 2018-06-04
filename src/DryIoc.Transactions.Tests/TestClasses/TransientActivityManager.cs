@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Castle.Core.Logging;
 using Castle.Transactions.Activities;
+using Microsoft.Extensions.Logging;
 
 namespace Castle.Transactions.Tests.TestClasses
 {
