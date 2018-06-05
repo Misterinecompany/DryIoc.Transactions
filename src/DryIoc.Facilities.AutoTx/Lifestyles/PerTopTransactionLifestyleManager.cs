@@ -22,6 +22,7 @@ using Castle.Transactions;
 
 namespace Castle.Facilities.AutoTx.Lifestyles
 {
+	/*
 	/// <summary>
 	/// 	A lifestyle manager for every top transaction in the current call context. This lifestyle is great
 	/// 	for components that are thread-safe and need to monitor/handle items in both the current thread
@@ -46,4 +47,5 @@ namespace Castle.Facilities.AutoTx.Lifestyles
 			return _Manager.CurrentTopTransaction;
 		}
 	}
+	*/
 }

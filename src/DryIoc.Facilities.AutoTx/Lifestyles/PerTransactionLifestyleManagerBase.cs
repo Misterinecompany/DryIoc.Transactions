@@ -23,16 +23,13 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
-using Castle.Core;
-using Castle.MicroKernel;
-using Castle.MicroKernel.Context;
-using Castle.MicroKernel.Lifestyle;
 using Castle.Transactions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Facilities.AutoTx.Lifestyles
 {
+	/*
 	/// <summary>
 	/// 	This lifestyle manager is responsible for disposing components
 	/// 	at the same time as the transaction is completed, i.e. the transction
@@ -258,4 +255,5 @@ namespace Castle.Facilities.AutoTx.Lifestyles
 		/// <returns>Maybe a current transaction as can be found in the transaction manager.</returns>
 		protected internal abstract Maybe<ITransaction> GetSemanticTransactionForLifetime();
 	}
+	*/
 }

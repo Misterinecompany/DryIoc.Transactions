@@ -17,7 +17,7 @@
 #endregion
 
 using System.Diagnostics.Contracts;
-using Castle.Windsor;
+using DryIoc;
 
 namespace Castle.Facilities.AutoTx.Testing
 {
@@ -33,7 +33,7 @@ namespace Castle.Facilities.AutoTx.Testing
 		/// <typeparam name = "T">The service to resolve.</typeparam>
 		/// <param name = "container">The container to resolve from.</param>
 		/// <returns>The IOResolveScope</returns>
-		public static ResolveScope<T> ResolveScope<T>(this IWindsorContainer container)
+		public static ResolveScope<T> ResolveScope<T>(this IContainer container)
 			where T : class
 		{
 			Contract.Requires(container != null);

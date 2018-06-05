@@ -18,11 +18,10 @@
 
 using System.Diagnostics.Contracts;
 using Castle.Facilities.AutoTx.Lifestyles;
-using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.Registration.Lifestyle;
 
 namespace Castle.Facilities.AutoTx
 {
+	/*
 	public static class LifestyleRegistrationExtensions
 	{
 		public static ComponentRegistration<TService> PerTransaction<TService>(
@@ -41,4 +40,5 @@ namespace Castle.Facilities.AutoTx
 			return @group.Custom<WrapperResolveLifestyleManager<PerTopTransactionLifestyleManager>>();
 		}
 	}
+	*/
 }

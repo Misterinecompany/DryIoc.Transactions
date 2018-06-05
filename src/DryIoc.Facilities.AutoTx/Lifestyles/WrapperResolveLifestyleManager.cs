@@ -20,16 +20,12 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
-using Castle.Core;
-using Castle.MicroKernel;
-using Castle.MicroKernel.Context;
-using Castle.MicroKernel.Lifestyle;
-using Castle.MicroKernel.Registration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Castle.Facilities.AutoTx.Lifestyles
 {
+	/*
 	/// <summary>
 	/// 	Abstract hybrid lifestyle manager, with two underlying lifestyles
 	/// </summary>
@@ -159,4 +155,5 @@ namespace Castle.Facilities.AutoTx.Lifestyles
 			return resolve;
 		}
 	}
+	*/
 }

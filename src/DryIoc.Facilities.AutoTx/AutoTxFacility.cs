@@ -20,6 +20,8 @@ using Castle.MicroKernel.SubSystems.Naming;
 using Castle.Transactions;
 using Castle.Transactions.Activities;
 using Castle.Transactions.Helpers;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Abstraction;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -34,15 +36,15 @@ namespace Castle.Facilities.AutoTx
 	///</summary>
 	public class AutoTxFacility : AbstractFacility
 	{
-		protected override void Init()
+		public AutoTxFacility(IContainer container) : base(container)
 		{
 			ILogger _Logger = NullLogger.Instance;
 
 			// check we have a logger factory
-			if (Kernel.HasComponent(typeof (ILoggerFactory)))
+			if (container.IsRegistered(typeof (ILoggerFactory)))
 			{
 				// get logger factory
-				var loggerFactory = Kernel.Resolve<ILoggerFactory>();
+				var loggerFactory = container.Resolve<ILoggerFactory>();
 				// get logger
 				_Logger = loggerFactory.CreateLogger(typeof (AutoTxFacility));
 			}
@@ -50,50 +52,36 @@ namespace Castle.Facilities.AutoTx
 			if (_Logger.IsEnabled(LogLevel.Debug))
 				_Logger.LogDebug("initializing AutoTxFacility");
 
-			if (!Kernel.HasComponent(typeof(ILogger)))
+			if (!container.IsRegistered(typeof(ILogger)))
 			{
-				Trace.TraceWarning("Missing ILogger in Kernel; add it or you'll have no logging of errors!");
-				Kernel.Register(Component.For<ILogger>().Instance(NullLogger.Instance));
+				Trace.TraceWarning("Missing ILogger in container; add it or you'll have no logging of errors!");
+				container.UseInstance(typeof(ILogger), NullLogger.Instance);
 			}
 
-			Kernel.Register(
-				// the interceptor needs to be created for every method call
-				Component.For<TransactionInterceptor>()
-					.LifeStyle.Transient,
-				Component.For<ITransactionMetaInfoStore>()
-					.ImplementedBy<TransactionClassMetaInfoStore>()
-					.LifeStyle.Singleton,
-				Component.For<ITransactionManager>()
-					.ImplementedBy<TransactionManager>()
-					.LifeStyle.Singleton
-					.Forward(typeof (TransactionManager)),
-				// the activity manager shouldn't have the same lifestyle as TransactionInterceptor, as it
-				// calls a static .Net/Mono framework method, and it's the responsibility of
-				// that framework method to keep track of the call context.
-				Component.For<IActivityManager>()
-					.ImplementedBy<ThreadLocalActivityManager>()
-					.LifeStyle.Singleton
-				//Component.For<IDirectoryAdapter>()
-				//    .ImplementedBy<DirectoryAdapter>()
-				//    .LifeStyle.PerTransaction(),
-				//Component.For<IFileAdapter>()
-				//    .ImplementedBy<FileAdapter>()
-				//    .LifeStyle.PerTransaction(),
-				//Component.For<IMapPath>()
-				//    .ImplementedBy<MapPathImpl>()
-				//    .LifeStyle.Transient
-				);
+			// the interceptor needs to be created for every method call
+			container.Register<TransactionInterceptor>(Reuse.Transient);
+			container.Register<ITransactionMetaInfoStore, TransactionClassMetaInfoStore>(Reuse.Singleton);
+			container.RegisterMany(new[] {typeof(ITransactionManager), typeof(TransactionManager)}, typeof(TransactionManager), Reuse.Singleton);
 
+			// the activity manager shouldn't have the same lifestyle as TransactionInterceptor, as it
+			// calls a static .Net/Mono framework method, and it's the responsibility of
+			// that framework method to keep track of the call context.
+			container.Register<IActivityManager, ThreadLocalActivityManager>(Reuse.Singleton);
+
+			//container.Register<IDirectoryAdapter, DirectoryAdapter>(Reuse.PerTransaction);
+			//container.Register<IFileAdapter, FileAdapter>(Reuse.PerTransaction);
+			//container.Register<IMapPath, MapPathImpl>(Reuse.Transient);
+			
 			var componentInspector = new TransactionalComponentInspector();
 
-			Kernel.ComponentModelBuilder.AddContributor(componentInspector);
+			container.ComponentModelBuilder.AddContributor(componentInspector);
 
 			_Logger.LogDebug(
 				"inspecting previously registered components; this might throw if you have configured your components in the wrong way");
 
-			((INamingSubSystem) Kernel.GetSubSystem(SubSystemConstants.NamingKey))
+			((INamingSubSystem) container.GetSubSystem(SubSystemConstants.NamingKey))
 				.GetAllHandlers()
-				.Do(x => componentInspector.ProcessModel(Kernel, x.ComponentModel))
+				.Do(x => componentInspector.ProcessModel(container, x.ComponentModel))
 				.Run();
 
 			_Logger.LogDebug(

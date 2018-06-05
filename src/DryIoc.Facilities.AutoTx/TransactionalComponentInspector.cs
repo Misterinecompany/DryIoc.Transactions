@@ -24,6 +24,7 @@ using Castle.MicroKernel;
 using Castle.MicroKernel.Facilities;
 using Castle.MicroKernel.ModelBuilder.Inspectors;
 using Castle.Transactions;
+using DryIoc;
 
 namespace Castle.Facilities.AutoTx
 {
@@ -35,10 +36,10 @@ namespace Castle.Facilities.AutoTx
 	{
 		private ITransactionMetaInfoStore _MetaStore;
 
-		public override void ProcessModel(IKernel kernel, ComponentModel model)
+		public override void ProcessModel(IContainer container, ComponentModel model)
 		{
 			if (_MetaStore == null)
-				_MetaStore = kernel.Resolve<ITransactionMetaInfoStore>();
+				_MetaStore = container.Resolve<ITransactionMetaInfoStore>();
 
 			Contract.Assume(model.Implementation != null);
 

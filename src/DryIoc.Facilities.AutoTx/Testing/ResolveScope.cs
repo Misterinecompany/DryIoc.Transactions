@@ -14,7 +14,8 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using Castle.Windsor;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -31,15 +32,15 @@ namespace Castle.Facilities.AutoTx.Testing
 
 		readonly T _Service;
 		bool _Disposed;
-		protected readonly IWindsorContainer Container;
+		protected readonly IContainer Container;
 
-		public ResolveScope(IWindsorContainer container)
+		public ResolveScope(IContainer container)
 		{
 			Contract.Requires(container != null);
 			Contract.Ensures(_Service != null, "or resolve throws");
 
 			// check container has a logger factory component
-			var loggerFactory = container.Kernel.HasComponent(typeof (ILoggerFactory))
+			var loggerFactory = container.IsRegistered(typeof (ILoggerFactory))
 			                    	? container.Resolve<ILoggerFactory>()
 			                    	: null;
 			_Logger = loggerFactory != null ? loggerFactory.CreateLogger(GetType()) : NullLogger.Instance;

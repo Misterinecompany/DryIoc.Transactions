@@ -27,6 +27,8 @@ using Castle.DynamicProxy;
 using Castle.MicroKernel;
 using Castle.Transactions;
 using Castle.Transactions.Internal;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Transactions.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -45,7 +47,7 @@ namespace Castle.Facilities.AutoTx
 		}
 
 		private InterceptorState _State;
-		private readonly IKernel _Kernel;
+		private readonly IContainer _Container;
 		private readonly ITransactionMetaInfoStore _Store;
 		private Maybe<TransactionalClassMetaInfo> _MetaInfo;
 		private ILoggerFactory _LoggerFactory = NullLoggerFactory.Instance;
@@ -57,15 +59,15 @@ namespace Castle.Facilities.AutoTx
 			set { _Logger = value; }
 		}
 
-		public TransactionInterceptor(IKernel kernel, ITransactionMetaInfoStore store)
+		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store)
 		{
-			Contract.Requires(kernel != null, "kernel must be non null");
+			Contract.Requires(container != null, "container must be non null");
 			Contract.Requires(store != null, "store must be non null");
 			Contract.Ensures(_State == InterceptorState.Constructed);
 
 			_Logger.LogDebug("created transaction interceptor");
 
-			_Kernel = kernel;
+			_Container = container;
 			_Store = store;
 			_State = InterceptorState.Constructed;
 		}
@@ -81,7 +83,7 @@ namespace Castle.Facilities.AutoTx
 			Contract.Assume(_State == InterceptorState.Active || _State == InterceptorState.Initialized);
 			Contract.Assume(invocation != null);
 
-			var txManagerC = _Kernel.Resolve<TransactionManager>();
+			var txManagerC = _Container.Resolve<TransactionManager>();
 			ITransactionManager txManager = txManagerC;
 
 			var mTxMethod = _MetaInfo.Do(x => x.AsTransactional(invocation.MethodInvocationTarget ?? invocation.Method));
@@ -121,7 +123,7 @@ namespace Castle.Facilities.AutoTx
 			}
 			finally
 			{
-				_Kernel.ReleaseComponent(txManagerC);
+				_Container.Release(txManagerC);
 			}
 		}
 
