@@ -1,9 +1,7 @@
 ﻿namespace DryIoc.Facilities.AutoTx.Abstraction
 {
-    public abstract class AbstractFacility
+    public interface IFacility
     {
-	    protected AbstractFacility(IContainer container)
-	    {
-	    }
+	    void Init(IContainer container);
     }
 }

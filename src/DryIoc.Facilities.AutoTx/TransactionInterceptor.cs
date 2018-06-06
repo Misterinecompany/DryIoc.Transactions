@@ -21,13 +21,11 @@ using System.Diagnostics.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
-using Castle.Core;
-using Castle.Core.Interceptor;
 using Castle.DynamicProxy;
-using Castle.MicroKernel;
 using Castle.Transactions;
 using Castle.Transactions.Internal;
 using DryIoc;
+using DryIoc.Facilities.AutoTx.Abstraction;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Transactions.Logging;
 using Microsoft.Extensions.Logging;
@@ -254,11 +252,12 @@ namespace Castle.Facilities.AutoTx
 			}, Tuple.Create(invocation, txData, txData.Transaction.LocalIdentifier));
 		}
 
-		void IOnBehalfAware.SetInterceptedComponentModel(ComponentModel target)
+		void IOnBehalfAware.SetInterceptedComponentModel(ServiceRegistrationInfo target)
 		{
+			// TODO this method is not called
 			Contract.Ensures(_MetaInfo != null);
-			Contract.Assume(target != null && target.Implementation != null);
-			_MetaInfo = _Store.GetMetaFromType(target.Implementation);
+			Contract.Assume(target.Factory.ImplementationType != null);
+			_MetaInfo = _Store.GetMetaFromType(target.Factory.ImplementationType);
 			_State = InterceptorState.Initialized;
 		}
 	}

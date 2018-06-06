@@ -19,12 +19,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Castle.Core;
-using Castle.MicroKernel;
-using Castle.MicroKernel.Facilities;
-using Castle.MicroKernel.ModelBuilder.Inspectors;
 using Castle.Transactions;
 using DryIoc;
+using DryIoc.Facilities.AutoTx.Errors;
+using DryIoc.Facilities.AutoTx.Extensions;
 
 namespace Castle.Facilities.AutoTx
 {
@@ -32,56 +30,59 @@ namespace Castle.Facilities.AutoTx
 	/// 	Transaction component inspector that selects the methods
 	/// 	available to get intercepted with transactions.
 	/// </summary>
-	internal class TransactionalComponentInspector : MethodMetaInspector
+	internal class TransactionalComponentInspector// : MethodMetaInspector
 	{
 		private ITransactionMetaInfoStore _MetaStore;
 
-		public override void ProcessModel(IContainer container, ComponentModel model)
+		public void ProcessModel(IContainer container, ServiceRegistrationInfo model)
 		{
 			if (_MetaStore == null)
 				_MetaStore = container.Resolve<ITransactionMetaInfoStore>();
 
-			Contract.Assume(model.Implementation != null);
+			Contract.Assume(model.Factory.ImplementationType != null);
 
 			Validate(model);
-			AddInterceptor(model);
+			AddInterceptor(container, model);
 		}
 
-		private void Validate(ComponentModel model)
+		private void Validate(ServiceRegistrationInfo model)
 		{
-			Contract.Requires(model.Implementation != null);
-			Contract.Ensures(model.Implementation != null);
+			Contract.Requires(model.Factory.ImplementationType != null);
+			Contract.Ensures(model.Factory.ImplementationType != null);
 
 			Maybe<TransactionalClassMetaInfo> meta;
 			List<string> problematicMethods;
-			if (model.Services == null
-			    || model.Services.All(s => s.IsInterface)
-			    || !(meta = _MetaStore.GetMetaFromType(model.Implementation)).HasValue
+			if (model.ServiceType == null
+			    || model.ServiceType.IsInterface
+			    || !(meta = _MetaStore.GetMetaFromType(model.Factory.ImplementationType)).HasValue
 			    || (problematicMethods = (from method in meta.Value.TransactionalMethods
 			                              where !method.IsVirtual
 			                              select method.Name).ToList()).Count == 0)
 				return;
 
-			throw new FacilityException(string.Format("The class {0} wants to use transaction interception, " +
+			throw new AutoTxFacilityException(string.Format("The class {0} wants to use transaction interception, " +
 			                                          "however the methods must be marked as virtual in order to do so. Please correct " +
-			                                          "the following methods: {1}", model.Implementation.FullName,
+			                                          "the following methods: {1}", model.Factory.ImplementationType.FullName,
 			                                          string.Join(", ", problematicMethods.ToArray())));
 		}
 
-		private void AddInterceptor(ComponentModel model)
+		private void AddInterceptor(IContainer container, ServiceRegistrationInfo model)
 		{
-			Contract.Requires(model.Implementation != null);
-			var meta = _MetaStore.GetMetaFromType(model.Implementation);
+			Contract.Requires(model.Factory.ImplementationType != null);
+			var meta = _MetaStore.GetMetaFromType(model.Factory.ImplementationType);
 
 			if (!meta.HasValue)
 				return;
 
-			model.Dependencies.Add(new DependencyModel(null, typeof (TransactionInterceptor), false));
-			model.Interceptors.Add(new InterceptorReference(typeof (TransactionInterceptor)));
+			//TODO remove this old Interceptor registration:
+			//model.Dependencies.Add(new DependencyModel(null, typeof (TransactionInterceptor), false));
+			//model.Interceptors.Add(new InterceptorReference(typeof (TransactionInterceptor)));
+			
+			container.Intercept<TransactionInterceptor>(model.ServiceType, model.Factory.ImplementationType);
 		}
 
 		[Pure]
-		protected override string ObtainNodeName()
+		protected string ObtainNodeName()
 		{
 			return "transaction-interceptor";
 		}

@@ -13,13 +13,8 @@
 // limitations under the License.
 
 using System.Diagnostics;
-using Castle.MicroKernel;
-using Castle.MicroKernel.Facilities;
-using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.SubSystems.Naming;
 using Castle.Transactions;
 using Castle.Transactions.Activities;
-using Castle.Transactions.Helpers;
 using DryIoc;
 using DryIoc.Facilities.AutoTx.Abstraction;
 using Microsoft.Extensions.Logging;
@@ -34,9 +29,9 @@ namespace Castle.Facilities.AutoTx
 	///                                   <code>c.AddFacility&lt;AutoTxFacility&gt;</code>
 	///                                 </para>
 	///</summary>
-	public class AutoTxFacility : AbstractFacility
+	public class AutoTxFacility : IFacility
 	{
-		public AutoTxFacility(IContainer container) : base(container)
+		public void Init(IContainer container)
 		{
 			ILogger _Logger = NullLogger.Instance;
 
@@ -74,15 +69,20 @@ namespace Castle.Facilities.AutoTx
 			
 			var componentInspector = new TransactionalComponentInspector();
 
-			container.ComponentModelBuilder.AddContributor(componentInspector);
+			//container.ComponentModelBuilder.AddContributor(componentInspector);
 
 			_Logger.LogDebug(
 				"inspecting previously registered components; this might throw if you have configured your components in the wrong way");
 
-			((INamingSubSystem) container.GetSubSystem(SubSystemConstants.NamingKey))
-				.GetAllHandlers()
-				.Do(x => componentInspector.ProcessModel(container, x.ComponentModel))
-				.Run();
+			//((INamingSubSystem) container.GetSubSystem(SubSystemConstants.NamingKey))
+			//	.GetAllHandlers()
+			//	.Do(x => componentInspector.ProcessModel(container, x.ComponentModel))
+			//	.Run();
+
+			foreach (var serviceRegistrationInfo in container.GetServiceRegistrations())
+			{
+				componentInspector.ProcessModel(container, serviceRegistrationInfo);
+			}
 
 			_Logger.LogDebug(
 				@"Initialized AutoTxFacility:

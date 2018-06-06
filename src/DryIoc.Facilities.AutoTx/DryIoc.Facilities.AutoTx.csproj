@@ -64,6 +64,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="4.2.1" />
     <PackageReference Include="DryIoc.dll" Version="2.12.10" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.0" />
   </ItemGroup>
