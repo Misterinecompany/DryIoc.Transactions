@@ -148,7 +148,6 @@ namespace Castle.Facilities.AutoTx.Tests.Bugfixes
 			var container = new Container();
 
 			container.AddFacility<AutoTxFacility>();
-			container.AddFacility<TypedFactoryFacility>();
 
 			container.Register<IUnitOfWork, UnitOfWorkImpl>(Reuse.PerTransaction);
 			container.Register<IRepo, Repo>(Reuse.Transient);
