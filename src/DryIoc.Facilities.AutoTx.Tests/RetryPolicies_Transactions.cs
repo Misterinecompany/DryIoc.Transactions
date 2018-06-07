@@ -16,13 +16,11 @@
 
 #endregion
 
-using System;
-using Castle.Facilities.AutoTx.Testing;
 using Castle.Facilities.AutoTx.Tests.TestClasses;
-using Castle.MicroKernel.Registration;
 using Castle.Transactions;
 using Castle.Transactions.Activities;
-using Castle.Windsor;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
 using NUnit.Framework;
 
 namespace Castle.Facilities.AutoTx.Tests
@@ -30,29 +28,22 @@ namespace Castle.Facilities.AutoTx.Tests
 	[Ignore("For v3.1: Implement retry policies are nicer to test with e.g. NHibernate integration parts.")]
 	public class RetryPolicies_Transactions
 	{
-		private IWindsorContainer _Container;
+		private IContainer _Container;
 		private ITransactionManager _TransactionManager;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_Container = new WindsorContainer().Register(
+			_Container = new Container();
 
-				Component.For<MyService>(),
+			_Container.Register<MyService>(Reuse.Singleton);
 
-				Component.For<ITransactionManager>()
-					.ImplementedBy<TransactionManager>()
-					.Named("transaction.manager")
-					.LifeStyle.Singleton,
+			_Container.Register<ITransactionManager, TransactionManager>(Reuse.Singleton, serviceKey: "transaction.manager");
 
-				// the activity manager shouldn't have the same lifestyle as TransactionInterceptor, as it
-				// calls a static .Net/Mono framework method, and it's the responsibility of
-				// that framework method to keep track of the call context.
-				Component.For<IActivityManager>()
-					.ImplementedBy<ThreadLocalActivityManager>()
-					.LifeStyle.Singleton);
-
-			_Container.Register();
+			// the activity manager shouldn't have the same lifestyle as TransactionInterceptor, as it
+			// calls a static .Net/Mono framework method, and it's the responsibility of
+			// that framework method to keep track of the call context.
+			_Container.Register<IActivityManager, ThreadLocalActivityManager>(Reuse.Singleton);
 
 			_TransactionManager = _Container.Resolve<ITransactionManager>();
 		}

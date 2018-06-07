@@ -1,8 +1,8 @@
-using Castle.Facilities.AutoTx.Tests.TestClasses;
-using Castle.MicroKernel.Registration;
-using Castle.Windsor;
-using NUnit.Framework;
 using Castle.Facilities.AutoTx.Testing;
+using Castle.Facilities.AutoTx.Tests.TestClasses;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
+using NUnit.Framework;
 
 namespace Castle.Facilities.AutoTx.Tests
 {
@@ -11,9 +11,9 @@ namespace Castle.Facilities.AutoTx.Tests
 		[Test]
 		public void Register_Then_AddFacility_ThenInvokeTransactionalMethod()
 		{
-			var container = new WindsorContainer()
-				.Register(Component.For<MyService>().LifeStyle.Transient)
-				.AddFacility<AutoTxFacility>();
+			var container = new Container();
+			container.Register<MyService>(Reuse.Transient);
+			container.AddFacility<AutoTxFacility>();
 
 			// this throws if we have not implemented this feature
 			using (var s = container.ResolveScope<MyService>())

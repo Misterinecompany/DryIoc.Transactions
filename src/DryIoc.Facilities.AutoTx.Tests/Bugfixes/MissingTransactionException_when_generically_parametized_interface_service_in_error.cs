@@ -1,8 +1,6 @@
 ﻿using System;
-using Castle.Facilities.TypedFactory;
-using Castle.MicroKernel.Registration;
-using Castle.MicroKernel.SubSystems.Configuration;
-using Castle.Windsor;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
 using NUnit.Framework;
 using SharpTestsEx;
 
@@ -133,24 +131,6 @@ namespace Castle.Facilities.AutoTx.Tests.Bugfixes
 			}
 		}
 
-		internal class EndpointInstaller : IWindsorInstaller
-		{
-			public void Install(IWindsorContainer container, IConfigurationStore store)
-			{
-				container.AddFacility<AutoTxFacility>();
-				container.AddFacility<TypedFactoryFacility>();
-
-				container.Register(
-					Component.For<IUnitOfWork>()
-						.UsingFactoryMethod((k, c) => new UnitOfWorkImpl())
-						.LifeStyle.PerTransaction(),
-					Component.For<IRepo>().ImplementedBy<Repo>().LifeStyle.Transient,
-					Component.For<IMessageHandler<MyMessage>>().ImplementedBy<ServiceClass>());
-
-				container.Register(Component.For<IBus>().ImplementedBy<BusImpl>());
-			}
-		}
-
 		[Test, Description("phew, that's quite a list of classes and interfaces needed!")]
 		public void Repro()
 		{
@@ -163,11 +143,20 @@ namespace Castle.Facilities.AutoTx.Tests.Bugfixes
 			((OtherMessage) bus.Sent).Name.Should().Be("Hello Pär");
 		}
 
-		private IWindsorContainer SetUpContainer()
+		private IContainer SetUpContainer()
 		{
-			var c = new WindsorContainer();
-			c.Install(new EndpointInstaller());
-			return c;
+			var container = new Container();
+
+			container.AddFacility<AutoTxFacility>();
+			container.AddFacility<TypedFactoryFacility>();
+
+			container.Register<IUnitOfWork, UnitOfWorkImpl>(Reuse.PerTransaction);
+			container.Register<IRepo, Repo>(Reuse.Transient);
+			container.Register<IMessageHandler<MyMessage>, ServiceClass>(Reuse.Singleton);
+			
+			container.Register<IBus, BusImpl>(Reuse.Singleton);
+
+			return container;
 		}
 	}
 

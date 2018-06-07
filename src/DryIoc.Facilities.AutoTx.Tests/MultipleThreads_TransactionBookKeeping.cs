@@ -1,12 +1,12 @@
 using System;
 using System.Threading;
-using Castle.Facilities.AutoTx.Testing;
 using Castle.Facilities.AutoTx.Tests.TestClasses;
-using Castle.MicroKernel.Registration;
 using Castle.Transactions;
-using Castle.Windsor;
 using NUnit.Framework;
 using System.Linq;
+using Castle.Facilities.AutoTx.Testing;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
 
 namespace Castle.Facilities.AutoTx.Tests
 {
@@ -17,14 +17,14 @@ namespace Castle.Facilities.AutoTx.Tests
 
 	public class MultipleThreads_TransactionBookKeeping
 	{
-		private WindsorContainer _Container;
+		private Container _Container;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_Container = new WindsorContainer();
+			_Container = new Container();
 			_Container.AddFacility<AutoTxFacility>();
-			_Container.Register(Component.For<MyService>());
+			_Container.Register<MyService>(Reuse.Singleton);
 			ThreadPool.SetMinThreads(5, 5);
 		}
 

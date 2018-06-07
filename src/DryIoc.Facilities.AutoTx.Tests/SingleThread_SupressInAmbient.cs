@@ -1,21 +1,21 @@
 using Castle.Facilities.AutoTx.Testing;
 using Castle.Facilities.AutoTx.Tests.TestClasses;
-using Castle.MicroKernel.Registration;
-using Castle.Windsor;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
 using NUnit.Framework;
 
 namespace Castle.Facilities.AutoTx.Tests
 {
 	public class SingleThread_SupressInAmbient
 	{
-		private WindsorContainer _Container;
+		private Container _Container;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_Container = new WindsorContainer();
+			_Container = new Container();
 			_Container.AddFacility<AutoTxFacility>();
-			_Container.Register(Component.For<MyService>());
+			_Container.Register<MyService>(Reuse.Singleton);
 		}
 
 		[TearDown]
@@ -40,14 +40,14 @@ namespace Castle.Facilities.AutoTx.Tests
 
     public class InheritanceTransaction
     {
-        private WindsorContainer _Container;
+        private Container _Container;
 
         [SetUp]
         public void SetUp()
         {
-            _Container = new WindsorContainer();
+            _Container = new Container();
             _Container.AddFacility<AutoTxFacility>();
-            _Container.Register(Component.For<InheritedMyService>());
+            _Container.Register<InheritedMyService>(Reuse.Singleton);
         }
 
         [TearDown]

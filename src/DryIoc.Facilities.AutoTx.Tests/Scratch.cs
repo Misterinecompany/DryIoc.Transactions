@@ -17,28 +17,22 @@
 #endregion
 
 using System;
-using System.Linq;
-using Castle.Facilities.AutoTx.Lifestyles;
-using Castle.Facilities.FactorySupport;
-using Castle.Facilities.TypedFactory;
-using Castle.MicroKernel.Registration;
 using Castle.Transactions;
-using Castle.Transactions.Internal;
-using Castle.Windsor;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
 using NUnit.Framework;
 
 namespace Castle.Facilities.AutoTx.Tests
 {
-	using Castle.Transactions.Helpers;
-
 	[Explicit("to try things out")]
 	internal class Scratch
 	{
 		[Test]
 		public void GetFacilities()
 		{
-			var c = new WindsorContainer();
-			c.AddFacility<FactorySupportFacility>().AddFacility<TypedFactoryFacility>();
+			var c = new Container();
+			c.AddFacility<FactorySupportFacility>();
+			c.AddFacility<TypedFactoryFacility>();
 			c.Kernel.GetFacilities().Do(Console.WriteLine).Run();
 		}
 
@@ -47,19 +41,15 @@ namespace Castle.Facilities.AutoTx.Tests
 		public void HandlerSelector_ReturnsTransientComponent_IsNoAmbientTransaction()
 		{
 			// given
-			var c = new WindsorContainer();
+			var c = new Container();
 
 			c.Kernel.AddHandlerSelector(new TransactionManagerCurrentTransactionSelector());
 
 			c.AddFacility<AutoTxFacility>();
 
-			c.Register(
-				Component.For<ITransactionalComponent>()
-					.ImplementedBy<ExampleTransactionalComponent>()
-					.LifeStyle.PerTransaction(),
-				Component.For<DependencyA1>(),
-				Component.For<DependencyA2>()
-				);
+			c.Register<ITransactionalComponent, ExampleTransactionalComponent>(Reuse.PerTransaction);
+			c.Register<DependencyA1>(Reuse.Singleton);
+			c.Register<DependencyA2>(Reuse.Singleton);
 
 			// then
 			var component = c.Resolve<ExampleTransactionalComponent>();

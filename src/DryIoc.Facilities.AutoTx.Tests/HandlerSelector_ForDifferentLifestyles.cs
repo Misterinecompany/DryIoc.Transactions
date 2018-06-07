@@ -1,37 +1,31 @@
 using System;
 using System.Diagnostics.Contracts;
-using Castle.Core;
-using Castle.MicroKernel;
-using Castle.MicroKernel.Registration;
 using Castle.Transactions;
-using Castle.Windsor;
 using NUnit.Framework;
-using Castle.Facilities.AutoTx.Lifestyles;
-using Castle.Facilities.AutoTx.Testing;
 using System.Linq;
+using Castle.Facilities.AutoTx.Testing;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Extensions;
 
 namespace Castle.Facilities.AutoTx.Tests
 {
 	public class HandlerSelector_ForDifferentLifeStyles
 	{
-		private IWindsorContainer _Container;
+		private IContainer _Container;
 
 		[SetUp]
 		public void SetUp()
 		{
-			_Container = new WindsorContainer();
+			_Container = new Container();
 			_Container.AddFacility<AutoTxFacility>();
 
 			// Note: depending on what users want; move this logic into the facility, so that IHandlerSelectors registered after initialization
 			// automatically gets attached to the kernel
 			_Container.Kernel.AddHandlerSelector(new DefaultToTransientLifeStyle<IHaveLifestyle>(_Container.Resolve<ITransactionManager>()));
 
-			_Container.Register(Component.For<IHaveLifestyle>().ImplementedBy<PerTxClass>().LifeStyle.PerTransaction()
-									.DependsOn(Parameter.ForKey("type").Eq("ordinary")),
-								Component.For<IHaveLifestyle>().ImplementedBy<PerTxClass>().LifeStyle.PerTransaction()
-									.Named("special")
-									.DependsOn(Parameter.ForKey("type").Eq("special")),
-			                    Component.For<IHaveLifestyle>().ImplementedBy<TransientClass>().LifeStyle.Transient);
+			_Container.Register<IHaveLifestyle, PerTxClass>(Reuse.PerTransaction, Parameters.Of.Type(request => "ordinary"));
+			_Container.Register<IHaveLifestyle, PerTxClass>(Reuse.PerTransaction, Parameters.Of.Type(request => "special"), serviceKey: "special");
+			_Container.Register<IHaveLifestyle, TransientClass>(Reuse.Transient);
 		}
 
 		[Test]

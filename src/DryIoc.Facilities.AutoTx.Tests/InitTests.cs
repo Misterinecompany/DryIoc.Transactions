@@ -16,10 +16,10 @@
 
 #endregion
 
-using Castle.MicroKernel.Facilities;
-using Castle.MicroKernel.Registration;
 using Castle.Transactions;
-using Castle.Windsor;
+using DryIoc;
+using DryIoc.Facilities.AutoTx.Errors;
+using DryIoc.Facilities.AutoTx.Extensions;
 using NUnit.Framework;
 
 namespace Castle.Facilities.AutoTx.Tests
@@ -29,15 +29,15 @@ namespace Castle.Facilities.AutoTx.Tests
 		[Test]
 		public void Cannot_Register_Class_Without_Virtual_Method()
 		{
-			var c = new WindsorContainer();
+			var c = new Container();
 			c.AddFacility<AutoTxFacility>();
 
 			try
 			{
-				c.Register(Component.For<FaultyComponent>());
+				c.Register<FaultyComponent>(Reuse.Singleton);
 				Assert.Fail("invalid component registration should be noted.");
 			}
-			catch (FacilityException ex)
+			catch (AutoTxFacilityException ex)
 			{
 				Assert.That(ex.Message.Contains("FaultyMethod"));
 				Assert.That(ex.Message.Contains("virtual"));

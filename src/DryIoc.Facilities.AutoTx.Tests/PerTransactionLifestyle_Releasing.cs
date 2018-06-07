@@ -17,14 +17,10 @@ namespace Castle.Facilities.AutoTx.Tests
 	using System;
 	using System.Diagnostics.Contracts;
 	using System.Threading;
-
 	using Castle.Facilities.AutoTx.Testing;
-	using Castle.Facilities.FactorySupport;
-	using Castle.Facilities.TypedFactory;
-	using Castle.MicroKernel.Registration;
 	using Castle.Transactions;
-	using Castle.Windsor;
-
+	using DryIoc;
+	using DryIoc.Facilities.AutoTx.Extensions;
 	using NLog;
 
 	using NUnit.Framework;
@@ -225,30 +221,24 @@ Test 'Castle.Facilities.AutoTx.Tests.PerTransactionLifestyle_Releasing.Concurren
 	PerTransactionLifestyle_Releasing.cs(180,0): at Castle.Facilities.AutoTx.Tests.PerTransactionLifestyle_Releasing.Concurrent_DependentTransaction_AndDisposing()*/
 		}
 
-		private WindsorContainer GetContainer()
+		private Container GetContainer()
 		{
-			var container = new WindsorContainer();
+			var container = new Container();
 			container.AddFacility<AutoTxFacility>();
-			container.AddFacility<FactorySupportFacility>();
-			container.AddFacility<TypedFactoryFacility>();
-			container.Register(
-				Component.For<IPerTxServiceFactory>()
-					.Instance(new ServiceFactory())
-					.LifeStyle.Singleton
-					.Named("per-tx-session.factory"),
-				Component.For<IPerTxService>()
-					.LifeStyle.PerTransaction()
-					.Named("per-tx-session")
-					.UsingFactoryMethod(k =>
-					{
-						var factory = k.Resolve<IPerTxServiceFactory>("per-tx-session.factory");
-						var s = factory.CreateService();
-						return s;
-					}),
-				Component.For<Service>(),
-				Component.For<ServiceWithDirectDep>());
+
+			container.Register<IPerTxServiceFactory, ServiceFactory>(Reuse.Singleton, serviceKey: "per-tx-session.factory");
+			container.Register<IPerTxService>(Reuse.PerTransaction, Made.Of(() => CreatePerTransactionService(container)), serviceKey: "per-tx-session");
+			container.Register<Service>(Reuse.Singleton);
+			container.Register<ServiceWithDirectDep>(Reuse.Singleton);
 
 			return container;
+		}
+
+		private IPerTxService CreatePerTransactionService(IResolver container)
+		{
+			var factory = container.Resolve<IPerTxServiceFactory>("per-tx-session.factory");
+			var s = factory.CreateService();
+			return s;
 		}
 	}
 
