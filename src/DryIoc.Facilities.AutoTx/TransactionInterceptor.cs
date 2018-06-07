@@ -35,7 +35,7 @@ using TransactionManager = Castle.Transactions.TransactionManager;
 
 namespace Castle.Facilities.AutoTx
 {
-	internal class TransactionInterceptor : IInterceptor, IOnBehalfAware
+	internal class TransactionInterceptor : IInterceptor
 	{
 		private enum InterceptorState
 		{
@@ -57,7 +57,7 @@ namespace Castle.Facilities.AutoTx
 			set { _Logger = value; }
 		}
 
-		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store)
+		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store, ServiceRequestInfo serviceRequestInfo)
 		{
 			Contract.Requires(container != null, "container must be non null");
 			Contract.Requires(store != null, "store must be non null");
@@ -68,6 +68,8 @@ namespace Castle.Facilities.AutoTx
 			_Container = container;
 			_Store = store;
 			_State = InterceptorState.Constructed;
+
+			SetInterceptedComponentModel(serviceRequestInfo);
 		}
 
 		[ContractInvariantMethod]
@@ -252,12 +254,11 @@ namespace Castle.Facilities.AutoTx
 			}, Tuple.Create(invocation, txData, txData.Transaction.LocalIdentifier));
 		}
 
-		void IOnBehalfAware.SetInterceptedComponentModel(ServiceRegistrationInfo target)
+		private void SetInterceptedComponentModel(ServiceRequestInfo target)
 		{
-			// TODO this method is not called
 			Contract.Ensures(_MetaInfo != null);
-			Contract.Assume(target.Factory.ImplementationType != null);
-			_MetaInfo = _Store.GetMetaFromType(target.Factory.ImplementationType);
+			Contract.Assume(target.ImplementationType != null);
+			_MetaInfo = _Store.GetMetaFromType(target.ImplementationType);
 			_State = InterceptorState.Initialized;
 		}
 	}

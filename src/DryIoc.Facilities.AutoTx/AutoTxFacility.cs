@@ -53,6 +53,11 @@ namespace Castle.Facilities.AutoTx
 				container.UseInstance(typeof(ILogger), NullLogger.Instance);
 			}
 
+			// add capability to inject info about requested service to the constructor
+			container.Register(Made.Of(
+				() => new ServiceRequestInfo(Arg.Index<RequestInfo>(0)), 
+				request => request));
+
 			// the interceptor needs to be created for every method call
 			container.Register<TransactionInterceptor>(Reuse.Transient);
 			container.Register<ITransactionMetaInfoStore, TransactionClassMetaInfoStore>(Reuse.Singleton);
