@@ -4,31 +4,86 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Castle.Facilities.AutoTx;
 using Castle.Transactions;
+using DryIoc.Facilities.AutoTx.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DryIoc.Facilities.AutoTx.Lifestyles
 {
-	public class PerTransactionReuse : IReuse
+	public class PerTransactionReuse : IReuse, IReuseV3
 	{
+		private readonly PerTransactionScopeContext _PerTransactionScopeContext;
+
+		public PerTransactionReuse(PerTransactionScopeContext perTransactionScopeContext) // TODO get scope context from container in Wrapper
+		{
+			_PerTransactionScopeContext = perTransactionScopeContext;
+		}
+
+		public int Lifespan => 50;
+
+		#region IReuseV3 implementation
+
+		/// <summary>Returns item from transaction scope.</summary>
+		/// <param name="scopeContext">Transaction scope context to select from.</param>
+		/// <param name="itemId">Scoped item ID for lookup.</param>
+		/// <param name="createValue">Delegate for creating the item.</param>
+		/// <returns>Reused item.</returns>
+		public static object GetOrAddItemOrDefault(IScopeContext scopeContext, int itemId, CreateScopedValue createValue)
+		{
+			var scope = scopeContext.GetCurrentOrDefault();
+			return scope == null ? null : scope.GetOrAdd(itemId, createValue);
+		}
+
+		private static readonly MethodInfo _GetOrAddOrDefaultMethod =
+			typeof(CurrentScopeReuse).GetSingleMethodOrNull("GetOrAddItemOrDefault");
+
+		/// <summary>Returns expression call to <see cref="GetOrAddItemOrDefault"/>.</summary>
+		public Expression Apply(Request request, bool trackTransientDisposable, Expression createItemExpr)
+		{
+			var itemId = trackTransientDisposable ? -1 : request.FactoryID;
+
+			return Expression.Call(_GetOrAddOrDefaultMethod,
+				Expression.Constant(_PerTransactionScopeContext),
+				Expression.Constant(itemId),
+				Expression.Lambda<CreateScopedValue>(createItemExpr));
+		}
+
+		public bool CanApply(Request request)
+		{
+			return _PerTransactionScopeContext.IsCurrentTransaction;
+		}
+
+		private readonly Lazy<Expression> _PerTransactionReuseExpr = new Lazy<Expression>(() =>
+			Expression.Field(null, typeof(AutoTxReuse).GetFieldOrNull("PerTransaction")));
+
+		public Expression ToExpression(Func<object, Expression> fallbackConverter)
+		{
+			return _PerTransactionReuseExpr.Value;
+		}
+
+		#endregion
+
+		#region Reuse implementation
+
 		public IScope GetScopeOrDefault(Request request)
 		{
-			throw new System.NotImplementedException();
+			return _PerTransactionScopeContext.GetCurrentOrDefault();
 		}
 
 		public Expression GetScopeExpression(Request request)
 		{
-			throw new System.NotImplementedException();
+			return Throw.For<Expression>(Error.Of("Obsolete"));
 		}
 
-		public int GetScopedItemIdOrSelf(int factoryID, Request request)
+		public int GetScopedItemIdOrSelf(int factoryId, Request request)
 		{
-			throw new System.NotImplementedException();
+			return _PerTransactionScopeContext.GetCurrentOrDefault().GetScopedItemIdOrSelf(factoryId);
 		}
 
-		public int Lifespan { get; }
+		#endregion
 	}
 
 	public class PerTransactionScopeContext : IScopeContext
@@ -50,13 +105,15 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 		public string RootScopeName => ScopeContextName;
 
+		public bool IsCurrentTransaction => _TransactionManager.CurrentTransaction.HasValue;
+
 		public IScope GetCurrentOrDefault()
 		{
 			if (_Disposed)
 				throw new ObjectDisposedException("PerTransactionLifestyleManagerBase",
 					"You cannot resolve with a disposed lifestyle.");
 
-			if (!_TransactionManager.CurrentTransaction.HasValue)
+			if (!IsCurrentTransaction)
 			{
 				throw new MissingTransactionException(
 					"No transaction in context when trying to instantiate model for resolve type. "

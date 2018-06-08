@@ -149,7 +149,7 @@ namespace Castle.Facilities.AutoTx.Tests.Bugfixes
 
 			container.AddFacility<AutoTxFacility>();
 
-			container.Register<IUnitOfWork, UnitOfWorkImpl>(Reuse.PerTransaction);
+			container.Register<IUnitOfWork, UnitOfWorkImpl>(AutoTxReuse.PerTransaction);
 			container.Register<IRepo, Repo>(Reuse.Transient);
 			container.Register<IMessageHandler<MyMessage>, ServiceClass>(Reuse.Singleton);
 			

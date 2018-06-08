@@ -28,6 +28,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DryIoc.dll" Version="2.12.10" />
     <PackageReference Include="NLog" Version="4.5.4" />
     <PackageReference Include="NUnit" Version="2.6.4" />
     <PackageReference Include="SharpTestsEx.MVC" Version="1.1.1" />

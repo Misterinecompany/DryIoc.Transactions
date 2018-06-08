@@ -1,8 +1,6 @@
 using System;
-using System.Diagnostics.Contracts;
 using Castle.Transactions;
 using NUnit.Framework;
-using System.Linq;
 using Castle.Facilities.AutoTx.Testing;
 using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
@@ -19,13 +17,13 @@ namespace Castle.Facilities.AutoTx.Tests
 			_Container = new Container();
 			_Container.AddFacility<AutoTxFacility>();
 
-			// Note: depending on what users want; move this logic into the facility, so that IHandlerSelectors registered after initialization
-			// automatically gets attached to the kernel
-			_Container.Kernel.AddHandlerSelector(new DefaultToTransientLifeStyle<IHaveLifestyle>(_Container.Resolve<ITransactionManager>()));
-
-			_Container.Register<IHaveLifestyle, PerTxClass>(Reuse.PerTransaction, Parameters.Of.Type(request => "ordinary"));
-			_Container.Register<IHaveLifestyle, PerTxClass>(Reuse.PerTransaction, Parameters.Of.Type(request => "special"), serviceKey: "special");
-			_Container.Register<IHaveLifestyle, TransientClass>(Reuse.Transient);
+			_Container.Register<IHaveLifestyle, PerTxClass>(AutoTxReuse.PerTransaction, Parameters.Of.Type(request => "ordinary"), serviceKey: "ordinary");
+			_Container.Register<IHaveLifestyle, PerTxClass>(AutoTxReuse.PerTransaction, Parameters.Of.Type(request => "special"), serviceKey: "special");
+			_Container.Register<IHaveLifestyle, TransientClass>(Reuse.Transient, serviceKey: "transient");
+			
+			_Container.Register<IHaveLifestyle>(Made.Of(
+				() => DefaultToTransientLifeStyleFactory.CreateHavingLifestyle(Arg.Of<IContainer>(), Arg.Of<ITransactionManager>()),
+				request => request.Parent.ImplementationType));
 		}
 
 		[Test]
@@ -64,6 +62,15 @@ namespace Castle.Facilities.AutoTx.Tests
 		}
 	}
 
+	public class DefaultToTransientLifeStyleFactory
+	{
+		public static IHaveLifestyle CreateHavingLifestyle(IContainer container, ITransactionManager transactionManager)
+		{
+			return container.Resolve<IHaveLifestyle>(transactionManager.CurrentTransaction.HasValue ? "ordinary" : "transient");
+		}
+	}
+
+	/*
 	/// <summary>
 	/// A class for defaulting transacted handlers to non transacted ones when there are no ambient transactions.
 	/// The services which this handler selector acts upon is specified by its generic parameter. This class
@@ -102,6 +109,7 @@ namespace Castle.Facilities.AutoTx.Tests
 				: x.ComponentModel.CustomLifestyle;
 		}
 	}
+	*/
 
 	public interface IHaveLifestyle
 	{
