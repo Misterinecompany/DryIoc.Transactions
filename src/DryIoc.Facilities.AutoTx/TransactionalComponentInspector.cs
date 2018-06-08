@@ -39,7 +39,8 @@ namespace Castle.Facilities.AutoTx
 			if (_MetaStore == null)
 				_MetaStore = container.Resolve<ITransactionMetaInfoStore>();
 
-			Contract.Assume(model.Factory.ImplementationType != null);
+			// TODO add better validation which models can be intercepted
+			//Contract.Assume(model.Factory.ImplementationType != null);
 
 			Validate(model);
 			AddInterceptor(container, model);

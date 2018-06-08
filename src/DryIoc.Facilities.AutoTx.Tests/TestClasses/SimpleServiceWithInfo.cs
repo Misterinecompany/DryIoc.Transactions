@@ -13,7 +13,7 @@ namespace DryIoc.Facilities.AutoTx.Tests.TestClasses
 		public ServiceRequestInfo ServiceRequestInfo { get; }
 
 		[Transaction]
-		public void TransactionMethod()
+		public virtual void TransactionMethod()
 		{
 		}
 	}

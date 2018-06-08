@@ -147,13 +147,13 @@ namespace Castle.Facilities.AutoTx.Tests.Bugfixes
 		{
 			var container = new Container();
 
-			container.AddFacility<AutoTxFacility>();
-
 			container.Register<IUnitOfWork, UnitOfWorkImpl>(AutoTxReuse.PerTransaction);
 			container.Register<IRepo, Repo>(Reuse.Transient);
 			container.Register<IMessageHandler<MyMessage>, ServiceClass>(Reuse.Singleton);
 			
 			container.Register<IBus, BusImpl>(Reuse.Singleton);
+
+			container.AddFacility<AutoTxFacility>();
 
 			return container;
 		}

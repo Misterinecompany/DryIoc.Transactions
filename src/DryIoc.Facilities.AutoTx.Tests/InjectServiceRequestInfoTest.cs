@@ -13,10 +13,10 @@ namespace DryIoc.Facilities.AutoTx.Tests
 	    public void SetUp()
 	    {
 		    _Container = new Container();
-		    _Container.AddFacility<AutoTxFacility>();
 		    _Container.Register<SimpleServiceWithInfo>(Reuse.Singleton);
 		    _Container.Register<EmptyServiceWithInfo>(Reuse.Singleton);
-	    }
+		    _Container.AddFacility<AutoTxFacility>();
+		}
 
 	    [TearDown]
 	    public void TearDown()
@@ -34,8 +34,8 @@ namespace DryIoc.Facilities.AutoTx.Tests
 
 		    var simpleService = _Container.Resolve<SimpleServiceWithInfo>();
 			Assert.NotNull(simpleService);
-			Assert.AreEqual(typeof(SimpleServiceWithInfo), simpleService.ServiceRequestInfo.ImplementationType);
-			Assert.AreNotEqual(typeof(SimpleServiceWithInfo), simpleService.ServiceRequestInfo.RequestInfo.ImplementationType);
+			Assert.AreEqual(typeof(SimpleServiceWithInfo), simpleService.ServiceRequestInfo.ImplementationType, "ImplementationType should base (without proxy)");
+			Assert.AreNotEqual(typeof(SimpleServiceWithInfo), simpleService.ServiceRequestInfo.RequestInfo.ImplementationType, "Request.ImplementationType should be proxy type");
 	    }
 	}
 }

@@ -17,6 +17,8 @@ using Castle.Transactions;
 using Castle.Transactions.Activities;
 using DryIoc;
 using DryIoc.Facilities.AutoTx.Abstraction;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Lifestyles;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -43,20 +45,30 @@ namespace Castle.Facilities.AutoTx
 				// get logger
 				_Logger = loggerFactory.CreateLogger(typeof (AutoTxFacility));
 			}
+			else
+			{
+				Trace.TraceWarning("Missing ILogger in container; add it or you'll have no logging of errors!");
+				container.UseInstance(typeof(ILoggerFactory), NullLoggerFactory.Instance);
+			}
 
 			if (_Logger.IsEnabled(LogLevel.Debug))
 				_Logger.LogDebug("initializing AutoTxFacility");
 
 			if (!container.IsRegistered(typeof(ILogger)))
 			{
-				Trace.TraceWarning("Missing ILogger in container; add it or you'll have no logging of errors!");
-				container.UseInstance(typeof(ILogger), NullLogger.Instance);
+				container.AddLoggerResolving();
+
+				if (_Logger.IsEnabled(LogLevel.Debug))
+					_Logger.LogDebug("Added capability of resolving ILogger");
 			}
 
 			// add capability to inject info about requested service to the constructor
 			container.Register(Made.Of(
 				() => new ServiceRequestInfo(Arg.Index<RequestInfo>(0)), 
-				request => request));
+				request => request.Parent));
+
+			// register PerTransactionScopeContext to container as singleton (one storage for scope-per-transaction)
+			container.Register<PerTransactionScopeContext>(Reuse.Singleton);
 
 			// the interceptor needs to be created for every method call
 			container.Register<TransactionInterceptor>(Reuse.Transient);
