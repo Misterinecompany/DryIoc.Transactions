@@ -38,7 +38,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 		}
 
 		private static readonly MethodInfo _GetOrAddOrDefaultMethod =
-			typeof(CurrentScopeReuse).GetSingleMethodOrNull("GetOrAddItemOrDefault");
+			typeof(PerTransactionReuse).GetSingleMethodOrNull("GetOrAddItemOrDefault");
 
 		/// <summary>Returns expression call to <see cref="GetOrAddItemOrDefault"/>.</summary>
 		public Expression Apply(Request request, bool trackTransientDisposable, Expression createItemExpr)

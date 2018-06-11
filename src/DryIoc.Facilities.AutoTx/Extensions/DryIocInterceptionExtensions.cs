@@ -11,24 +11,15 @@ namespace DryIoc.Facilities.AutoTx.Extensions
 
 		private static DefaultProxyBuilder ProxyBuilder => _proxyBuilder.Value;
 
-		public static void Intercept<TService, TInterceptor>(this IRegistrator registrator, object serviceKey = null)
+		public static void Intercept<TInterceptor>(this IRegistrator registrator, Type serviceType, out Type proxyType, object serviceKey = null)
 			where TInterceptor : class, IInterceptor
 		{
-			var serviceType = typeof(TService);
-
-			registrator.Intercept<TInterceptor>(serviceType, serviceKey);
+			registrator.Intercept<TInterceptor>(serviceType, serviceType, out proxyType, serviceKey);
 		}
 
-		public static void Intercept<TInterceptor>(this IRegistrator registrator, Type serviceType, object serviceKey = null)
+		public static void Intercept<TInterceptor>(this IRegistrator registrator, Type serviceType, Type serviceImpl, out Type proxyType, object serviceKey = null)
 			where TInterceptor : class, IInterceptor
 		{
-			registrator.Intercept<TInterceptor>(serviceType, serviceType, serviceKey);
-		}
-
-		public static void Intercept<TInterceptor>(this IRegistrator registrator, Type serviceType, Type serviceImpl, object serviceKey = null)
-			where TInterceptor : class, IInterceptor
-		{
-			Type proxyType;
 			if (serviceImpl.IsInterface())
 				proxyType = ProxyBuilder.CreateInterfaceProxyTypeWithTargetInterface(
 					serviceImpl, ArrayTools.Empty<Type>(), ProxyGenerationOptions.Default);

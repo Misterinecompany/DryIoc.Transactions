@@ -63,9 +63,10 @@ namespace Castle.Facilities.AutoTx
 			}
 
 			// add capability to inject info about requested service to the constructor
+			container.Register<ProxyTypeStorage>(Reuse.Singleton);
 			container.Register(Made.Of(
-				() => new ServiceRequestInfo(Arg.Index<RequestInfo>(0)), 
-				request => request.Parent));
+				() => new ParentServiceRequestInfo(Arg.Index<RequestInfo>(0), Arg.Of<ProxyTypeStorage>()), 
+				request => request), setup: Setup.With(asResolutionCall: true));
 
 			// register PerTransactionScopeContext to container as singleton (one storage for scope-per-transaction)
 			container.Register<PerTransactionScopeContext>(Reuse.Singleton);
@@ -84,7 +85,7 @@ namespace Castle.Facilities.AutoTx
 			//container.Register<IFileAdapter, FileAdapter>(Reuse.PerTransaction);
 			//container.Register<IMapPath, MapPathImpl>(Reuse.Transient);
 			
-			var componentInspector = new TransactionalComponentInspector();
+			var componentInspector = new TransactionalComponentInspector(container);
 
 			//container.ComponentModelBuilder.AddContributor(componentInspector);
 
@@ -98,7 +99,7 @@ namespace Castle.Facilities.AutoTx
 
 			foreach (var serviceRegistrationInfo in container.GetServiceRegistrations())
 			{
-				componentInspector.ProcessModel(container, serviceRegistrationInfo);
+				componentInspector.ProcessModel(serviceRegistrationInfo);
 			}
 
 			_Logger.LogDebug(

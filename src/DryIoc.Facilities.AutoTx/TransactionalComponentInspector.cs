@@ -21,6 +21,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Castle.Transactions;
 using DryIoc;
+using DryIoc.Facilities.AutoTx.Abstraction;
 using DryIoc.Facilities.AutoTx.Errors;
 using DryIoc.Facilities.AutoTx.Extensions;
 
@@ -32,18 +33,26 @@ namespace Castle.Facilities.AutoTx
 	/// </summary>
 	internal class TransactionalComponentInspector// : MethodMetaInspector
 	{
-		private ITransactionMetaInfoStore _MetaStore;
+		private readonly IContainer _Container;
+		private readonly ITransactionMetaInfoStore _MetaStore;
+		private readonly ProxyTypeStorage _ProxyTypeStorage;
 
-		public void ProcessModel(IContainer container, ServiceRegistrationInfo model)
+		public TransactionalComponentInspector(IContainer container)
 		{
-			if (_MetaStore == null)
-				_MetaStore = container.Resolve<ITransactionMetaInfoStore>();
+			_Container = container;
+			_MetaStore = container.Resolve<ITransactionMetaInfoStore>();
+			_ProxyTypeStorage = container.Resolve<ProxyTypeStorage>();
+		}
 
-			// TODO add better validation which models can be intercepted
-			//Contract.Assume(model.Factory.ImplementationType != null);
+		public void ProcessModel(ServiceRegistrationInfo model)
+		{
+			if (model.Factory.ImplementationType == null) // some registrations don't have implementation type (e.g. ILogger)
+				return;
+			
+			Contract.Assume(model.Factory.ImplementationType != null);
 
 			Validate(model);
-			AddInterceptor(container, model);
+			AddInterceptor(model);
 		}
 
 		private void Validate(ServiceRegistrationInfo model)
@@ -67,7 +76,7 @@ namespace Castle.Facilities.AutoTx
 			                                          string.Join(", ", problematicMethods.ToArray())));
 		}
 
-		private void AddInterceptor(IContainer container, ServiceRegistrationInfo model)
+		private void AddInterceptor(ServiceRegistrationInfo model)
 		{
 			Contract.Requires(model.Factory.ImplementationType != null);
 			var meta = _MetaStore.GetMetaFromType(model.Factory.ImplementationType);
@@ -79,7 +88,8 @@ namespace Castle.Facilities.AutoTx
 			//model.Dependencies.Add(new DependencyModel(null, typeof (TransactionInterceptor), false));
 			//model.Interceptors.Add(new InterceptorReference(typeof (TransactionInterceptor)));
 			
-			container.Intercept<TransactionInterceptor>(model.ServiceType, model.Factory.ImplementationType);
+			_Container.Intercept<TransactionInterceptor>(model.ServiceType, out var proxyType);
+			_ProxyTypeStorage.AddMapping(proxyType, model.Factory.ImplementationType);
 		}
 
 		[Pure]

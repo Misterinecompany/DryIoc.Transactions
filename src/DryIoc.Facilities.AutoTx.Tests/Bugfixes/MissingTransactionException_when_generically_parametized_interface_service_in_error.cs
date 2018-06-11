@@ -33,7 +33,7 @@ namespace Castle.Facilities.AutoTx.Tests.Bugfixes
 			}
 		}
 
-		internal interface IRepo
+		public interface IRepo
 		{
 			User Load(Guid id);
 		}
@@ -158,5 +158,4 @@ namespace Castle.Facilities.AutoTx.Tests.Bugfixes
 			return container;
 		}
 	}
-
 }

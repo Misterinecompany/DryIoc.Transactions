@@ -57,7 +57,7 @@ namespace Castle.Facilities.AutoTx
 			set { _Logger = value; }
 		}
 
-		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store, ServiceRequestInfo serviceRequestInfo)
+		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store, ParentServiceRequestInfo parentServiceRequestInfo)
 		{
 			Contract.Requires(container != null, "container must be non null");
 			Contract.Requires(store != null, "store must be non null");
@@ -69,7 +69,7 @@ namespace Castle.Facilities.AutoTx
 			_Store = store;
 			_State = InterceptorState.Constructed;
 
-			SetInterceptedComponentModel(serviceRequestInfo);
+			SetInterceptedComponentModel(parentServiceRequestInfo);
 		}
 
 		[ContractInvariantMethod]
@@ -254,7 +254,7 @@ namespace Castle.Facilities.AutoTx
 			}, Tuple.Create(invocation, txData, txData.Transaction.LocalIdentifier));
 		}
 
-		private void SetInterceptedComponentModel(ServiceRequestInfo target)
+		private void SetInterceptedComponentModel(ParentServiceRequestInfo target)
 		{
 			Contract.Ensures(_MetaInfo != null);
 			Contract.Assume(target.ImplementationType != null);
