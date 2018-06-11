@@ -12,9 +12,13 @@ namespace DryIoc.Facilities.AutoTx.Utils
 			_Storage = new Dictionary<Type, Type>();
 	    }
 
-	    public void AddMapping(Type proxyType, Type implementationType)
+	    public bool TryAddMapping(Type proxyType, Type implementationType)
 	    {
+		    if (_Storage.ContainsKey(proxyType))
+			    return false;
+
 			_Storage.Add(proxyType, implementationType);
+		    return true;
 	    }
 
 	    public Type GetImplementationType(Type proxyType)

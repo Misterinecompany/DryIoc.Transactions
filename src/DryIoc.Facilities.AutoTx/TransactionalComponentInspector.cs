@@ -87,9 +87,12 @@ namespace Castle.Facilities.AutoTx
 			//TODO remove this old Interceptor registration:
 			//model.Dependencies.Add(new DependencyModel(null, typeof (TransactionInterceptor), false));
 			//model.Interceptors.Add(new InterceptorReference(typeof (TransactionInterceptor)));
-			
-			_Container.Intercept<TransactionInterceptor>(model.ServiceType, out var proxyType);
-			_ProxyTypeStorage.AddMapping(proxyType, model.Factory.ImplementationType);
+
+			var proxyType = _Container.CreateProxy(model.ServiceType);
+			if (_ProxyTypeStorage.TryAddMapping(proxyType, model.Factory.ImplementationType))
+			{
+				_Container.Intercept<TransactionInterceptor>(model.ServiceType, proxyType);
+			}
 		}
 
 		[Pure]
