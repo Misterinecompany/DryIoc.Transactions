@@ -134,7 +134,7 @@ namespace Castle.Transactions
 			_activityManager.GetCurrentActivity().EnlistDependentTask(task);
 		}
 		
-		[SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly")]
+		[SuppressMessage("Microsoft.Design", "CA1034:ImplementIDisposableCorrectly")]
 		public class DisposableScope : IDisposable
 		{
 			readonly Func<ITransaction> _onDispose;

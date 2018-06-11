@@ -25,7 +25,6 @@ namespace Castle.Facilities.AutoTx.Tests
 			_Container = new Container();
 			_Container.Register<MyService>(Reuse.Singleton);
 			_Container.AddAutoTx();
-			ThreadPool.SetMinThreads(5, 5);
 		}
 
 		[TearDown]
