@@ -1,5 +1,5 @@
 ﻿using Castle.Transactions;
-using DryIoc.Facilities.AutoTx.Abstraction;
+using DryIoc.Facilities.AutoTx.Utils;
 
 namespace DryIoc.Facilities.AutoTx.Tests.TestClasses
 {

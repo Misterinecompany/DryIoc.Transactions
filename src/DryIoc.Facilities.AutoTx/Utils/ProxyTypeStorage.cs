@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace DryIoc.Facilities.AutoTx.Abstraction
+namespace DryIoc.Facilities.AutoTx.Utils
 {
     public class ProxyTypeStorage
     {

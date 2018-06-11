@@ -23,8 +23,8 @@ namespace Castle.Facilities.AutoTx.Tests
 		public void SetUp()
 		{
 			_Container = new Container();
-			_Container.AddFacility<AutoTxFacility>();
 			_Container.Register<MyService>(Reuse.Singleton);
+			_Container.AddAutoTx();
 			ThreadPool.SetMinThreads(5, 5);
 		}
 

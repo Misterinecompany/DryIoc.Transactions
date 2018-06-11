@@ -1,7 +1,7 @@
 ﻿using System;
 using Castle.DynamicProxy;
 
-namespace DryIoc.Facilities.AutoTx.Abstraction
+namespace DryIoc.Facilities.AutoTx.Utils
 {
 	public class ParentServiceRequestInfo
 	{

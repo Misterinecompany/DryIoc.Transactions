@@ -15,8 +15,7 @@ namespace Castle.Facilities.AutoTx.Tests
 		public void SetUp()
 		{
 			_Container = new Container();
-			_Container.AddFacility<AutoTxFacility>();
-
+			
 			_Container.Register<IHaveLifestyle, PerTxClass>(AutoTxReuse.PerTransaction, Parameters.Of.Type(request => "ordinary"), serviceKey: "ordinary");
 			_Container.Register<IHaveLifestyle, PerTxClass>(AutoTxReuse.PerTransaction, Parameters.Of.Type(request => "special"), serviceKey: "special");
 			_Container.Register<IHaveLifestyle, TransientClass>(Reuse.Transient, serviceKey: "transient");
@@ -24,6 +23,8 @@ namespace Castle.Facilities.AutoTx.Tests
 			_Container.Register<IHaveLifestyle>(Made.Of(
 				() => DefaultToTransientLifeStyleFactory.CreateHavingLifestyle(Arg.Of<IContainer>(), Arg.Of<ITransactionManager>()),
 				request => request.Parent.ImplementationType));
+
+			_Container.AddAutoTx();
 		}
 
 		[Test]

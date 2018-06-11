@@ -14,8 +14,8 @@ namespace Castle.Facilities.AutoTx.Tests
 		public void SetUp()
 		{
 			_Container = new Container();
-			_Container.AddFacility<AutoTxFacility>();
 			_Container.Register<MyService>(Reuse.Singleton);
+			_Container.AddAutoTx();
 		}
 
 		[TearDown]
@@ -46,9 +46,9 @@ namespace Castle.Facilities.AutoTx.Tests
         public void SetUp()
         {
             _Container = new Container();
-            _Container.AddFacility<AutoTxFacility>();
             _Container.Register<InheritedMyService>(Reuse.Singleton);
-        }
+	        _Container.AddAutoTx();
+		}
 
         [TearDown]
         public void TearDown()

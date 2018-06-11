@@ -153,7 +153,7 @@ namespace Castle.Facilities.AutoTx.Tests.Bugfixes
 			
 			container.Register<IBus, BusImpl>(Reuse.Singleton);
 
-			container.AddFacility<AutoTxFacility>();
+			container.AddAutoTx();
 
 			return container;
 		}

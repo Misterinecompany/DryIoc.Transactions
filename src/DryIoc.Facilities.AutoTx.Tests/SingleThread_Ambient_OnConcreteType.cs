@@ -33,8 +33,8 @@ namespace Castle.Facilities.AutoTx.Tests
 		public void SetUp()
 		{
 			_Container = new Container();
-			_Container.AddFacility<AutoTxFacility>();
 			_Container.Register<ConcreteService>(Reuse.Singleton);
+			_Container.AddAutoTx();
 		}
 
 		[TearDown]

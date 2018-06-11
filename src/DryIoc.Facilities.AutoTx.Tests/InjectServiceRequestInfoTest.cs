@@ -1,5 +1,4 @@
 ﻿using Castle.DynamicProxy;
-using Castle.Facilities.AutoTx;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Tests.TestClasses;
 using NUnit.Framework;
@@ -18,7 +17,7 @@ namespace DryIoc.Facilities.AutoTx.Tests
 		    _Container.Register<SimpleServiceWithTransaction>(Reuse.Singleton);
 		    _Container.Register<EmptyServiceWithInfo>(Reuse.Singleton);
 			_Container.Register<ServiceWithParentInfo>(Reuse.Transient);
-		    _Container.AddFacility<AutoTxFacility>();
+		    _Container.AddAutoTx();
 		}
 
 	    [TearDown]

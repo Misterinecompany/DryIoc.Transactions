@@ -1,15 +1,15 @@
 ﻿using System;
-using DryIoc.Facilities.AutoTx.Abstraction;
+using Castle.Facilities.AutoTx;
 using Microsoft.Extensions.Logging;
 
 namespace DryIoc.Facilities.AutoTx.Extensions
 {
     public static class DryIocExtensions
     {
-		public static void AddFacility<T>(this IContainer container) where T : IFacility, new()
+		public static void AddAutoTx(this IContainer container)
 		{
-			var facility = new T();
-			facility.Init(container);
+			var autoTxFacility = new AutoTxFacility();
+			autoTxFacility.Init(container);
 	    }
 
 	    public static void AddLoggerResolving(this IContainer container)

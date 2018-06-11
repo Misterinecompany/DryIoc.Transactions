@@ -16,9 +16,9 @@ using System.Diagnostics;
 using Castle.Transactions;
 using Castle.Transactions.Activities;
 using DryIoc;
-using DryIoc.Facilities.AutoTx.Abstraction;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Lifestyles;
+using DryIoc.Facilities.AutoTx.Utils;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -31,7 +31,7 @@ namespace Castle.Facilities.AutoTx
 	///                                   <code>c.AddFacility&lt;AutoTxFacility&gt;</code>
 	///                                 </para>
 	///</summary>
-	public class AutoTxFacility : IFacility
+	public class AutoTxFacility
 	{
 		public void Init(IContainer container)
 		{

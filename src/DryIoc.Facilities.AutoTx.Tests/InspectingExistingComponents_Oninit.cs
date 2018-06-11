@@ -13,7 +13,7 @@ namespace Castle.Facilities.AutoTx.Tests
 		{
 			var container = new Container();
 			container.Register<MyService>(Reuse.Transient);
-			container.AddFacility<AutoTxFacility>();
+			container.AddAutoTx();
 
 			// this throws if we have not implemented this feature
 			using (var s = container.ResolveScope<MyService>())

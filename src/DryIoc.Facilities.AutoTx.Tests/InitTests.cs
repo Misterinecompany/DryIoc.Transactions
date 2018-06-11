@@ -30,11 +30,11 @@ namespace Castle.Facilities.AutoTx.Tests
 		public void Cannot_Register_Class_Without_Virtual_Method()
 		{
 			var c = new Container();
-			c.AddFacility<AutoTxFacility>();
-
+			c.Register<FaultyComponent>(Reuse.Singleton);
+			
 			try
 			{
-				c.Register<FaultyComponent>(Reuse.Singleton);
+				c.AddAutoTx();
 				Assert.Fail("invalid component registration should be noted.");
 			}
 			catch (AutoTxFacilityException ex)

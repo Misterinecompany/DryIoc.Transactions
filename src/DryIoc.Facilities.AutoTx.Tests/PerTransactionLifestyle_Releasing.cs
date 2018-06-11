@@ -224,13 +224,14 @@ Test 'Castle.Facilities.AutoTx.Tests.PerTransactionLifestyle_Releasing.Concurren
 		private Container GetContainer()
 		{
 			var container = new Container();
-			container.AddFacility<AutoTxFacility>();
-
+			
 			container.Register<IPerTxServiceFactory, ServiceFactory>(Reuse.Singleton, serviceKey: "per-tx-session.factory");
 			container.Register<IPerTxService>(AutoTxReuse.PerTransaction, Made.Of(() => CreatePerTransactionService(container)), serviceKey: "per-tx-session");
 			container.Register<Service>(Reuse.Singleton);
 			container.Register<ServiceWithDirectDep>(Reuse.Singleton);
 
+			container.AddAutoTx();
+			
 			return container;
 		}
 

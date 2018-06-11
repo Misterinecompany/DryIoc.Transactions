@@ -21,9 +21,9 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Castle.Transactions;
 using DryIoc;
-using DryIoc.Facilities.AutoTx.Abstraction;
 using DryIoc.Facilities.AutoTx.Errors;
 using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Utils;
 
 namespace Castle.Facilities.AutoTx
 {
