@@ -70,11 +70,13 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 				{
 					lock (LockObject)
 					{
+						var scopeFromStorage = _ScopePerTransactionIdStorage[key];
 						if (!_Disposed)
 						{
 							Contract.Assume(_ScopePerTransactionIdStorage.Count > 0);
 
 							_ScopePerTransactionIdStorage.Remove(key);
+							scopeFromStorage.Dispose();
 						}
 					}
 				};
@@ -133,6 +135,10 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 								items);
 					}
 
+					foreach (var scope in _ScopePerTransactionIdStorage.Values)
+					{
+						scope.Dispose();
+					}
 					_ScopePerTransactionIdStorage.Clear();
 				}
 			}
