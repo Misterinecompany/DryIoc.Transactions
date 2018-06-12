@@ -38,7 +38,7 @@ namespace DryIoc.Facilities.AutoTx.Tests
 			using (var scope = container.ResolveScope<Service>())
 			{
 				var ex = Assert.Throws<MissingTransactionException>(() => scope.Service.DoWork());
-				Assert.That(ex.Message, Contains.Substring("Castle.Facilities.AutoTx.Tests.IPerTxService"),
+				Assert.That(ex.Message, Contains.Substring(typeof(IPerTxService).FullName),
 				            "The message from the exception needs to contain the component which IS A per-transaction component.");
 			}
 		}
@@ -55,7 +55,7 @@ namespace DryIoc.Facilities.AutoTx.Tests
 				using (var scope = container.ResolveScope<ServiceWithDirectDep>())
 					scope.Service.DoWork();
 			});
-			Assert.That(ex.Message, Contains.Substring("Castle.Facilities.AutoTx.Tests.IPerTxService"),
+			Assert.That(ex.Message, Contains.Substring(typeof(IPerTxService).FullName),
 			            "The message from the exception needs to contain the component which IS A per-transaction component.");
 		}
 
