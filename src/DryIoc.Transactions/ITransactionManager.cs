@@ -18,9 +18,9 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using Castle.Transactions.Contracts;
+using DryIoc.Transactions.Contracts;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	/// <summary>
 	/// 	The transaction manager takes care of the nitty-gritty details of managing the store for transactions and their data.

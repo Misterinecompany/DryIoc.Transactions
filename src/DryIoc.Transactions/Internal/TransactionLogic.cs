@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Transactions.Internal
-{
-	using System;
+using System;
 
+namespace DryIoc.Transactions.Internal
+{
 	/// <summary>
 	/// Class with implementation-detail type algorithms.
 	/// </summary>

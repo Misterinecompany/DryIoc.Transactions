@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
-namespace Castle.Transactions.Utils
+namespace DryIoc.Transactions.Utils
 {
 	/// <summary>
 	/// 	A functional-programming class which can help in memoizing function calls,

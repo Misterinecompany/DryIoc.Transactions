@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Transactions.Contracts
-{
-	using System;
-	using System.Diagnostics.Contracts;
-	using System.Transactions;
+using System;
+using System.Diagnostics.Contracts;
 
-	using TransactionException = Castle.Transactions.TransactionException;
+namespace DryIoc.Transactions.Contracts
+{
+	using TransactionException = TransactionException;
 
 	[ContractClassFor(typeof(ITransaction))]
 	internal abstract class ITransactionContract : ITransaction
@@ -72,7 +71,7 @@ namespace Castle.Transactions.Contracts
 			get { throw new NotImplementedException(); }
 		}
 
-		public Transaction Inner
+		public System.Transactions.Transaction Inner
 		{
 			get { throw new NotImplementedException(); }
 		}

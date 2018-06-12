@@ -1,5 +1,4 @@
 ﻿using System;
-using Castle.Facilities.AutoTx;
 using Microsoft.Extensions.Logging;
 
 namespace DryIoc.Facilities.AutoTx.Extensions

@@ -20,7 +20,7 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Transactions;
 
-namespace Castle.Transactions.Contracts
+namespace DryIoc.Transactions.Contracts
 {
 	[ContractClassFor(typeof (ITransactionManager))]
 	internal abstract class TransactionManagerContract : ITransactionManager

@@ -1,11 +1,11 @@
 using System;
 using System.Threading;
 using System.Transactions;
-using Castle.Transactions.Internal;
+using DryIoc.Transactions.Internal;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
-namespace Castle.Transactions.Tests.ExternalSources
+namespace DryIoc.Transactions.Tests.ExternalSources
 {
 	[Description("This test fixture passes, rightly so. Durable resource managers that say 'prepared' can't be expected to block on commit, which is why "+
 		"there are non-zero enlistment counts in the printout. From http://ayende.com/blog/4528/who-stole-my-transaction")]

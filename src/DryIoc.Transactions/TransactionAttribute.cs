@@ -17,12 +17,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Transactions;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	/// <summary>
 	/// 	Specifies a method as transactional. When adding this interface to a method you can use an inversion of control container

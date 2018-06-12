@@ -1,6 +1,6 @@
 ﻿using System.Transactions;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	/// <summary>
 	/// An enum of the possible states a transaction might take. Due to

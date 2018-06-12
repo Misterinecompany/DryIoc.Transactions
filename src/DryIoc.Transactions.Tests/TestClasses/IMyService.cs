@@ -18,7 +18,7 @@
 
 using System;
 
-namespace Castle.Transactions.Tests.TestClasses
+namespace DryIoc.Transactions.Tests.TestClasses
 {
 	public interface IMyService
 	{

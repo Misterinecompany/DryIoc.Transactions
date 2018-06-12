@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace Castle.Transactions.Tests
+namespace DryIoc.Transactions.Tests
 {
 	public class MaybeMonad_Specs
 	{

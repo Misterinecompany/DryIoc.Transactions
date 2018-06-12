@@ -1,10 +1,9 @@
-using Castle.Facilities.AutoTx.Testing;
-using Castle.Facilities.AutoTx.Tests.TestClasses;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.AutoTx.Tests.TestClasses;
 using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests
+namespace DryIoc.Facilities.AutoTx.Tests
 {
 	public class SingleThread_SupressInAmbient
 	{

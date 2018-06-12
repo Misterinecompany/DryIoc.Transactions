@@ -1,9 +1,9 @@
-﻿namespace Castle.Transactions.Helpers
-{
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics.Contracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
+namespace DryIoc.Transactions.Helpers
+{
 	/// <summary>
 	/// Helper class with items originally from reactive extensions.
 	/// </summary>

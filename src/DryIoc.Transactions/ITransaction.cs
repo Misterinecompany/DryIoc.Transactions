@@ -17,17 +17,14 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Transactions;
-using Castle.Transactions.Contracts;
+using DryIoc.Transactions.Contracts;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
-	using System.ComponentModel;
-
-	using Castle.Transactions.Internal;
-
 	/// <summary>
 	/// 	<para>
 	/// 		Denotes a castle transaction. This is the main point of interaction between your code and

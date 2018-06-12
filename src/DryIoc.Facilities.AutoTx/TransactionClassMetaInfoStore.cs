@@ -20,10 +20,10 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
-using Castle.Transactions;
-using Castle.Transactions.Utils;
+using DryIoc.Transactions;
+using DryIoc.Transactions.Utils;
 
-namespace Castle.Facilities.AutoTx
+namespace DryIoc.Facilities.AutoTx
 {
 	internal sealed class TransactionClassMetaInfoStore : ITransactionMetaInfoStore
 	{

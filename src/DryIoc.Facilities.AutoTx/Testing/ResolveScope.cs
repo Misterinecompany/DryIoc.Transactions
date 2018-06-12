@@ -14,12 +14,11 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Castle.Facilities.AutoTx.Testing
+namespace DryIoc.Facilities.AutoTx.Testing
 {
 	/// <summary>
 	///   A scope usable for deterministically releasing (from Windsor) resources resolved. Important when testing logic that is dependent on the resource being released.

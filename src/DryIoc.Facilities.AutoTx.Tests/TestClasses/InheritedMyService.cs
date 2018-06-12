@@ -1,6 +1,6 @@
-﻿using Castle.Transactions;
+﻿using DryIoc.Transactions;
 
-namespace Castle.Facilities.AutoTx.Tests.TestClasses
+namespace DryIoc.Facilities.AutoTx.Tests.TestClasses
 {
 	public class InheritedMyService:MyService
 	{

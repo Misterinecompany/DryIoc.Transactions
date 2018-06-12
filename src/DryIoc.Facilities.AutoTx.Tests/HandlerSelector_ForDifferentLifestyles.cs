@@ -1,11 +1,10 @@
 using System;
-using Castle.Transactions;
-using NUnit.Framework;
-using Castle.Facilities.AutoTx.Testing;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Transactions;
+using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests
+namespace DryIoc.Facilities.AutoTx.Tests
 {
 	public class HandlerSelector_ForDifferentLifeStyles
 	{

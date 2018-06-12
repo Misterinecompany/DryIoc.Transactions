@@ -16,13 +16,12 @@
 
 #endregion
 
-using Castle.Transactions;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Errors;
 using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Transactions;
 using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests
+namespace DryIoc.Facilities.AutoTx.Tests
 {
 	public class InitTests
 	{

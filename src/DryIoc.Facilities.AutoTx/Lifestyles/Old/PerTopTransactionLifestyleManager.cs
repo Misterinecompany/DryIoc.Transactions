@@ -16,11 +16,7 @@
 
 #endregion
 
-using System;
-using System.Diagnostics.Contracts;
-using Castle.Transactions;
-
-namespace Castle.Facilities.AutoTx.Lifestyles
+namespace DryIoc.Facilities.AutoTx.Lifestyles.Old
 {
 	/*
 	/// <summary>

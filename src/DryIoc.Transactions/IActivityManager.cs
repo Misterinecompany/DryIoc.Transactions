@@ -1,6 +1,6 @@
-﻿using Castle.Transactions.Activities;
+﻿using DryIoc.Transactions.Activities;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	/// <summary>
 	/// 	Abstracts approaches to keep transaction activities

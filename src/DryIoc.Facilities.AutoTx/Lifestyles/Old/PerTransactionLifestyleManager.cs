@@ -12,12 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Diagnostics.Contracts;
-
-using Castle.Transactions;
-
-namespace Castle.Facilities.AutoTx.Lifestyles
+namespace DryIoc.Facilities.AutoTx.Lifestyles.Old
 {
 	/*
 	/// <summary>

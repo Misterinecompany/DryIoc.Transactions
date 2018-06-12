@@ -15,7 +15,7 @@
 using System.Threading;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Castle.Transactions.Activities
+namespace DryIoc.Transactions.Activities
 {
 	/// <summary>
 	///   The ThreadLocal activity manager saves the stack of transactions in thread local variable. This is the recommended manager and the default, also.

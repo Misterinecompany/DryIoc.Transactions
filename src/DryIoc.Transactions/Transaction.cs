@@ -21,14 +21,13 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
-using Castle.Transactions.Internal;
+using DryIoc.Transactions.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using TaskExtensions = DryIoc.Transactions.Internal.TaskExtensions;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
-	using Castle.Transactions.Helpers;
-
 	[Serializable]
 	public class Transaction : ITransaction, IDependentAware
 	{
@@ -194,7 +193,7 @@ namespace Castle.Transactions
 					if (_DependentTasks != null && _CreationOptions.DependentOption == DependentCloneOption.BlockCommitUntilComplete)
 						Task.WaitAll(_DependentTasks.ToArray()); // this might throw, and then we don't set the state to completed
 					else if (_DependentTasks != null && _CreationOptions.DependentOption == DependentCloneOption.RollbackIfNotComplete)
-						_DependentTasks.Do(x => x.IgnoreExceptions()).Run();
+						_DependentTasks.Do(x => TaskExtensions.IgnoreExceptions(x)).Run();
 
 					_Committable.Commit();
 				}

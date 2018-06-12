@@ -22,18 +22,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using Castle.DynamicProxy;
-using Castle.Transactions;
-using Castle.Transactions.Internal;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Utils;
+using DryIoc.Transactions;
+using DryIoc.Transactions.Internal;
 using DryIoc.Transactions.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using TransactionException = Castle.Transactions.TransactionException;
-using TransactionManager = Castle.Transactions.TransactionManager;
+using TransactionException = DryIoc.Transactions.TransactionException;
+using TransactionManager = DryIoc.Transactions.TransactionManager;
 
-namespace Castle.Facilities.AutoTx
+namespace DryIoc.Facilities.AutoTx
 {
 	internal class TransactionInterceptor : IInterceptor
 	{

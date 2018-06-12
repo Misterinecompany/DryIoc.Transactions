@@ -16,10 +16,7 @@
 
 #endregion
 
-using System.Diagnostics.Contracts;
-using Castle.Facilities.AutoTx.Lifestyles;
-
-namespace Castle.Facilities.AutoTx
+namespace DryIoc.Facilities.AutoTx
 {
 	/*
 	public static class LifestyleRegistrationExtensions

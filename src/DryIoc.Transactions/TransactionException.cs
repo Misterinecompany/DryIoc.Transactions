@@ -19,7 +19,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	/// <summary>
 	/// 	Exception thrown when the transaction services code has problems.

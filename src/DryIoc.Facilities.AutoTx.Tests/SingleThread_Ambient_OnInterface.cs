@@ -18,14 +18,13 @@
 
 using System;
 using System.Transactions;
-using Castle.Facilities.AutoTx.Testing;
-using Castle.Facilities.AutoTx.Tests.TestClasses;
-using Castle.Transactions;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.AutoTx.Tests.TestClasses;
+using DryIoc.Transactions;
 using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests
+namespace DryIoc.Facilities.AutoTx.Tests
 {
 	public class SingleThread_Ambient_OnInterface
 	{

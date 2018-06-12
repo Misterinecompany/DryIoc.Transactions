@@ -17,9 +17,8 @@
 #endregion
 
 using System.Diagnostics.Contracts;
-using DryIoc;
 
-namespace Castle.Facilities.AutoTx.Testing
+namespace DryIoc.Facilities.AutoTx.Testing
 {
 	/// <summary>
 	/// 	Helper class for adding 'nifty' extensions to Windsor which ensures disposal/release of

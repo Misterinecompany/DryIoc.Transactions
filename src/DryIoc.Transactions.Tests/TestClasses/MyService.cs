@@ -20,7 +20,7 @@ using System;
 using System.Diagnostics.Contracts;
 using NUnit.Framework;
 
-namespace Castle.Transactions.Tests.TestClasses
+namespace DryIoc.Transactions.Tests.TestClasses
 {
 	public class MyService : IMyService
 	{

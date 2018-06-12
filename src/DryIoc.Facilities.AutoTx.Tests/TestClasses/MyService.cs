@@ -19,10 +19,10 @@
 using System;
 using System.Diagnostics.Contracts;
 using System.Transactions;
-using Castle.Transactions;
+using DryIoc.Transactions;
 using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests.TestClasses
+namespace DryIoc.Facilities.AutoTx.Tests.TestClasses
 {
 	public class MyService
 	{

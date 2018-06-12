@@ -16,11 +16,11 @@
 
 #endregion
 
-namespace Castle.Transactions.Pending
-{
-	using System;
-	using System.Diagnostics.Contracts;
+using System;
+using System.Diagnostics.Contracts;
 
+namespace DryIoc.Transactions.Pending
+{
 	internal class AnonymousRetryPolicy : IRetryPolicy
 	{
 		private readonly Func<Exception, bool> _Inner;

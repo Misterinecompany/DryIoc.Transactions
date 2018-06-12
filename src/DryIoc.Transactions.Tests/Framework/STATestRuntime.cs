@@ -19,7 +19,7 @@
 using System.Threading;
 using NUnit.Framework;
 
-namespace Castle.Transactions.Tests.Framework
+namespace DryIoc.Transactions.Tests.Framework
 {
 	public class STATestRuntime
 	{

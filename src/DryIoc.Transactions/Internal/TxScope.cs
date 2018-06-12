@@ -20,7 +20,7 @@ using System;
 using System.Transactions;
 using Microsoft.Extensions.Logging;
 
-namespace Castle.Transactions.Internal
+namespace DryIoc.Transactions.Internal
 {
 	/// <summary>
 	/// 	A TxScope sets the ambient transaction for the duration of its lifetime and then re-assigns the previous value.

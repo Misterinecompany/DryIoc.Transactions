@@ -17,11 +17,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Transactions;
 
-namespace Castle.Transactions.Contracts
+namespace DryIoc.Transactions.Contracts
 {
 	[ContractClassFor(typeof (ITransactionOptions))]
 	internal abstract class ITransactionOptionsContract : ITransactionOptions

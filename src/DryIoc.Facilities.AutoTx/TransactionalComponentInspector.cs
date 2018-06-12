@@ -19,13 +19,12 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Castle.Transactions;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Errors;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Utils;
+using DryIoc.Transactions;
 
-namespace Castle.Facilities.AutoTx
+namespace DryIoc.Facilities.AutoTx
 {
 	/// <summary>
 	/// 	Transaction component inspector that selects the methods

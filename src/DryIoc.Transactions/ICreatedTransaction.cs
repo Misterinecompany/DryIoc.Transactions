@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using Castle.Transactions.Contracts;
+using DryIoc.Transactions.Contracts;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	///<summary>
 	///	An interface denoting the data structure which

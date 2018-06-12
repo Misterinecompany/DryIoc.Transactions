@@ -13,12 +13,12 @@
 // limitations under the License.
 
 using System.Transactions;
-using Castle.Transactions.Activities;
-using Castle.Transactions.Tests.TestClasses;
+using DryIoc.Transactions.Activities;
+using DryIoc.Transactions.Tests.TestClasses;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
-namespace Castle.Transactions.Tests.TransactionManager
+namespace DryIoc.Transactions.Tests.TransactionManager
 {
 	public class transaction_manager_spec
 	{

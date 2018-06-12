@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Transactions;
 using Microsoft.Extensions.Logging.Abstractions;
+using NUnit.Framework;
 
-namespace Castle.Transactions.Tests
+namespace DryIoc.Transactions.Tests
 {
-	using System.Transactions;
-
-	using NUnit.Framework;
-
-	using Transaction = Castle.Transactions.Transaction;
+	using Transaction = Transaction;
 
 	public class CorrectDisposalOfTransaction_Specs
 	{

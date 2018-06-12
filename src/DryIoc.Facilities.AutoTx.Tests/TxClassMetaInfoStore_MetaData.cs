@@ -19,16 +19,14 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using Castle.Facilities.AutoTx.Tests.Framework;
-using Castle.Facilities.AutoTx.Tests.TestClasses;
-using Castle.Transactions;
-using Castle.Transactions.Internal;
+using DryIoc.Facilities.AutoTx.Tests.Framework;
+using DryIoc.Facilities.AutoTx.Tests.TestClasses;
+using DryIoc.Transactions;
+using DryIoc.Transactions.Helpers;
 using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests
+namespace DryIoc.Facilities.AutoTx.Tests
 {
-	using Castle.Transactions.Helpers;
-
 	public class TxClassMetaInfoStore_MetaData
 	{
 		[Test, Explicit("Testing whether we can use GetHashCode to exclude methods from object")]

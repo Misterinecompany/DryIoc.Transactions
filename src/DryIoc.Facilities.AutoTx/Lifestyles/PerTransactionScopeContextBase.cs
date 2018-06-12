@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Castle.Facilities.AutoTx;
-using Castle.Transactions;
+using DryIoc.Transactions;
 using Microsoft.Extensions.Logging;
 
 namespace DryIoc.Facilities.AutoTx.Lifestyles

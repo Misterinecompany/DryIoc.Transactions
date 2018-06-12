@@ -19,7 +19,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	[Obsolete("Deprecated; just remove this attribute for the same effect. No other changes are necessary.")]
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]

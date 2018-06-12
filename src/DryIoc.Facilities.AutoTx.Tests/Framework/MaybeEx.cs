@@ -1,8 +1,8 @@
 using System;
-using Castle.Transactions;
+using DryIoc.Transactions;
 using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests.Framework
+namespace DryIoc.Facilities.AutoTx.Tests.Framework
 {
 	public static class MaybeEx
 	{

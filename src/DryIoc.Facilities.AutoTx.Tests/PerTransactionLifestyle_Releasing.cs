@@ -12,19 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.AutoTx.Tests
+using System;
+using System.Diagnostics.Contracts;
+using System.Threading;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Transactions;
+using NLog;
+using NUnit.Framework;
+
+namespace DryIoc.Facilities.AutoTx.Tests
 {
-	using System;
-	using System.Diagnostics.Contracts;
-	using System.Threading;
-	using Castle.Facilities.AutoTx.Testing;
-	using Castle.Transactions;
-	using DryIoc;
-	using DryIoc.Facilities.AutoTx.Extensions;
-	using NLog;
-
-	using NUnit.Framework;
-
 // ReSharper disable InconsistentNaming
 	public class PerTransactionLifestyle_Releasing
 	{

@@ -1,19 +1,19 @@
 using System;
-using System.Threading;
-using Castle.Facilities.AutoTx.Tests.TestClasses;
-using Castle.Transactions;
-using NUnit.Framework;
 using System.Linq;
-using Castle.Facilities.AutoTx.Testing;
-using DryIoc;
+using System.Threading;
+using System.Transactions;
 using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.AutoTx.Tests.TestClasses;
+using DryIoc.Transactions;
+using NUnit.Framework;
+using Transaction = DryIoc.Transactions.Transaction;
+using TransactionManager = DryIoc.Transactions.TransactionManager;
 
-namespace Castle.Facilities.AutoTx.Tests
+namespace DryIoc.Facilities.AutoTx.Tests
 {
-	using System.Transactions;
-
-	using Transaction = Castle.Transactions.Transaction;
-	using TransactionManager = Castle.Transactions.TransactionManager;
+	using Transaction = Transaction;
+	using TransactionManager = TransactionManager;
 
 	public class MultipleThreads_TransactionBookKeeping
 	{

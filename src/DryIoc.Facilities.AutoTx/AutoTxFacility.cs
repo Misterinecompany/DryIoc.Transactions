@@ -13,16 +13,15 @@
 // limitations under the License.
 
 using System.Diagnostics;
-using Castle.Transactions;
-using Castle.Transactions.Activities;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Lifestyles;
 using DryIoc.Facilities.AutoTx.Utils;
+using DryIoc.Transactions;
+using DryIoc.Transactions.Activities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Castle.Facilities.AutoTx
+namespace DryIoc.Facilities.AutoTx
 {
 	///<summary>
 	///  <para>A facility for automatically handling transactions using the lightweight

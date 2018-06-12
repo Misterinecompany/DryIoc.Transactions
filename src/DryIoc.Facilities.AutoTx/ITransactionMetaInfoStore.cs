@@ -18,10 +18,10 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using Castle.Facilities.AutoTx.Contracts;
-using Castle.Transactions;
+using DryIoc.Facilities.AutoTx.Contracts;
+using DryIoc.Transactions;
 
-namespace Castle.Facilities.AutoTx
+namespace DryIoc.Facilities.AutoTx
 {
 	[ContractClass(typeof (TransactionMetaInfoStoreContract))]
 	internal interface ITransactionMetaInfoStore

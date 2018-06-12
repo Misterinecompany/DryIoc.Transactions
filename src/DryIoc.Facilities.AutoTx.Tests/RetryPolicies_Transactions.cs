@@ -16,14 +16,13 @@
 
 #endregion
 
-using Castle.Facilities.AutoTx.Tests.TestClasses;
-using Castle.Transactions;
-using Castle.Transactions.Activities;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Tests.TestClasses;
+using DryIoc.Transactions;
+using DryIoc.Transactions.Activities;
 using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests
+namespace DryIoc.Facilities.AutoTx.Tests
 {
 	[Ignore("For v3.1: Implement retry policies are nicer to test with e.g. NHibernate integration parts.")]
 	public class RetryPolicies_Transactions

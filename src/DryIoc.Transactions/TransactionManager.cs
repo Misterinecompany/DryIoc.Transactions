@@ -17,12 +17,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Transactions;
-using Castle.Transactions.Internal;
+using DryIoc.Transactions.Internal;
 using DryIoc.Transactions.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	/// <summary>
 	///   The default transaction manager that is capable of handling most combinations of <see cref="ITransactionOptions" /> .

@@ -22,7 +22,7 @@ using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Castle.Transactions.Activities
+namespace DryIoc.Transactions.Activities
 {
 	/// <summary>
 	/// 	Value-object that encapsulates a transaction and is serializable across

@@ -19,7 +19,7 @@
 using System;
 using System.Transactions;
 
-namespace Castle.Transactions.Tests.TestClasses
+namespace DryIoc.Transactions.Tests.TestClasses
 {
 	public class ResourceImpl : ISinglePhaseNotification
 	{

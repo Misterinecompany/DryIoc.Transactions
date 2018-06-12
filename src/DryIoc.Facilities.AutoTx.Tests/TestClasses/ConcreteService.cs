@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using Castle.Transactions;
+using DryIoc.Transactions;
 using NUnit.Framework;
 
-namespace Castle.Facilities.AutoTx.Tests.TestClasses
+namespace DryIoc.Facilities.AutoTx.Tests.TestClasses
 {
 	public class ConcreteService
 	{

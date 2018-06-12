@@ -18,9 +18,9 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using Castle.Transactions;
+using DryIoc.Transactions;
 
-namespace Castle.Facilities.AutoTx.Contracts
+namespace DryIoc.Facilities.AutoTx.Contracts
 {
 	[ContractClassFor(typeof (ITransactionMetaInfoStore))]
 	internal abstract class TransactionMetaInfoStoreContract : ITransactionMetaInfoStore

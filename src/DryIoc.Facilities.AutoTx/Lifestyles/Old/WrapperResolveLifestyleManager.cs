@@ -16,14 +16,7 @@
 
 #endregion
 
-using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Diagnostics.Contracts;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-
-namespace Castle.Facilities.AutoTx.Lifestyles
+namespace DryIoc.Facilities.AutoTx.Lifestyles.Old
 {
 	/*
 	/// <summary>

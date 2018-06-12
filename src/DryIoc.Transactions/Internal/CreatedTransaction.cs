@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Transactions.Internal
-{
-	using System;
-	using System.Diagnostics.Contracts;
+using System;
+using System.Diagnostics.Contracts;
 
+namespace DryIoc.Transactions.Internal
+{
 	/// <summary>
 	/// Class that simply implements the data-bearing interface <see cref="ICreatedTransaction"/>.
 	/// </summary>

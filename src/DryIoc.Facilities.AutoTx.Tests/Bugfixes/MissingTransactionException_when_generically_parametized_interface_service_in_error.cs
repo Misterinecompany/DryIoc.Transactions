@@ -1,13 +1,11 @@
 ﻿using System;
-using DryIoc;
 using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Transactions;
 using NUnit.Framework;
 using SharpTestsEx;
 
-namespace Castle.Facilities.AutoTx.Tests.Bugfixes
+namespace DryIoc.Facilities.AutoTx.Tests.Bugfixes
 {
-	using Castle.Transactions;
-
 	public class MissingTransactionException_when_generically_parametized_interface_service_in_error
 	{
 		public interface IUnitOfWork : IDisposable

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Castle.Transactions.Internal
+namespace DryIoc.Transactions.Internal
 {
 	// reference: http://blogs.msdn.com/b/pfxteam/archive/2009/05/31/9674669.aspx
 	public static class TaskExtensions

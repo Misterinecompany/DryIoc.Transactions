@@ -17,12 +17,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Transactions;
-using Castle.Transactions.Contracts;
+using DryIoc.Transactions.Contracts;
 
-namespace Castle.Transactions
+namespace DryIoc.Transactions
 {
 	[ContractClass(typeof (ITransactionOptionsContract))]
 	public interface ITransactionOptions : IEquatable<ITransactionOptions>

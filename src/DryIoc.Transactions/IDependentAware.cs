@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Transactions
+using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
+using DryIoc.Transactions.Contracts;
+
+namespace DryIoc.Transactions
 {
-	using System.Diagnostics.Contracts;
-	using System.Threading.Tasks;
-
-	using Castle.Transactions.Contracts;
-
 	/// <summary>
 	/// 	An interface specifying whether the <see cref = "ITransaction" /> implementation
 	/// 	knows about its dependents. If the transaction class does not implement this interface
