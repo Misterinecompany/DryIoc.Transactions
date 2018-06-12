@@ -27,9 +27,7 @@ namespace Castle.Facilities.AutoTx
 	///<summary>
 	///  <para>A facility for automatically handling transactions using the lightweight
 	///    transaction manager. This facility does not depend on
-	///    any other facilities.</para> <para>Install the facility in your container with
-	///                                   <code>c.AddFacility&lt;AutoTxFacility&gt;</code>
-	///                                 </para>
+	///    any other facilities.</para>
 	///</summary>
 	public class AutoTxFacility
 	{
@@ -70,6 +68,7 @@ namespace Castle.Facilities.AutoTx
 
 			// register PerTransactionScopeContext to container as singleton (one storage for scope-per-transaction)
 			container.Register<PerTransactionScopeContext>(Reuse.Singleton);
+			container.Register<PerTopTransactionScopeContext>(Reuse.Singleton);
 
 			// the interceptor needs to be created for every method call
 			container.Register<TransactionInterceptor>(Reuse.Transient);

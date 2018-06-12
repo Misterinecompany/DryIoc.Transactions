@@ -6,7 +6,11 @@ using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DryIoc.Facilities.AutoTx.Lifestyles
 {
-    public class WrapperReuse<T> : IReuse, IReuseV3 where T : class, IReuse, IReuseV3
+	/// <summary>
+	/// The lifestyle class with underlying lifestyle class which is resolved from the Container
+	/// </summary>
+	/// <typeparam name="T">Primary lifestyle manager which has its constructor resolved through the Container.</typeparam>
+	public abstract class WrapperReuseBase<T> : IReuse, IReuseV3 where T : PerTransactionReuseBase
 	{
 		private object _Lock = new object();
 		private ILogger _Logger;
@@ -27,15 +31,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 			return GetInnerReuse(request).CanApply(request);
 		}
 
-		public Expression ToExpression(Func<object, Expression> fallbackConverter)
-		{
-			if (!_Initialized)
-			{
-				throw new InvalidOperationException($"Inner Reuse of type {typeof(T)} can't be initialized because reference to container is missing at the moment.");
-			}
-
-			return _Lifestyle1.ToExpression(fallbackConverter);
-		}
+		public abstract Expression ToExpression(Func<object, Expression> fallbackConverter);
 
 		public IScope GetScopeOrDefault(Request request)
 		{
@@ -81,7 +77,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 				// get logger factory instance
 				var loggerFactory = kernel.Resolve<ILoggerFactory>();
 				// create logger
-				_Logger = loggerFactory.CreateLogger(typeof(WrapperReuse<T>));
+				_Logger = loggerFactory.CreateLogger(typeof(WrapperReuseBase<T>));
 			}
 			else
 			{
@@ -113,6 +109,22 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 			_Initialized = true;
 
 			return _Lifestyle1;
+		}
+	}
+
+	public class WrapperPerTransactionReuse : WrapperReuseBase<PerTransactionReuse>
+	{
+		public override Expression ToExpression(Func<object, Expression> fallbackConverter)
+		{
+			return PerTransactionReuse.PerTransactionReuseExpr.Value;
+		}
+	}
+
+	public class WrapperPerTopTransactionReuse : WrapperReuseBase<PerTopTransactionReuse>
+	{
+		public override Expression ToExpression(Func<object, Expression> fallbackConverter)
+		{
+			return PerTopTransactionReuse.PerTopTransactionReuseExpr.Value;
 		}
 	}
 }
