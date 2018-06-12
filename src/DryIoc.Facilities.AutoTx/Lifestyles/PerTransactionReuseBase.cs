@@ -20,12 +20,13 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 		/// <summary>Returns item from transaction scope.</summary>
 		/// <param name="scopeContext">Transaction scope context to select from.</param>
+		/// <param name="request">Container Request info for resolving service</param>
 		/// <param name="itemId">Scoped item ID for lookup.</param>
 		/// <param name="createValue">Delegate for creating the item.</param>
 		/// <returns>Reused item.</returns>
-		public static object GetOrAddItemOrDefault(IScopeContext scopeContext, int itemId, CreateScopedValue createValue)
+		public static object GetOrAddItemOrDefault(PerTransactionScopeContextBase scopeContext, Request request, int itemId, CreateScopedValue createValue)
 		{
-			var scope = scopeContext.GetCurrentOrDefault();
+			var scope = scopeContext.GetCurrentOrDefault(request.ServiceType);
 			return scope == null ? null : scope.GetOrAdd(itemId, createValue);
 		}
 
@@ -39,6 +40,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 			return Expression.Call(_GetOrAddOrDefaultMethod,
 				Expression.Constant(_PerTransactionScopeContextBase),
+				Expression.Constant(request),
 				Expression.Constant(itemId),
 				Expression.Lambda<CreateScopedValue>(createItemExpr));
 		}
@@ -56,7 +58,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 		public IScope GetScopeOrDefault(Request request)
 		{
-			return _PerTransactionScopeContextBase.GetCurrentOrDefault();
+			return _PerTransactionScopeContextBase.GetCurrentOrDefault(request.ServiceType);
 		}
 
 		public Expression GetScopeExpression(Request request)
@@ -66,7 +68,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 		public int GetScopedItemIdOrSelf(int factoryId, Request request)
 		{
-			return _PerTransactionScopeContextBase.GetCurrentOrDefault().GetScopedItemIdOrSelf(factoryId);
+			return GetScopeOrDefault(request).GetScopedItemIdOrSelf(factoryId);
 		}
 
 		#endregion

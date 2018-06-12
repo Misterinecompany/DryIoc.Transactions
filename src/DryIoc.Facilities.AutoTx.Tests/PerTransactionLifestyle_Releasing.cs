@@ -226,7 +226,7 @@ Test 'Castle.Facilities.AutoTx.Tests.PerTransactionLifestyle_Releasing.Concurren
 			var container = new Container();
 			
 			container.Register<IPerTxServiceFactory, ServiceFactory>(Reuse.Singleton, serviceKey: "per-tx-session.factory");
-			container.Register<IPerTxService>(AutoTxReuse.PerTransaction, Made.Of(() => CreatePerTransactionService(container)), serviceKey: "per-tx-session");
+			container.Register<IPerTxService>(AutoTxReuse.PerTransaction, Made.Of(() => CreatePerTransactionService(container)));
 			container.Register<Service>(Reuse.Singleton);
 			container.Register<ServiceWithDirectDep>(Reuse.Singleton);
 
@@ -235,7 +235,7 @@ Test 'Castle.Facilities.AutoTx.Tests.PerTransactionLifestyle_Releasing.Concurren
 			return container;
 		}
 
-		private IPerTxService CreatePerTransactionService(IResolver container)
+		private static IPerTxService CreatePerTransactionService(IResolver container)
 		{
 			var factory = container.Resolve<IPerTxServiceFactory>("per-tx-session.factory");
 			var s = factory.CreateService();

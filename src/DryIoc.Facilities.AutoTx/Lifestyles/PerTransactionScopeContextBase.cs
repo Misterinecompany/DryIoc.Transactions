@@ -31,6 +31,11 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 		public IScope GetCurrentOrDefault()
 		{
+			return GetCurrentOrDefault(null);
+		}
+
+		public IScope GetCurrentOrDefault(Type serviceType)
+		{
 			if (_Disposed)
 				throw new ObjectDisposedException("PerTransactionLifestyleManagerBase",
 					"You cannot resolve with a disposed lifestyle.");
@@ -38,7 +43,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 			if (!IsCurrentTransaction)
 			{
 				throw new MissingTransactionException(
-					"No transaction in context when trying to instantiate model for resolve type. "
+					$"No transaction in context when trying to instantiate model for resolve type {serviceType}. "
 					+ "If you have verified that your call stack contains a method with the [Transaction] attribute, "
 					+ "then also make sure that you have registered the AutoTx Facility."
 				);
