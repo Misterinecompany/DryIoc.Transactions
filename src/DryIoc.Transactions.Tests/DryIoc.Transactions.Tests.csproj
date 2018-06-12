@@ -44,7 +44,6 @@
     <PackageReference Include="SharpTestsEx.MVC" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DryIoc.IO\DryIoc.IO.csproj" />
     <ProjectReference Include="..\DryIoc.Transactions\DryIoc.Transactions.csproj" />
   </ItemGroup>
   <ItemGroup>
