@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 using System.Transactions;
 using DryIoc.Transactions.Helpers;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using TaskExtensions = DryIoc.Transactions.Internal.TaskExtensions;
 
 namespace DryIoc.Transactions
@@ -31,8 +30,7 @@ namespace DryIoc.Transactions
 	[Serializable]
 	public class Transaction : ITransaction, IDependentAware
 	{
-		readonly ILogger _Logger = NullLogger.Instance;
-
+		private readonly ILogger _Logger;
 		private TransactionState _State = TransactionState.Default;
 
 		private readonly ITransactionOptions _CreationOptions;

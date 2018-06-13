@@ -35,11 +35,6 @@ namespace DryIoc.Transactions
 		{
 		}
 
-		[Obsolete("Deprecated; use [Transaction], [Transaction(TransactionScopeOption.Required)] or [Transaction(TransactionScopeOption.Supress)] instead.")]
-		public TransactionAttribute(TransactionMode transactionMode) : this(TransactionScopeOption.Required, System.Transactions.IsolationLevel.ReadCommitted)
-		{
-		}
-
 		public TransactionAttribute(TransactionScopeOption mode) : this(mode, System.Transactions.IsolationLevel.ReadCommitted)
 		{
 		}

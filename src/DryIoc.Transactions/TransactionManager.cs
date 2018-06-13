@@ -20,7 +20,6 @@ using System.Transactions;
 using DryIoc.Transactions.Internal;
 using DryIoc.Transactions.Logging;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DryIoc.Transactions
 {
@@ -29,7 +28,7 @@ namespace DryIoc.Transactions
 	/// </summary>
 	public class TransactionManager : ITransactionManager
 	{
-		private readonly ILogger _logger = NullLogger.Instance;
+		private readonly ILogger _logger;
 		private readonly ILoggerFactory _loggerFactory;
 
 		readonly IActivityManager _activityManager;

@@ -28,7 +28,6 @@ using DryIoc.Transactions;
 using DryIoc.Transactions.Internal;
 using DryIoc.Transactions.Logging;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using TransactionException = DryIoc.Transactions.TransactionException;
 using TransactionManager = DryIoc.Transactions.TransactionManager;
 
@@ -46,27 +45,23 @@ namespace DryIoc.Facilities.AutoTx
 		private InterceptorState _State;
 		private readonly IContainer _Container;
 		private readonly ITransactionMetaInfoStore _Store;
+		private readonly ILoggerFactory _LoggerFactory;
+		private readonly ILogger _Logger;
 		private Maybe<TransactionalClassMetaInfo> _MetaInfo;
-		private ILoggerFactory _LoggerFactory = NullLoggerFactory.Instance;
-		private ILogger _Logger = NullLogger.Instance;
 
-		public ILogger Logger
-		{
-			get { return _Logger; }
-			set { _Logger = value; }
-		}
-
-		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store, ParentServiceRequestInfo parentServiceRequestInfo)
+		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store, ParentServiceRequestInfo parentServiceRequestInfo, ILoggerFactory loggerFactory)
 		{
 			Contract.Requires(container != null, "container must be non null");
 			Contract.Requires(store != null, "store must be non null");
 			Contract.Ensures(_State == InterceptorState.Constructed);
 
-			_Logger.LogDebug("created transaction interceptor");
-
 			_Container = container;
 			_Store = store;
+			_LoggerFactory = loggerFactory;
+			_Logger = loggerFactory.CreateLogger(GetType());
 			_State = InterceptorState.Constructed;
+
+			_Logger.LogDebug("created transaction interceptor");
 
 			SetInterceptedComponentModel(parentServiceRequestInfo);
 		}

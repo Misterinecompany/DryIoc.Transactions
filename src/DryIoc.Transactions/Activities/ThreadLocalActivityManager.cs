@@ -18,25 +18,25 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace DryIoc.Transactions.Activities
 {
 	/// <summary>
-	///   The ThreadLocal activity manager saves the stack of transactions in thread local variable. This is the recommended manager and the default, also.
+	///   The ThreadLocal activity manager saves the stack of transactions in thread local variable.
 	/// </summary>
 	public class ThreadLocalActivityManager : IActivityManager
 	{
-		private static readonly ThreadLocal<Activity> _threadLocalActivity = new ThreadLocal<Activity>();
+		private static readonly ThreadLocal<Activity> _ThreadLocalActivity = new ThreadLocal<Activity>();
 
 		public ThreadLocalActivityManager()
 		{
-			_threadLocalActivity.Value = null;
+			_ThreadLocalActivity.Value = null;
 		}
 
 		public Activity GetCurrentActivity()
 		{
-			var activity = _threadLocalActivity.Value;
+			var activity = _ThreadLocalActivity.Value;
 
 			if (activity == null)
 			{
 				activity = new Activity(NullLogger.Instance);
-				_threadLocalActivity.Value = activity;
+				_ThreadLocalActivity.Value = activity;
 			}
 
 			return activity;

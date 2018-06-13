@@ -30,7 +30,7 @@ namespace DryIoc.Facilities.AutoTx
 	/// 	Transaction component inspector that selects the methods
 	/// 	available to get intercepted with transactions.
 	/// </summary>
-	internal class TransactionalComponentInspector// : MethodMetaInspector
+	internal class TransactionalComponentInspector
 	{
 		private readonly IContainer _Container;
 		private readonly ITransactionMetaInfoStore _MetaStore;
@@ -83,21 +83,11 @@ namespace DryIoc.Facilities.AutoTx
 			if (!meta.HasValue)
 				return;
 
-			//TODO remove this old Interceptor registration:
-			//model.Dependencies.Add(new DependencyModel(null, typeof (TransactionInterceptor), false));
-			//model.Interceptors.Add(new InterceptorReference(typeof (TransactionInterceptor)));
-
 			var proxyType = _Container.CreateProxy(model.ServiceType);
 			if (_ProxyTypeStorage.TryAddMapping(proxyType, model.Factory.ImplementationType))
 			{
 				_Container.Intercept<TransactionInterceptor>(model.ServiceType, proxyType);
 			}
-		}
-
-		[Pure]
-		protected string ObtainNodeName()
-		{
-			return "transaction-interceptor";
 		}
 	}
 }

@@ -79,21 +79,10 @@ namespace DryIoc.Facilities.AutoTx
 			// that framework method to keep track of the call context.
 			container.Register<IActivityManager, ThreadLocalActivityManager>(Reuse.Singleton);
 
-			//container.Register<IDirectoryAdapter, DirectoryAdapter>(Reuse.PerTransaction);
-			//container.Register<IFileAdapter, FileAdapter>(Reuse.PerTransaction);
-			//container.Register<IMapPath, MapPathImpl>(Reuse.Transient);
-			
 			var componentInspector = new TransactionalComponentInspector(container);
-
-			//container.ComponentModelBuilder.AddContributor(componentInspector);
-
+			
 			_Logger.LogDebug(
 				"inspecting previously registered components; this might throw if you have configured your components in the wrong way");
-
-			//((INamingSubSystem) container.GetSubSystem(SubSystemConstants.NamingKey))
-			//	.GetAllHandlers()
-			//	.Do(x => componentInspector.ProcessModel(container, x.ComponentModel))
-			//	.Run();
 
 			foreach (var serviceRegistrationInfo in container.GetServiceRegistrations())
 			{

@@ -12,11 +12,9 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 	/// <typeparam name="T">Primary lifestyle manager which has its constructor resolved through the Container.</typeparam>
 	public abstract class WrapperReuseBase<T> : IReuse, IReuseV3 where T : PerTransactionReuseBase
 	{
-		private object _Lock = new object();
+		private readonly object _Lock = new object();
 		private ILogger _Logger;
-		private IContainer _LifestyleKernel;
-		protected T _Lifestyle1;
-		private bool _Disposed;
+		private T _Lifestyle1;
 		private bool _Initialized;
 
 		public int Lifespan => 50;
@@ -87,17 +85,6 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 			if (_Logger.IsEnabled(LogLevel.Debug))
 				_Logger.LogDebug("initializing (for component: {0})", request.ServiceType);
 
-			//_LifestyleKernel.Register<T>(Reuse.Transient, serviceKey: "T.lifestyle");
-			//kernel.AddChildKernel(_LifestyleKernel);
-
-			//try
-			//{
-			//	_Lifestyle1 = _LifestyleKernel.Resolve<T>();
-			//}
-			//finally
-			//{
-			//	kernel.RemoveChildKernel(_LifestyleKernel);
-			//}
 
 			_Lifestyle1 = kernel.New<T>();
 

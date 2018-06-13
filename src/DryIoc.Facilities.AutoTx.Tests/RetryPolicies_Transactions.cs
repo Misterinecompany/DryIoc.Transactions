@@ -50,7 +50,6 @@ namespace DryIoc.Facilities.AutoTx.Tests
 		[TearDown]
 		public void TearDown()
 		{
-			_Container.Release(_TransactionManager);
 			_Container.Dispose();
 		}
 

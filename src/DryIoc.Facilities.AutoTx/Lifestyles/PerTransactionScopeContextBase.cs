@@ -10,8 +10,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 {
 	public abstract class PerTransactionScopeContextBase : IScopeContext
 	{
-		protected readonly object LockObject = new object();
-
+		private readonly object _LockObject = new object();
 		private readonly Dictionary<string, Scope> _ScopePerTransactionIdStorage;
 		private readonly ILogger _Logger;
 		protected bool _Disposed;
@@ -60,14 +59,14 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 				return scope;
 			}
 
-			lock (LockObject)
+			lock (_LockObject)
 			{
 				scope = new Scope(name: RootScopeName);
 				_ScopePerTransactionIdStorage.Add(key, scope);
 
 				transaction.Inner.TransactionCompleted += (sender, args) =>
 				{
-					lock (LockObject)
+					lock (_LockObject)
 					{
 						var scopeFromStorage = _ScopePerTransactionIdStorage[key];
 						if (!_Disposed)
@@ -118,7 +117,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 			try
 			{
-				lock (LockObject)
+				lock (_LockObject)
 				{
 					if (_ScopePerTransactionIdStorage.Count > 0)
 					{
