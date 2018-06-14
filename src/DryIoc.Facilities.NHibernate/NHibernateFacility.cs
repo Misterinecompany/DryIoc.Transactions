@@ -12,27 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using Castle.Core.Logging;
+using Castle.Facilities.AutoTx;
+using Castle.Facilities.FactorySupport;
+using Castle.Facilities.TypedFactory;
+using Castle.MicroKernel;
+using Castle.MicroKernel.Facilities;
+using Castle.MicroKernel.Registration;
+using Castle.Transactions;
 using Castle.Transactions.Helpers;
+using NHibernate;
+using NHibernate.Cfg;
 
-namespace Castle.Facilities.NHibernate
+namespace DryIoc.Facilities.NHibernate
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics.Contracts;
-	using System.Linq;
-
-	using Castle.Core.Logging;
-	using Castle.Facilities.AutoTx;
-	using Castle.Facilities.FactorySupport;
-	using Castle.Facilities.TypedFactory;
-	using Castle.MicroKernel;
-	using Castle.MicroKernel.Facilities;
-	using Castle.MicroKernel.Registration;
-	using Castle.Transactions;
-
-	using global::NHibernate;
-	using global::NHibernate.Cfg;
-
 	using ILoggerFactory = Castle.Core.Logging.ILoggerFactory;
 
 	///<summary>

@@ -12,29 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using Castle.Facilities.AutoTx;
+using Castle.Facilities.AutoTx.Testing;
+using Castle.Facilities.Logging;
+using Castle.MicroKernel.Registration;
+using Castle.Services.Logging.NLogIntegration;
+using Castle.Transactions;
+using Castle.Windsor;
+using DryIoc.Facilities.NHibernate.Tests.Framework;
+using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NHibernate;
+using NLog;
+using NUnit.Framework;
+
+namespace DryIoc.Facilities.NHibernate.Tests
 {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics.Contracts;
-
-	using Castle.Facilities.AutoTx;
-	using Castle.Facilities.AutoTx.Testing;
-	using Castle.Facilities.NHibernate.Tests.Framework;
-	using Castle.Facilities.NHibernate.Tests.TestClasses;
-	using Castle.MicroKernel.Registration;
-	using Castle.Transactions;
-	using Castle.Windsor;
-
-	using NLog;
-
-	using NUnit.Framework;
-
-	using global::NHibernate;
-	using Castle.Facilities.Logging;
-	using Castle.Services.Logging.NLogIntegration;
-
-    public class Multiple_Threads_DependentTransactionWithParent : EnsureSchema
+	public class Multiple_Threads_DependentTransactionWithParent : EnsureSchema
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 		private WindsorContainer container;

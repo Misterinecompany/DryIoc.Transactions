@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Castle.Facilities.NHibernate
+namespace DryIoc.Facilities.NHibernate
 {
     internal static class CallContext
     {

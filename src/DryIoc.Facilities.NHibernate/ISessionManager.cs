@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate
+using System.Diagnostics.Contracts;
+using NHibernate;
+
+namespace DryIoc.Facilities.NHibernate
 {
-	using System.Diagnostics.Contracts;
-
-	using global::NHibernate;
-
 	/// <summary>
 	/// 	Session manager interface. This denotes the ISession factory. The default
 	/// 	session lifestyle is per-transaction, so call OpenSession within a transaction!

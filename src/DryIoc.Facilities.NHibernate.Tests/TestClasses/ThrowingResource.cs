@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests.TestClasses
-{
-	using System;
-	using System.Transactions;
+using System;
+using System.Transactions;
 
+namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
+{
 	internal class ThrowingResource : ISinglePhaseNotification
 	{
 		private readonly bool throwIt;

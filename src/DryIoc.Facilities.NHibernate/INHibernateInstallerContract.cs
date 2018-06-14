@@ -12,17 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Diagnostics.Contracts;
+using Castle.Transactions;
+using NHibernate;
 using NHibernate.Cfg;
 
-namespace Castle.Facilities.NHibernate
+namespace DryIoc.Facilities.NHibernate
 {
-	using System;
-	using System.Diagnostics.Contracts;
-
-	using Castle.Transactions;
-
-	using global::NHibernate;
-
 	[ContractClassFor(typeof(INHibernateInstaller))]
 	internal abstract class INHibernateInstallerContract : INHibernateInstaller
 	{

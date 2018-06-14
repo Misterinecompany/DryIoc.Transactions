@@ -12,23 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests
+using Castle.Facilities.AutoTx;
+using Castle.Facilities.AutoTx.Testing;
+using Castle.Facilities.Logging;
+using Castle.MicroKernel.Registration;
+using Castle.Services.Logging.NLogIntegration;
+using Castle.Transactions;
+using Castle.Windsor;
+using DryIoc.Facilities.NHibernate.Tests.Framework;
+using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NLog;
+using NUnit.Framework;
+
+namespace DryIoc.Facilities.NHibernate.Tests
 {
-	using Castle.Facilities.AutoTx;
-	using Castle.Facilities.AutoTx.Testing;
-	using Castle.Facilities.NHibernate.Tests.Framework;
-	using Castle.Facilities.NHibernate.Tests.TestClasses;
-	using Castle.MicroKernel.Registration;
-	using Castle.Transactions;
-	using Castle.Windsor;
-
-	using NLog;
-
-	using NUnit.Framework;
-	using Castle.Facilities.Logging;
-	using Castle.Services.Logging.NLogIntegration;
-
-    public class SimpleUseCase_SingleSave : EnsureSchema
+	public class SimpleUseCase_SingleSave : EnsureSchema
 	{
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 		private WindsorContainer c;

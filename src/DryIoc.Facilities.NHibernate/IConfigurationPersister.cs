@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
-using System;
 using System.Collections.Generic;
-
 using NHibernate.Cfg;
 
-namespace Castle.Facilities.NHibernate
+namespace DryIoc.Facilities.NHibernate
 {
 	/// <summary>
 	/// Knows how to read/write an NH <see cref="Configuration"/> from

@@ -12,19 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests
+using System;
+using System.Configuration;
+using System.Data.SqlClient;
+using System.Transactions;
+using Castle.Core.Logging;
+using Castle.Transactions.Internal;
+using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NUnit.Framework;
+
+namespace DryIoc.Facilities.NHibernate.Tests
 {
-	using System;
-	using System.Configuration;
-	using System.Data.SqlClient;
-	using System.Transactions;
-
-	using Castle.Core.Logging;
-	using Castle.Facilities.NHibernate.Tests.TestClasses;
-	using Castle.Transactions.Internal;
-
-	using NUnit.Framework;
-
 	[Explicit]
 	public class ScratchBoard_LTM
 	{

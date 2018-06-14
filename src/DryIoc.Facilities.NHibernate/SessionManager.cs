@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate
+using System;
+using System.Diagnostics.Contracts;
+using Castle.MicroKernel.Facilities;
+using Castle.Transactions;
+using NHibernate;
+
+namespace DryIoc.Facilities.NHibernate
 {
-	using System;
-	using System.Diagnostics.Contracts;
-	using Castle.MicroKernel;
-	using Castle.MicroKernel.Facilities;
-	using Castle.Transactions;
-	using global::NHibernate;
 	using ITransaction = Castle.Transactions.ITransaction;
 
 	/// <summary>

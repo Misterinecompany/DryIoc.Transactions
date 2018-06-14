@@ -12,17 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests.TestClasses
+using System;
+using System.Diagnostics.Contracts;
+using Castle.Transactions;
+using NHibernate;
+using NUnit.Framework;
+
+namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 {
-	using System;
-	using System.Diagnostics.Contracts;
-
-	using Castle.Transactions;
-
-	using NUnit.Framework;
-
-	using global::NHibernate;
-
 	// this class uses the transient lifestyle because it resolves ISession in the constructor and
 	// it's not resolving Func<ISession> or ISessionManager.
 	public class ServiceUsingTransientSessionLifestyle

@@ -12,16 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests.TestClasses
+using System;
+using Castle.Transactions;
+using NHibernate;
+using NUnit.Framework;
+
+namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 {
-	using System;
-
-	using Castle.Transactions;
-
-	using NUnit.Framework;
-
-	using global::NHibernate;
-
 	public class ServiceWithProtectedMethodInTransaction
 	{
 		private readonly ISessionFactory factory;

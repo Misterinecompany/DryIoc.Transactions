@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using NHibernate.Cfg;
 
-namespace Castle.Facilities.NHibernate
+namespace DryIoc.Facilities.NHibernate
 {
-	using System;
-	using System.Diagnostics.Contracts;
-	using System.Collections.Generic;
-
 	[ContractClassFor( typeof( IConfigurationPersister ) )]
 	internal abstract class IConfigurationPersisterContract : IConfigurationPersister
 	{

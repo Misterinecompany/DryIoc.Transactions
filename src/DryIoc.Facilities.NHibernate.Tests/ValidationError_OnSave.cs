@@ -12,28 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests
+using System;
+using System.Collections;
+using System.Transactions;
+using Castle.Facilities.AutoTx;
+using Castle.Facilities.AutoTx.Testing;
+using Castle.MicroKernel.Registration;
+using Castle.Transactions;
+using Castle.Windsor;
+using DryIoc.Facilities.NHibernate.Tests.Framework;
+using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NHibernate;
+using NHibernate.SqlCommand;
+using NHibernate.Type;
+using NLog;
+using NUnit.Framework;
+
+namespace DryIoc.Facilities.NHibernate.Tests
 {
-	using System;
-	using System.Collections;
-	using System.Transactions;
-
-	using Castle.Facilities.AutoTx;
-	using Castle.Facilities.AutoTx.Testing;
-	using Castle.Facilities.NHibernate.Tests.Framework;
-	using Castle.Facilities.NHibernate.Tests.TestClasses;
-	using Castle.MicroKernel.Registration;
-	using Castle.Transactions;
-	using Castle.Windsor;
-
-	using NLog;
-
-	using NUnit.Framework;
-
-	using global::NHibernate;
-	using global::NHibernate.SqlCommand;
-	using global::NHibernate.Type;
-
 	using ITransaction = global::NHibernate.ITransaction;
 
 	internal class ValidationError_OnSave : EnsureSchema

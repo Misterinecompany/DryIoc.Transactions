@@ -13,15 +13,13 @@
 // limitations under the License.
 
 
-namespace Castle.Facilities.NHibernate
+using System.Diagnostics.Contracts;
+using Castle.Transactions;
+using NHibernate;
+using NHibernate.Cfg;
+
+namespace DryIoc.Facilities.NHibernate
 {
-	using System.Diagnostics.Contracts;
-
-	using Transactions;
-
-	using global::NHibernate.Cfg;
-	using global::NHibernate;
-
 	/// <summary>
 	/// 	Register a bunch of these; one for each database.
 	/// </summary>

@@ -12,23 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Web;
+using Castle.Facilities.AutoTx;
+using Castle.Facilities.AutoTx.Testing;
 using Castle.MicroKernel.Lifestyle;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NHibernate;
+using NUnit.Framework;
 
-namespace Castle.Facilities.NHibernate.Tests.LifeStyle
+namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 {
-	using System;
-
-	using Castle.Facilities.AutoTx;
-	using Castle.Facilities.AutoTx.Testing;
-	using Castle.Facilities.NHibernate.Tests.TestClasses;
-	using Castle.MicroKernel.Registration;
-	using Castle.Windsor;
-
-	using NUnit.Framework;
-
-	using global::NHibernate;
-
 	public class per_web_request_spec
 	{
 		private IWindsorContainer container;

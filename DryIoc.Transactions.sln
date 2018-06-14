@@ -16,6 +16,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DryIoc.Transactions", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DryIoc.Facilities.AutoTx.Tests", "src\DryIoc.Facilities.AutoTx.Tests\DryIoc.Facilities.AutoTx.Tests.csproj", "{BBDD1C0A-67E9-48C7-9A14-69CB8B158549}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DryIoc.Facilities.NHibernate", "src\DryIoc.Facilities.NHibernate\DryIoc.Facilities.NHibernate.csproj", "{EA0C04B7-679C-4DDB-921F-F5ED3BA13FBD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DryIoc.Facilities.NHibernate.Tests", "src\DryIoc.Facilities.NHibernate.Tests\DryIoc.Facilities.NHibernate.Tests.csproj", "{EB6B9C42-5D2D-469B-9E27-F0730A7ED4D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +42,14 @@ Global
 		{BBDD1C0A-67E9-48C7-9A14-69CB8B158549}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBDD1C0A-67E9-48C7-9A14-69CB8B158549}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBDD1C0A-67E9-48C7-9A14-69CB8B158549}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA0C04B7-679C-4DDB-921F-F5ED3BA13FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA0C04B7-679C-4DDB-921F-F5ED3BA13FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA0C04B7-679C-4DDB-921F-F5ED3BA13FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA0C04B7-679C-4DDB-921F-F5ED3BA13FBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB6B9C42-5D2D-469B-9E27-F0730A7ED4D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB6B9C42-5D2D-469B-9E27-F0730A7ED4D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB6B9C42-5D2D-469B-9E27-F0730A7ED4D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB6B9C42-5D2D-469B-9E27-F0730A7ED4D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

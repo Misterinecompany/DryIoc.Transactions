@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-
 using NHibernate.Cfg;
 
-namespace Castle.Facilities.NHibernate.Tests.TestClasses
+namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 {
 	internal class PersistingInstaller : ExampleInstaller
 	{

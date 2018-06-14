@@ -12,26 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.IO;
-using System.Linq;
+using Castle.Facilities.AutoTx;
+using Castle.Facilities.Logging;
+using Castle.MicroKernel.Registration;
+using Castle.Services.Logging.NLogIntegration;
+using Castle.Windsor;
+using DryIoc.Facilities.NHibernate.Tests.Framework;
+using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NUnit.Framework;
 
-namespace Castle.Facilities.NHibernate.Tests
+namespace DryIoc.Facilities.NHibernate.Tests
 {
-	using AutoTx;
-	using Framework;
-
-	using MicroKernel.Registration;
-
-	using Windsor;
-
-	using NUnit.Framework;
-	using Logging;
-
-	using Castle.Facilities.NHibernate.Tests.TestClasses;
-	using Castle.Services.Logging.NLogIntegration;
-
-    public class SimpleUseCase_PersistedConfig : EnsureSchema
+	public class SimpleUseCase_PersistedConfig : EnsureSchema
 	{
 		[SetUp]
 		public void SetUp()

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests.TestClasses
-{
-	using FluentNHibernate.Mapping;
+using FluentNHibernate.Mapping;
 
+namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
+{
 	public class ThingMap : ClassMap<Thing>
 	{
 		public ThingMap()

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests.TestClasses
-{
-	using System;
+using System;
 
+namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
+{
 	public class Thing
 	{
 		[Obsolete("NHibernate's c'tor")]

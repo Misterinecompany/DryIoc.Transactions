@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests
-{
-	using System;
-	using System.Diagnostics;
-	using System.IO;
-	using System.Text.RegularExpressions;
-	using System.Xml.Serialization;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Xml.Serialization;
 
+namespace DryIoc.Facilities.NHibernate.Tests
+{
 	[Serializable]
 	public class TraceRecord
 	{

@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Facilities.NHibernate.Tests.Framework
+using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NHibernate.Tool.hbm2ddl;
+using NUnit.Framework;
+
+namespace DryIoc.Facilities.NHibernate.Tests.Framework
 {
-	using Castle.Facilities.NHibernate.Tests.TestClasses;
-
-	using NUnit.Framework;
-
-	using global::NHibernate.Tool.hbm2ddl;
-
 	public abstract class EnsureSchema
 	{
 	    [OneTimeSetUp]

@@ -12,27 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Castle.Facilities.AutoTx;
+using Castle.Facilities.FactorySupport;
+using Castle.Facilities.Logging;
+using Castle.MicroKernel.Facilities;
+using Castle.MicroKernel.Registration;
+using Castle.Services.Logging.NLogIntegration;
+using Castle.Transactions;
+using Castle.Windsor;
+using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NHibernate;
 using NHibernate.Cfg;
+using NUnit.Framework;
 
-namespace Castle.Facilities.NHibernate.Tests
+namespace DryIoc.Facilities.NHibernate.Tests
 {
-	using System;
-
-	using Castle.Facilities.AutoTx;
-	using Castle.Facilities.FactorySupport;
-	using Castle.Facilities.NHibernate.Tests.TestClasses;
-	using Castle.MicroKernel.Facilities;
-	using Castle.MicroKernel.Registration;
-	using Castle.Transactions;
-	using Castle.Windsor;
-
-	using NUnit.Framework;
-
-	using global::NHibernate;
-	using Castle.Facilities.Logging;
-	using Castle.Services.Logging.NLogIntegration;
-
-    internal class Init
+	internal class Init
 	{
 		[Test]
 		public void given_two_configs_resolves_the_default_true_one_first()
