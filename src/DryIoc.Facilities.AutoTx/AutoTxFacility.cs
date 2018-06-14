@@ -89,6 +89,8 @@ namespace DryIoc.Facilities.AutoTx
 				componentInspector.ProcessModel(serviceRegistrationInfo);
 			}
 
+			container.Register<AutoTxFacility>(Reuse.Transient); // to determine if AutoTx was initialized
+
 			_Logger.LogDebug(
 				@"Initialized AutoTxFacility:
 

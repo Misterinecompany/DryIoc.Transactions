@@ -54,13 +54,10 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			var c = new Container();
 			c.AddNLogLogging();
-			c.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
+			c.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 
-			c.AddAutoTx();
-			c.AddNHibernate();
-
-			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
-
+			// Adding AutoTx and NHibernate must be done after all components are initialized
+			
 			return c;
 		}
 
@@ -68,6 +65,11 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		public void Register_Run()
 		{
 			c.Register<ServiceWithProtectedMethodInTransaction>(Reuse.Singleton);
+
+			c.AddAutoTx();
+			c.AddNHibernate();
+
+			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
 
 			using (var s = c.ResolveScope<ServiceWithProtectedMethodInTransaction>())
 			{

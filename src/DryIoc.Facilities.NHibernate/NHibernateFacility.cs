@@ -209,6 +209,13 @@ namespace DryIoc.Facilities.NHibernate
 				{
 					container.UseInstance(x.Config, serviceKey: $"{x.Instance.SessionFactoryKey}-cfg");
 					container.UseInstance(x.Factory, serviceKey: x.Instance.SessionFactoryKey);
+
+					if (x.Instance.IsDefault)
+					{
+						container.UseInstance(x.Config);
+						container.UseInstance(x.Factory);
+					}
+
 					RegisterSession(container, x, 0);
 					RegisterSession(container, x, 1);
 					RegisterSession(container, x, 2);
@@ -282,11 +289,11 @@ namespace DryIoc.Facilities.NHibernate
 			//var registration = Component.For<IStatelessSession>()
 			//	.UsingFactoryMethod(k => k.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey).OpenStatelessSession());
 
-			var nameAndLifeStyle = GetNameAndLifeStyle(index, x.Instance.SessionFactoryKey + SessionStatelessInfix);
+			var sessionFactoryKey = x.Instance.SessionFactoryKey;
+			var nameAndLifeStyle = GetNameAndLifeStyle(index, sessionFactoryKey + SessionStatelessInfix);
 
 			container.Register<IStatelessSession>(nameAndLifeStyle.Item2,
-				Made.Of(() => Arg.Of<ISessionFactory>(Arg.Index<string>(0)).OpenStatelessSession(),
-					request => x.Instance.SessionFactoryKey),
+				Made.Of(() => Arg.Of<ISessionFactory>(sessionFactoryKey).OpenStatelessSession()),
 				serviceKey: nameAndLifeStyle.Item1);
 		}
 
@@ -318,10 +325,12 @@ namespace DryIoc.Facilities.NHibernate
 			//		return s;
 			//	});
 
-			var nameAndLifeStyle = GetNameAndLifeStyle(index, x.Instance.SessionFactoryKey);
+			var localFlushMode = flushMode;
+			var sessionFactoryKey = x.Instance.SessionFactoryKey;
+			var nameAndLifeStyle = GetNameAndLifeStyle(index, sessionFactoryKey);
 
 			container.Register<ISession>(nameAndLifeStyle.Item2,
-				Made.Of(() => CreateSession(Arg.Of<ISessionFactory>(x.Instance.SessionFactoryKey), x, flushMode)),
+				Made.Of(() => CreateSession(Arg.Of<ISessionFactory>(sessionFactoryKey), x, localFlushMode)),
 				serviceKey: nameAndLifeStyle.Item1);
 		}
 

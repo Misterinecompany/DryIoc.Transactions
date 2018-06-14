@@ -48,7 +48,9 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 		protected virtual Guid SaveIt()
 		{
 			using (var s = factory.OpenSession())
+			{
 				return (Guid)s.Save(new Thing(45.0));
+			}
 		}
 	}
 }

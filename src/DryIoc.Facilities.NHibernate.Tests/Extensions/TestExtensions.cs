@@ -8,7 +8,7 @@ namespace DryIoc.Facilities.NHibernate.Tests.Extensions
     {
 	    public static void AddNLogLogging(this IContainer container)
 	    {
-			container.Register<ILoggerFactory, NLogLoggerFactory>(Reuse.Singleton);
+			container.Register<ILoggerFactory, NLogLoggerFactory>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 		    if (!container.IsRegistered(typeof(ILogger)))
 		    {
 			    container.AddLoggerResolving();
