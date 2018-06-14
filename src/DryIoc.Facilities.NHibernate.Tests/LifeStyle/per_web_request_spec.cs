@@ -13,13 +13,11 @@
 // limitations under the License.
 
 using System;
-using System.Web;
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.AutoTx.Testing;
-using Castle.MicroKernel.Lifestyle;
-using Castle.MicroKernel.Registration;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Microsoft.DependencyInjection;
 using NHibernate;
 using NUnit.Framework;
 
@@ -27,19 +25,19 @@ namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 {
 	public class per_web_request_spec
 	{
-		private IWindsorContainer container;
+		private IContainer container;
 
 		[SetUp]
 		public void SetUp()
 		{
-			container = new WindsorContainer()
-				.Register(Component.For<INHibernateInstaller>().ImplementedBy<ExampleInstaller>())
-				.AddFacility<AutoTxFacility>()
-				.AddFacility<NHibernateFacility>(
-					fac => fac.DefaultLifeStyle = DefaultSessionLifeStyleOption.SessionPerWebRequest);
-			var app = new HttpApplication();
-			var lifestyle = new PerWebRequestLifestyleModule();
-			lifestyle.Init(app);
+			container = new Container().WithDependencyInjectionAdapter(); // the same configuration as for ASP.NET Core
+			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
+			container.AddAutoTx();
+			container.AddNHibernate(DefaultSessionLifeStyleOption.SessionPerWebRequest);
+
+			//var app = new HttpApplication();
+			//var lifestyle = new PerWebRequestLifestyleModule();
+			//lifestyle.Init(app);
 		}
 
 		[TearDown]
@@ -54,7 +52,9 @@ namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 			try
 			{
 				using (var scope = container.ResolveScope<ISession>())
+				{
 					Console.WriteLine(scope.Service.GetSessionImplementation().SessionId);
+				}
 
 				Assert.Fail("Not in web request, should not resolve.");
 			}

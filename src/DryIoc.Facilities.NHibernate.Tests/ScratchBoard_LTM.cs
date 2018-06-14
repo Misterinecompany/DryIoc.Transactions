@@ -17,6 +17,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Transactions;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions.Internal;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 

@@ -14,7 +14,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using Castle.Transactions;
+using DryIoc.Transactions;
 using NHibernate;
 using NUnit.Framework;
 

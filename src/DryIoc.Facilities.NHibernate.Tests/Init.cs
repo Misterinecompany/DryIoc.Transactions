@@ -13,15 +13,11 @@
 // limitations under the License.
 
 using System;
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.FactorySupport;
-using Castle.Facilities.Logging;
-using Castle.MicroKernel.Facilities;
-using Castle.MicroKernel.Registration;
-using Castle.Services.Logging.NLogIntegration;
-using Castle.Transactions;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.NHibernate.Errors;
+using DryIoc.Facilities.NHibernate.Tests.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions;
 using NHibernate;
 using NHibernate.Cfg;
 using NUnit.Framework;
@@ -33,20 +29,20 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[Test]
 		public void given_two_configs_resolves_the_default_true_one_first()
 		{
-			var c = new WindsorContainer();
-			c.AddFacility<LoggingFacility>(f => f.LogUsing<NLogFactory>());
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<C1>());
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<C2>());
+			var c = new Container();
+			c.AddNLogLogging();
+			c.Register<INHibernateInstaller, C1>(Reuse.Singleton);
+			c.Register<INHibernateInstaller, C2>(Reuse.Singleton);
 			AssertOrder(c);
 		}
 
 		[Test]
 		public void given_two_configs_resolves_the_default_true_one_first_permutate()
 		{
-			var c = new WindsorContainer();
-			c.AddFacility<LoggingFacility>(f => f.LogUsing<NLogFactory>());
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<C2>());
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<C1>());
+			var c = new Container();
+			c.AddNLogLogging();
+			c.Register<INHibernateInstaller, C2>(Reuse.Singleton);
+			c.Register<INHibernateInstaller, C1>(Reuse.Singleton);
 			AssertOrder(c);
 		}
 
@@ -56,10 +52,10 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			var c = GetTxContainer();
 			try
 			{
-				c.AddFacility<NHibernateFacility>();
+				c.AddNHibernate();
 				Assert.Fail();
 			}
-			catch (FacilityException ex)
+			catch (NHibernateFacilityException ex)
 			{
 				Assert.That(ex.Message, Does.Contain("registered"));
 			}
@@ -70,13 +66,13 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			var c = GetTxContainer();
 
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<C2>());
+			c.Register<INHibernateInstaller, C2>(Reuse.Singleton);
 			try
 			{
-				c.AddFacility<NHibernateFacility>();
+				c.AddNHibernate();
 				Assert.Fail();
 			}
-			catch (FacilityException ex)
+			catch (NHibernateFacilityException ex)
 			{
 				Assert.That(ex.Message, Does.Contain("IsDefault"));
 			}
@@ -87,36 +83,34 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			var c = GetTxContainer();
 
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<C1>());
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<C1_Copy>());
+			c.Register<INHibernateInstaller, C1>(Reuse.Singleton);
+			c.Register<INHibernateInstaller, C1_Copy>(Reuse.Singleton);
 			try
 			{
-				c.AddFacility<NHibernateFacility>();
+				c.AddNHibernate();
 				Assert.Fail();
 			}
-			catch (FacilityException ex)
+			catch (NHibernateFacilityException ex)
 			{
 				Assert.That(ex.Message.ToLowerInvariant(), Does.Contain("duplicate"));
 			}
 		}
 
-		private static WindsorContainer GetTxContainer()
+		private static Container GetTxContainer()
 		{
-			var c = new WindsorContainer();
-			c.AddFacility<LoggingFacility>(f => f.LogUsing<NLogFactory>());
-			c.AddFacility<FactorySupportFacility>();
-			c.AddFacility<AutoTxFacility>();
+			var c = new Container();
+			c.AddNLogLogging();
+			c.AddAutoTx();
 			return c;
 		}
 
-		private void AssertOrder(WindsorContainer c)
+		private void AssertOrder(Container c)
 		{
-			c.AddFacility<FactorySupportFacility>();
-			c.AddFacility<AutoTxFacility>();
+			c.AddAutoTx();
 
 			try
 			{
-				c.AddFacility<NHibernateFacility>();
+				c.AddNHibernate();
 				Assert.Fail("no exception thrown");
 			}
 			catch (ApplicationException ex)

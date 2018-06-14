@@ -13,13 +13,10 @@
 // limitations under the License.
 
 using System;
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.Logging;
-using Castle.MicroKernel.Registration;
-using Castle.Services.Logging.NLogIntegration;
-using Castle.Transactions;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.NHibernate.Tests.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions;
 using NHibernate;
 using NLog;
 using NUnit.Framework;
@@ -30,12 +27,12 @@ namespace DryIoc.Facilities.NHibernate.Tests
 	{
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-		private WindsorContainer c;
+		private Container c;
 
 		[SetUp]
 		public void SetUp()
 		{
-			c = GetWindsorContainer();
+			c = GetContainer();
 		}
 
 		[Test]
@@ -51,19 +48,19 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			Assert.Fail("we haven't solved this test yet");
 		}
 
-		private static WindsorContainer GetWindsorContainer()
+		private static Container GetContainer()
 		{
-			var c = new WindsorContainer();
+			var c = new Container();
 
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<ExampleInstaller>());
+			c.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
 
-			c.AddFacility<LoggingFacility>(f => f.LogUsing<NLogFactory>());
-			c.AddFacility<AutoTxFacility>();
-			c.AddFacility<NHibernateFacility>();
+			c.AddNLogLogging();
+			c.AddAutoTx();
+			c.AddNHibernate();
 
-			c.Register(Component.For<ReproClass>());
+			c.Register<ReproClass>(Reuse.Singleton);
 
-			Assert.That(c.Kernel.HasComponent(typeof(ITransactionManager)));
+			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
 
 			return c;
 		}
@@ -77,7 +74,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 
 		public ReproClass(Func<ISession> getSession, ITransactionManager manager)
 		{
-			if (getSession == null) throw new ArgumentNullException("getSession");
+			if (getSession == null) throw new ArgumentNullException(nameof(getSession));
 			this.getSession = getSession;
 			this.manager = manager;
 		}

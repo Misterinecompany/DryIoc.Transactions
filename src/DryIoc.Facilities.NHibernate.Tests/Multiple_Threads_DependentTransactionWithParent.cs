@@ -15,15 +15,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.AutoTx.Testing;
-using Castle.Facilities.Logging;
-using Castle.MicroKernel.Registration;
-using Castle.Services.Logging.NLogIntegration;
-using Castle.Transactions;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.NHibernate.Tests.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.Framework;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions;
 using NHibernate;
 using NLog;
 using NUnit.Framework;
@@ -33,17 +30,17 @@ namespace DryIoc.Facilities.NHibernate.Tests
 	public class Multiple_Threads_DependentTransactionWithParent : EnsureSchema
 	{
 		private static Logger logger = LogManager.GetCurrentClassLogger();
-		private WindsorContainer container;
+		private Container container;
 
 		[SetUp]
 		public void SetUp()
 		{
-			container = new WindsorContainer();
-			container.AddFacility<LoggingFacility>(f => f.LogUsing<NLogFactory>());
-			container.Register(Component.For<INHibernateInstaller>().ImplementedBy<ExampleInstaller>());
-			container.AddFacility<AutoTxFacility>();
-			container.AddFacility<NHibernateFacility>();
-			container.Register(Component.For<ThreadedService>().LifeStyle.Transient);
+			container = new Container();
+			container.AddNLogLogging();
+			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
+			container.AddAutoTx();
+			container.AddNHibernate();
+			container.Register<ThreadedService>(Reuse.Transient);
 		}
 
 		[TearDown]
@@ -56,14 +53,18 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		public void SameSessionInSameTransaction()
 		{
 			using (var threaded = new ResolveScope<ThreadedService>(container))
+			{
 				threaded.Service.VerifySameSession();
+			}
 		}
 
 		[Test]
 		public void SameSession_WithRecursion()
 		{
 			using (var threaded = new ResolveScope<ThreadedService>(container))
+			{
 				threaded.Service.VerifyRecursingSession();
+			}
 		}
 
 		[Test]

@@ -13,11 +13,8 @@
 // limitations under the License.
 
 using System.IO;
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.Logging;
-using Castle.MicroKernel.Registration;
-using Castle.Services.Logging.NLogIntegration;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.NHibernate.Tests.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.Framework;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
 using NUnit.Framework;
@@ -37,13 +34,13 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[Test]
 		public void CacheFile_Is_Created()
 		{
-			using (var c = new WindsorContainer())
+			using (var c = new Container())
 			{
-				c.Register( Component.For<INHibernateInstaller>().ImplementedBy<PersistingInstaller>() );
+				c.Register<INHibernateInstaller, PersistingInstaller>(Reuse.Singleton);
 
-				c.AddFacility<LoggingFacility>( f => f.LogUsing<NLogFactory>() );
-				c.AddFacility<AutoTxFacility>();
-				c.AddFacility<NHibernateFacility>();
+				c.AddNLogLogging();
+				c.AddAutoTx();
+				c.AddNHibernate();
 
 				Assert.That(File.Exists(PersistingInstaller.SerializedConfigFile), "Could not find serialized cache file");
 			}

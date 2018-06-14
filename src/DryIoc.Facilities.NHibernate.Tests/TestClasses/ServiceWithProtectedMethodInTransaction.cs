@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using Castle.Transactions;
+using DryIoc.Transactions;
 using NHibernate;
 using NUnit.Framework;
 
@@ -25,7 +25,7 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 
 		public ServiceWithProtectedMethodInTransaction(ISessionFactory factory)
 		{
-			if (factory == null) throw new ArgumentNullException("factory");
+			if (factory == null) throw new ArgumentNullException(nameof(factory));
 			this.factory = factory;
 		}
 

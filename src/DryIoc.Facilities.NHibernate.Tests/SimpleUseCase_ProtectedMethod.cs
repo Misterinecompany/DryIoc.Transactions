@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.AutoTx.Testing;
-using Castle.Facilities.Logging;
-using Castle.MicroKernel.Registration;
-using Castle.Services.Logging.NLogIntegration;
-using Castle.Transactions;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.NHibernate.Tests.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.Framework;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions;
 using NLog;
 using NUnit.Framework;
 
@@ -30,12 +27,12 @@ namespace DryIoc.Facilities.NHibernate.Tests
 	{
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-		private WindsorContainer c;
+		private Container c;
 
 		[SetUp]
 		public void SetUp()
 		{
-			c = GetWindsorContainer();
+			c = GetContainer();
 		}
 
 		[TearDown]
@@ -43,24 +40,26 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			logger.Debug("running tear-down, removing components");
 
-			c.Register(Component.For<TearDownService>().LifeStyle.Transient);
+			c.Register<TearDownService>(Reuse.Transient);
 
 			using (var s = c.ResolveScope<TearDownService>())
+			{
 				s.Service.ClearThings();
+			}
 
 			c.Dispose();
 		}
 
-		private static WindsorContainer GetWindsorContainer()
+		private static Container GetContainer()
 		{
-			var c = new WindsorContainer();
-			c.AddFacility<LoggingFacility>(f => f.LogUsing<NLogFactory>());
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<ExampleInstaller>());
+			var c = new Container();
+			c.AddNLogLogging();
+			c.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
 
-			c.AddFacility<AutoTxFacility>();
-			c.AddFacility<NHibernateFacility>();
+			c.AddAutoTx();
+			c.AddNHibernate();
 
-			Assert.That(c.Kernel.HasComponent(typeof(ITransactionManager)));
+			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
 
 			return c;
 		}
@@ -68,10 +67,12 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[Test]
 		public void Register_Run()
 		{
-			c.Register(Component.For<ServiceWithProtectedMethodInTransaction>());
+			c.Register<ServiceWithProtectedMethodInTransaction>(Reuse.Singleton);
 
 			using (var s = c.ResolveScope<ServiceWithProtectedMethodInTransaction>())
+			{
 				s.Service.Do();
+			}
 		}
 	}
 }

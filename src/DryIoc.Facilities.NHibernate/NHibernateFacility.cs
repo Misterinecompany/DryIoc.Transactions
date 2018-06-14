@@ -337,13 +337,13 @@ namespace DryIoc.Facilities.NHibernate
 					if (index == 0)
 						return new Tuple<string, IReuse>(baseName + SessionPerTxSuffix, AutoTxReuse.PerTopTransaction);
 					if (index == 1)
-						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.Scoped);
+						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.InWebRequest);
 					if (index == 2)
 						return new Tuple<string, IReuse>(baseName + SessionTransientSuffix, Reuse.Transient);
 					break;
 				case DefaultSessionLifeStyleOption.SessionPerWebRequest:
 					if (index == 0)
-						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.Scoped);
+						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.InWebRequest);
 					if (index == 1)
 						return new Tuple<string, IReuse>(baseName + SessionPerTxSuffix, AutoTxReuse.PerTopTransaction);
 					if (index == 2)
@@ -355,7 +355,7 @@ namespace DryIoc.Facilities.NHibernate
 					if (index == 1)
 						return new Tuple<string, IReuse>(baseName + SessionPerTxSuffix, AutoTxReuse.PerTopTransaction);
 					if (index == 2)
-						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.Scoped);
+						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.InWebRequest);
 					break;
 				default:
 					throw new NHibernateFacilityException("Unknown default life style - please file a bug report");

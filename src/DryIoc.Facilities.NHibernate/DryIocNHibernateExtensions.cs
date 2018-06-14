@@ -18,5 +18,11 @@ namespace DryIoc.Facilities.NHibernate
 			var nhibernateFacility = new NHibernateFacility();
 			nhibernateFacility.Init(container);
 		}
+
+		public static void AddNHibernate(this IContainer container, DefaultSessionLifeStyleOption defaultLifeStyle)
+		{
+			var nhibernateFacility = new NHibernateFacility(defaultLifeStyle);
+			nhibernateFacility.Init(container);
+		}
 	}
 }

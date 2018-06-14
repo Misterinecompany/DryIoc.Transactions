@@ -13,10 +13,10 @@
 // limitations under the License.
 
 using System;
-using Castle.Facilities.AutoTx.Testing;
-using Castle.Transactions;
+using DryIoc.Facilities.AutoTx.Testing;
 using DryIoc.Facilities.NHibernate.Tests.Framework;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions;
 using NLog;
 using NUnit.Framework;
 
@@ -30,7 +30,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[SetUp]
 		public void SetUp()
 		{
-			container = new Container();
+			container = ContainerBuilder.Create();
 		}
 
 		[TearDown]
@@ -48,7 +48,9 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			logger.Debug("starting test run");
 
 			using (var x = container.ResolveScope<NestedTransactionService>())
+			{
 				x.Service.Run();
+			}
 		}
 
 		/// <summary>

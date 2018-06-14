@@ -15,13 +15,11 @@
 using System;
 using System.Collections;
 using System.Transactions;
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.AutoTx.Testing;
-using Castle.MicroKernel.Registration;
-using Castle.Transactions;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
 using DryIoc.Facilities.NHibernate.Tests.Framework;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions;
 using NHibernate;
 using NHibernate.SqlCommand;
 using NHibernate.Type;
@@ -40,7 +38,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[SetUp]
 		public void SetUp()
 		{
-			container = new Container();
+			container = ContainerBuilder.Create();
 		}
 
 		[TearDown]
@@ -55,21 +53,26 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			logger.Debug("starting test run");
 
 			using (var x = container.ResolveScope<Test>())
+			{
 				x.Service.Run();
+			}
 		}
 	}
 
-	internal class Container : WindsorContainer
+	internal static class ContainerBuilder
 	{
-		public Container()
+		public static Container Create()
 		{
-			Register(Component.For<INHibernateInstaller>().Instance(new ExampleInstaller(new ThrowingInterceptor())));
+			var container = new Container();
+			container.UseInstance<INHibernateInstaller>(new ExampleInstaller(new ThrowingInterceptor()));
+			
+			container.AddAutoTx();
+			container.AddNHibernate();
+			
+			container.Register<Test>(Reuse.Transient);
+			container.Register<NestedTransactionService>(Reuse.Transient);
 
-			AddFacility<AutoTxFacility>();
-			AddFacility<NHibernateFacility>();
-
-			Register(Component.For<Test>().LifeStyle.Transient);
-			Register(Component.For<NestedTransactionService>().LifeStyle.Transient);
+			return container;
 		}
 	}
 

@@ -13,9 +13,8 @@
 // limitations under the License.
 
 using System;
-using Castle.Facilities.AutoTx;
-using Castle.MicroKernel.Registration;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx;
+using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
 using NHibernate;
 using NUnit.Framework;
@@ -24,16 +23,15 @@ namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 {
 	public class transient_resolving_spec
 	{
-		private IWindsorContainer container;
+		private IContainer container;
 
 		[SetUp]
 		public void given_transient_registration()
 		{
-			container = new WindsorContainer()
-				.Register(Component.For<INHibernateInstaller>().ImplementedBy<ExampleInstaller>())
-				.AddFacility<AutoTxFacility>()
-				.AddFacility<NHibernateFacility>(
-					fac => fac.DefaultLifeStyle = DefaultSessionLifeStyleOption.SessionTransient);
+			container = new Container();
+			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
+			container.AddAutoTx();
+			container.AddNHibernate(DefaultSessionLifeStyleOption.SessionTransient);
 		}
 
 		[TearDown]

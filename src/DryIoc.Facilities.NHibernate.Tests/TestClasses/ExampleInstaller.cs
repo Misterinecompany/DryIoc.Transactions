@@ -14,7 +14,7 @@
 
 using System.Configuration;
 using System.Diagnostics.Contracts;
-using Castle.Transactions;
+using DryIoc.Transactions;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;

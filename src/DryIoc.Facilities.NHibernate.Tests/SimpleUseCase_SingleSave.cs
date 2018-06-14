@@ -12,15 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.AutoTx.Testing;
-using Castle.Facilities.Logging;
-using Castle.MicroKernel.Registration;
-using Castle.Services.Logging.NLogIntegration;
-using Castle.Transactions;
-using Castle.Windsor;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.NHibernate.Tests.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.Framework;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions;
 using NLog;
 using NUnit.Framework;
 
@@ -29,12 +26,12 @@ namespace DryIoc.Facilities.NHibernate.Tests
 	public class SimpleUseCase_SingleSave : EnsureSchema
 	{
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-		private WindsorContainer c;
+		private Container c;
 
 		[SetUp]
 		public void SetUp()
 		{
-			c = GetWindsorContainer();
+			c = GetContainer();
 		}
 
 		[TearDown]
@@ -42,10 +39,12 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			logger.Debug("running tear-down, removing components");
 
-			c.Register(Component.For<TearDownService>().LifeStyle.Transient);
+			c.Register<TearDownService>(Reuse.Transient);
 
 			using (var s = c.ResolveScope<TearDownService>())
+			{
 				s.Service.ClearThings();
+			}
 
 			c.Dispose();
 		}
@@ -58,7 +57,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[Test]
 		public void SavingWith_PerTransaction_Lifestyle()
 		{
-			c.Register(Component.For<ServiceUsingPerTransactionSessionLifestyle>().LifeStyle.Transient);
+			c.Register<ServiceUsingPerTransactionSessionLifestyle>(Reuse.Transient);
 
 			// given
 			using (var scope = c.ResolveScope<ServiceUsingPerTransactionSessionLifestyle>())
@@ -69,17 +68,17 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			}
 		}
 
-		private static WindsorContainer GetWindsorContainer()
+		private static Container GetContainer()
 		{
-			var c = new WindsorContainer();
+			var c = new Container();
 
-			c.Register(Component.For<INHibernateInstaller>().ImplementedBy<ExampleInstaller>());
+			c.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
 
-			c.AddFacility<LoggingFacility>(f => f.LogUsing<NLogFactory>());
-			c.AddFacility<AutoTxFacility>();
-			c.AddFacility<NHibernateFacility>();
+			c.AddNLogLogging();
+			c.AddAutoTx();
+			c.AddNHibernate();
 
-			Assert.That(c.Kernel.HasComponent(typeof(ITransactionManager)));
+			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
 
 			return c;
 		}
