@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <AssemblyName>Castle.Facilities.NHibernate.Tests</AssemblyName>
+    <PackageId>Castle.Facilities.NHibernate.Tests</PackageId>
+    <Version>1.0.0.16087</Version>
+    <Company>Logibit AB</Company>
+    <Description>A library for making it easier to deal with NHibernate and Transactions</Description>
+    <Copyright>(c) 2015 by Henrik Feldt</Copyright>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Castle.Core-NLog" Version="4.3.0" />
+    <PackageReference Include="Castle.Facilities.AutoTx" Version="3.2.207.2207" />
+    <PackageReference Include="Castle.FactorySupportFacility" Version="4.1.0" />
+    <PackageReference Include="Castle.LoggingFacility" Version="4.1.0" />
+    <PackageReference Include="Castle.Windsor" Version="4.1.0" />
+    <PackageReference Include="FluentNHibernate" Version="2.1.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="NHibernate" Version="5.1.2" />
+    <PackageReference Include="NLog" Version="4.5.6" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.108" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Castle.Facilities.NHibernate\Castle.Facilities.NHibernate.csproj" />
+  </ItemGroup>
+</Project>
