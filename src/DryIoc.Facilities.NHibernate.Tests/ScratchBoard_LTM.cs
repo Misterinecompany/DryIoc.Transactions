@@ -16,9 +16,8 @@ using System;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Transactions;
-using Castle.Core.Logging;
-using Castle.Transactions.Internal;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace DryIoc.Facilities.NHibernate.Tests

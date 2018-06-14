@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace DryIoc.Facilities.AutoTx.Errors
 {
-    public class AutoTxFacilityException : Exception
+    public class AutoTxFacilityException : InvalidOperationException
     {
 	    public AutoTxFacilityException()
 	    {

@@ -16,22 +16,19 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Castle.Core.Logging;
-using Castle.Facilities.AutoTx;
-using Castle.Facilities.FactorySupport;
-using Castle.Facilities.TypedFactory;
-using Castle.MicroKernel;
-using Castle.MicroKernel.Facilities;
-using Castle.MicroKernel.Registration;
-using Castle.Transactions;
-using Castle.Transactions.Helpers;
+using DryIoc.Facilities.AutoTx;
+using DryIoc.Facilities.AutoTx.Extensions;
+using DryIoc.Facilities.NHibernate.Errors;
+using DryIoc.Transactions;
+using DryIoc.Transactions.Helpers;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NHibernate;
 using NHibernate.Cfg;
+using ILoggerFactory = Microsoft.Extensions.Logging.ILoggerFactory;
 
 namespace DryIoc.Facilities.NHibernate
 {
-	using ILoggerFactory = Castle.Core.Logging.ILoggerFactory;
-
 	///<summary>
 	///	Easy NHibernate integration with declarative transactions 
 	///	using Castle Transaction Services and .Net System.Transactions.
@@ -40,7 +37,7 @@ namespace DryIoc.Facilities.NHibernate
 	///	constituents in parallel. The NHibernate Facility is configured 
 	///	using FluentNHibernate
 	///</summary>
-	public class NHibernateFacility : AbstractFacility
+	public class NHibernateFacility
 	{
 		private ILogger logger = NullLogger.Instance;
 		private DefaultSessionLifeStyleOption defaultLifeStyle;
@@ -140,48 +137,43 @@ namespace DryIoc.Facilities.NHibernate
 		///	</list>
 		///</exception>
 		[ContractVerification(false)] // interactive bits don't have contracts
-		protected override void Init()
+		public void Init(IContainer container)
 		{
 			// check we have a logger factory
-			if (Kernel.HasComponent(typeof(ILoggerFactory)))
+			if (container.IsRegistered(typeof(ILoggerFactory)))
 			{
 				// get logger factory
-				var loggerFactory = Kernel.Resolve<ILoggerFactory>();
+				var loggerFactory = container.Resolve<ILoggerFactory>();
 				// get logger
-				logger = loggerFactory.Create(typeof(AutoTxFacility));
+				logger = loggerFactory.CreateLogger(typeof(AutoTxFacility));
 			}
 
-			if (logger.IsDebugEnabled)
-				logger.DebugFormat("initializing NHibernateFacility");
+			if (logger.IsEnabled(LogLevel.Debug))
+				logger.LogDebug("initializing NHibernateFacility");
 
-			if (!Kernel.HasComponent(typeof(IConfigurationPersister)))
+			if (!container.IsRegistered(typeof(IConfigurationPersister)))
 			{
-				Kernel.Register(Component.For<IConfigurationPersister>().ImplementedBy<FileConfigurationPersister>());
+				container.Register<IConfigurationPersister, FileConfigurationPersister>();
 			}
 
-			var installers = Kernel.ResolveAll<INHibernateInstaller>();
+			var installers = container.ResolveMany<INHibernateInstaller>().ToList();
 
 			Contract.Assume(installers != null, "ResolveAll shouldn't return null");
 
-			if (installers.Length == 0)
-				throw new FacilityException("no INHibernateInstaller-s registered.");
+			if (installers.Count == 0)
+				throw new NHibernateFacilityException("no INHibernateInstaller-s registered.");
 
 			var count = installers.Count(x => x.IsDefault);
 			if (count == 0 || count > 1)
-				throw new FacilityException("no INHibernateInstaller has IsDefault = true or many have specified it");
+				throw new NHibernateFacilityException("no INHibernateInstaller has IsDefault = true or many have specified it");
 
 			if (installers.Any(x => string.IsNullOrEmpty(x.SessionFactoryKey)))
-				throw new FacilityException("all session factory keys must be non null and non empty strings");
+				throw new NHibernateFacilityException("all session factory keys must be non null and non empty strings");
 
-			VerifyLegacyInterceptors();
+			container.AssertHasFacility<AutoTxFacility>();
 
-			AssertHasFacility<AutoTxFacility>();
-
-			AddFacility<FactorySupportFacility>();
-			AddFacility<TypedFactoryFacility>();
-
-			if (logger.IsDebugEnabled)
-				logger.DebugFormat("registering facility components");
+			if (logger.IsEnabled(LogLevel.Debug))
+				logger.LogDebug("registering facility components");
 
 			var added = new HashSet<string>();
 
@@ -210,115 +202,165 @@ namespace DryIoc.Facilities.NHibernate
 				.Do(x =>
 				{
 					if (!added.Add(x.Instance.SessionFactoryKey))
-						throw new FacilityException(
-							string.Format(
-								"Duplicate session factory keys '{0}' added. Verify that your INHibernateInstaller instances are not named the same.",
-								x.Instance.SessionFactoryKey));
+						throw new NHibernateFacilityException(
+							$"Duplicate session factory keys '{x.Instance.SessionFactoryKey}' added. Verify that your INHibernateInstaller instances are not named the same.");
 				})
-				.Do(x => Kernel.Register(
-					Component.For<Configuration>()
-						.Instance(x.Config)
-						.LifeStyle.Singleton
-						.Named(x.Instance.SessionFactoryKey + "-cfg"),
-					Component.For<ISessionFactory>()
-						.Instance(x.Factory)
-						.LifeStyle.Singleton
-						.Named(x.Instance.SessionFactoryKey),
-					RegisterSession(x, 0),
-					RegisterSession(x, 1),
-					RegisterSession(x, 2),
-					RegisterStatelessSession(x, 0),
-					RegisterStatelessSession(x, 1),
-					RegisterStatelessSession(x, 2),
-					Component.For<ISessionManager>().Instance(new SessionManager(() =>
-					{
-						var factory = Kernel.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);
-						var s = x.Instance.Interceptor.Do(y => factory.WithOptions().Interceptor(y).OpenSession()).OrDefault(factory.OpenSession());
-						s.FlushMode = flushMode;
-						return s;
-					}, Kernel.Resolve<ITransactionManager>()))
-						.Named(x.Instance.SessionFactoryKey + SessionManagerSuffix)
-						.LifeStyle.Singleton))
+				.Do(x =>
+				{
+					container.UseInstance(x.Config, serviceKey: $"{x.Instance.SessionFactoryKey}-cfg");
+					container.UseInstance(x.Factory, serviceKey: x.Instance.SessionFactoryKey);
+					RegisterSession(container, x, 0);
+					RegisterSession(container, x, 1);
+					RegisterSession(container, x, 2);
+					RegisterStatelessSession(container, x, 0);
+					RegisterStatelessSession(container, x, 1);
+					RegisterStatelessSession(container, x, 2);
+
+					container.Register<ISessionManager>(Reuse.Singleton,
+						Made.Of(() => new SessionManager(Arg.Index<Func<ISession>>(0), Arg.Of<ITransactionManager>()),
+							request =>
+							{
+								var factory = container.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);
+								return new Func<ISession>(() => CreateSession(factory, x, flushMode));
+								//return new Func<ISession>(() =>
+								//{
+								//	var s = x.Instance.Interceptor.Do(y => factory.WithOptions().Interceptor(y).OpenSession())
+								//		.OrDefault(factory.OpenSession());
+								//	s.FlushMode = flushMode;
+								//	return s;
+								//});
+							}),
+						serviceKey: x.Instance.SessionFactoryKey + SessionManagerSuffix);
+
+					// TODO try change creating inner func to direct ISession resolving or at least non-anonymous factory method
+
+					//container.Register(
+						//Component.For<Configuration>()
+						//	.Instance(x.Config)
+						//	.LifeStyle.Singleton
+						//	.Named(x.Instance.SessionFactoryKey + "-cfg"),
+						//Component.For<ISessionFactory>()
+						//	.Instance(x.Factory)
+						//	.LifeStyle.Singleton
+						//	.Named(x.Instance.SessionFactoryKey),
+						//RegisterSession(x, 0),
+						//RegisterSession(x, 1),
+						//RegisterSession(x, 2),
+						//RegisterStatelessSession(x, 0),
+						//RegisterStatelessSession(x, 1),
+						//RegisterStatelessSession(x, 2),
+
+						//Component.For<ISessionManager>().Instance(new SessionManager(() =>
+						//	{
+						//		var factory = container.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);
+						//		var s = x.Instance.Interceptor.Do(y => factory.WithOptions().Interceptor(y).OpenSession())
+						//			.OrDefault(factory.OpenSession());
+						//		s.FlushMode = flushMode;
+						//		return s;
+						//	}, container.Resolve<ITransactionManager>()))
+						//	.Named(x.Instance.SessionFactoryKey + SessionManagerSuffix)
+						//	.LifeStyle.Singleton);
+				})
 				.ToList();
 
-			if (logger.IsDebugEnabled)
-				logger.DebugFormat("notifying the nhibernate installers that they have been configured");
+			if (logger.IsEnabled(LogLevel.Debug))
+				logger.LogDebug("notifying the nhibernate installers that they have been configured");
 
 			installed.Run(x => x.Instance.Registered(x.Factory));
 
-			if (logger.IsDebugEnabled)
-				logger.DebugFormat("Initialized NHibernateFacility");
+			if (logger.IsEnabled(LogLevel.Debug))
+				logger.LogDebug("Initialized NHibernateFacility");
 		}
 
-		private IRegistration RegisterStatelessSession(Data x, uint index)
+		private void RegisterStatelessSession(IContainer container, Data x, uint index)
 		{
 			Contract.Requires(index < 3,
 							  "there are only three supported lifestyles; per transaction, per web request and transient");
 			Contract.Requires(x != null);
-			Contract.Ensures(Contract.Result<IRegistration>() != null);
+			//Contract.Ensures(Contract.Result<IRegistration>() != null);
 
-			var registration = Component.For<IStatelessSession>()
-				.UsingFactoryMethod(k => k.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey).OpenStatelessSession());
+			//var registration = Component.For<IStatelessSession>()
+			//	.UsingFactoryMethod(k => k.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey).OpenStatelessSession());
 
-			return GetLifeStyle(registration, index, x.Instance.SessionFactoryKey + SessionStatelessInfix);
+			var nameAndLifeStyle = GetNameAndLifeStyle(index, x.Instance.SessionFactoryKey + SessionStatelessInfix);
+
+			container.Register<IStatelessSession>(nameAndLifeStyle.Item2,
+				Made.Of(() => Arg.Of<ISessionFactory>(Arg.Index<string>(0)).OpenStatelessSession(),
+					request => x.Instance.SessionFactoryKey),
+				serviceKey: nameAndLifeStyle.Item1);
 		}
 
-		private IRegistration RegisterSession(Data x, uint index)
+		private static ISession CreateSession(ISessionFactory factory, Data x, FlushMode flushMode)
+		{
+			//var factory = k.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);
+			var s = x.Instance.Interceptor.Do(y => factory.WithOptions().Interceptor(y).OpenSession())
+				.OrDefault(factory.OpenSession());
+			s.FlushMode = flushMode;
+			//logger.DebugFormat("resolved session component named '{0}'", c.Handler.ComponentModel.Name);
+			return s;
+		}
+
+		private void RegisterSession(IContainer container, Data x, uint index)
 		{
 			Contract.Requires(index < 3,
 							  "there are only three supported lifestyles; per transaction, per web request and transient");
 			Contract.Requires(x != null);
-			Contract.Ensures(Contract.Result<IRegistration>() != null);
+			//Contract.Ensures(Contract.Result<IRegistration>() != null);
 
-			return GetLifeStyle(
-				Component.For<ISession>()
-					.UsingFactoryMethod((k, c) =>
-					{
-						var factory = k.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);
-						var s = x.Instance.Interceptor.Do(y => factory.WithOptions().Interceptor(y).OpenSession()).OrDefault(factory.OpenSession());
-						s.FlushMode = flushMode;
-						logger.DebugFormat("resolved session component named '{0}'", c.Handler.ComponentModel.Name);
-						return s;
-					}), index, x.Instance.SessionFactoryKey);
+			//var registration = Component.For<ISession>()
+			//	.UsingFactoryMethod((k, c) =>
+			//	{
+			//		var factory = k.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);
+			//		var s = x.Instance.Interceptor.Do(y => factory.WithOptions().Interceptor(y).OpenSession())
+			//			.OrDefault(factory.OpenSession());
+			//		s.FlushMode = flushMode;
+			//		logger.DebugFormat("resolved session component named '{0}'", c.Handler.ComponentModel.Name);
+			//		return s;
+			//	});
+
+			var nameAndLifeStyle = GetNameAndLifeStyle(index, x.Instance.SessionFactoryKey);
+
+			container.Register<ISession>(nameAndLifeStyle.Item2,
+				Made.Of(() => CreateSession(Arg.Of<ISessionFactory>(x.Instance.SessionFactoryKey), x, flushMode)),
+				serviceKey: nameAndLifeStyle.Item1);
 		}
 
-		private ComponentRegistration<T> GetLifeStyle<T>(ComponentRegistration<T> registration, uint index, string baseName)
-			where T : class
+		private Tuple<string, IReuse> GetNameAndLifeStyle(uint index, string baseName)
 		{
 			Contract.Requires(index < 3,
 							  "there are only three supported lifestyles; per transaction, per web request and transient");
-			Contract.Ensures(Contract.Result<ComponentRegistration<T>>() != null);
+			Contract.Ensures(Contract.Result<Tuple<string, IReuse>>() != null);
 
 			switch (defaultLifeStyle)
 			{
 				case DefaultSessionLifeStyleOption.SessionPerTransaction:
 					if (index == 0)
-						return registration.Named(baseName + SessionPerTxSuffix).LifeStyle.PerTopTransaction();
+						return new Tuple<string, IReuse>(baseName + SessionPerTxSuffix, AutoTxReuse.PerTopTransaction);
 					if (index == 1)
-						return registration.Named(baseName + SessionPWRSuffix).LifeStyle.Scoped();
+						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.Scoped);
 					if (index == 2)
-						return registration.Named(baseName + SessionTransientSuffix).LifeStyle.Transient;
+						return new Tuple<string, IReuse>(baseName + SessionTransientSuffix, Reuse.Transient);
 					break;
 				case DefaultSessionLifeStyleOption.SessionPerWebRequest:
 					if (index == 0)
-						return registration.Named(baseName + SessionPWRSuffix).LifeStyle.Scoped();
+						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.Scoped);
 					if (index == 1)
-						return registration.Named(baseName + SessionPerTxSuffix).LifeStyle.PerTopTransaction();
+						return new Tuple<string, IReuse>(baseName + SessionPerTxSuffix, AutoTxReuse.PerTopTransaction);
 					if (index == 2)
-						return registration.Named(baseName + SessionTransientSuffix).LifeStyle.Transient;
+						return new Tuple<string, IReuse>(baseName + SessionTransientSuffix, Reuse.Transient);
 					break;
 				case DefaultSessionLifeStyleOption.SessionTransient:
 					if (index == 0)
-						return registration.Named(baseName + SessionTransientSuffix).LifeStyle.Transient;
+						return new Tuple<string, IReuse>(baseName + SessionTransientSuffix, Reuse.Transient);
 					if (index == 1)
-						return registration.Named(baseName + SessionPerTxSuffix).LifeStyle.PerTopTransaction();
+						return new Tuple<string, IReuse>(baseName + SessionPerTxSuffix, AutoTxReuse.PerTopTransaction);
 					if (index == 2)
-						return registration.Named(baseName + SessionPWRSuffix).LifeStyle.Scoped();
+						return new Tuple<string, IReuse>(baseName + SessionPWRSuffix, Reuse.Scoped);
 					break;
 				default:
-					throw new FacilityException("Unknown default life style - please file a bug report");
+					throw new NHibernateFacilityException("Unknown default life style - please file a bug report");
 			}
-			throw new FacilityException("Invalid index passed to GetLifeStyle<T> - please file a bug report");
+			throw new NHibernateFacilityException("Invalid index passed to GetNameAndLifeStyle<T> - please file a bug report");
 		}
 
 		private class Data
@@ -326,43 +368,6 @@ namespace DryIoc.Facilities.NHibernate
 			public INHibernateInstaller Instance;
 			public Configuration Config;
 			public ISessionFactory Factory;
-		}
-
-		private void AssertHasFacility<T>()
-		{
-			var facilities = Kernel.GetFacilities();
-
-			Contract.Assume(facilities != null, "GetFacilities shouldn't return null");
-
-			var type = typeof(T);
-			if (!facilities.Select(x => x.ToString()).Contains(type.ToString()))
-				throw new FacilityException(
-					string.Format(
-						"The NHibernateFacility is dependent on the '{0}' facility. "
-						+ "Please add the facility by writing \"container.AddFacility<{1}>()\" or adding it to your config file.",
-						type, type.Name));
-		}
-
-		private void VerifyLegacyInterceptors()
-		{
-			if (Kernel.HasComponent("nhibernate.session.interceptor"))
-				logger.WarnFormat("component with key \"nhibernate.session.interceptor\" found! this interceptor will not be used.");
-		}
-
-		// even though this is O(3n), n ~= 3, so we don't mind it
-		private void AddFacility<T>() where T : IFacility, new()
-		{
-			var facilities = Kernel.GetFacilities();
-
-			Contract.Assume(facilities != null, "GetFacilities shouldn't return null");
-
-			if (facilities.Select(x => x.ToString()).Contains(typeof(T).ToString())) return;
-
-			logger.InfoFormat(
-				"facility '{0}' wasn't found in kernel, adding it, because it's a requirement for NHibernateFacility",
-				typeof(T));
-
-			Kernel.AddFacility<T>();
 		}
 	}
 }

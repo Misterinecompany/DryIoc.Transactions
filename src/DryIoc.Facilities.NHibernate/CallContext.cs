@@ -5,16 +5,16 @@ namespace DryIoc.Facilities.NHibernate
 {
     internal static class CallContext
     {
-        private static readonly ConcurrentDictionary<string, ThreadLocal<object>> state = new ConcurrentDictionary<string, ThreadLocal<object>>();
+        private static readonly ConcurrentDictionary<string, ThreadLocal<object>> _State = new ConcurrentDictionary<string, ThreadLocal<object>>();
 
         public static void SetData(string name, object data)
         {
-            state.GetOrAdd(name, _ => new ThreadLocal<object>()).Value = data;
+            _State.GetOrAdd(name, _ => new ThreadLocal<object>()).Value = data;
         }
 
         public static object GetData(string name)
         {
-            return state.TryGetValue(name, out ThreadLocal<object> data) ? data.Value : null;
+            return _State.TryGetValue(name, out var data) ? data.Value : null;
         }
     }
 }

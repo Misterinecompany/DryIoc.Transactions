@@ -54,12 +54,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="4.2.1" />
-    <PackageReference Include="Castle.Facilities.AutoTx" Version="3.2.207.2207" />
-    <PackageReference Include="Castle.FactorySupportFacility" Version="4.1.0" />
-    <PackageReference Include="Castle.LoggingFacility" Version="4.1.0" />
-    <PackageReference Include="Castle.Transactions" Version="3.2.207.2207" />
-    <PackageReference Include="Castle.Windsor" Version="4.1.0" />
     <PackageReference Include="NHibernate" Version="5.1.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DryIoc.Facilities.AutoTx\DryIoc.Facilities.AutoTx.csproj" />
+    <ProjectReference Include="..\DryIoc.Transactions\DryIoc.Transactions.csproj" />
   </ItemGroup>
 </Project>

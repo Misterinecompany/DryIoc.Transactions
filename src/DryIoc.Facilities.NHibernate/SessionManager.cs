@@ -14,13 +14,13 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using Castle.MicroKernel.Facilities;
-using Castle.Transactions;
+using DryIoc.Facilities.NHibernate.Errors;
+using DryIoc.Transactions;
 using NHibernate;
 
 namespace DryIoc.Facilities.NHibernate
 {
-	using ITransaction = Castle.Transactions.ITransaction;
+	using ITransaction = DryIoc.Transactions.ITransaction;
 
 	/// <summary>
 	/// 	The session manager is an object wrapper around the "real" manager which is managed
@@ -56,7 +56,7 @@ namespace DryIoc.Facilities.NHibernate
 				var session = getSession();
 
 				if (session == null)
-					throw new FacilityException(
+					throw new NHibernateFacilityException(
 						"The Func<ISession> passed to SessionManager returned a null session. Verify your registration.");
 
 				return session;
@@ -71,7 +71,7 @@ namespace DryIoc.Facilities.NHibernate
 					session = getSession();
 
 					if (session == null)
-						throw new FacilityException(
+						throw new NHibernateFacilityException(
 							"The Func<ISession> passed to SessionManager returned a null session. Verify your registration.");
 
 					//Store the session so I can reused
