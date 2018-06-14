@@ -30,7 +30,7 @@ namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 		[SetUp]
 		public void SetUp()
 		{
-			container = new Container().WithDependencyInjectionAdapter(); // the same configuration as for ASP.NET Core
+			container = new Container().WithDependencyInjectionAdapter(); // the same configuration as for ASP.NET Core (test per web-request life style)
 			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
 			container.AddAutoTx();
 			container.AddNHibernate(DefaultSessionLifeStyleOption.SessionPerWebRequest);

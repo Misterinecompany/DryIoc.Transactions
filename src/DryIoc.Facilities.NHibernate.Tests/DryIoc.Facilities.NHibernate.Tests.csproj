@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
-    <AssemblyName>Castle.Facilities.NHibernate.Tests</AssemblyName>
-    <PackageId>Castle.Facilities.NHibernate.Tests</PackageId>
+    <AssemblyName>DryIoc.Facilities.NHibernate.Tests</AssemblyName>
+    <PackageId>DryIoc.Facilities.NHibernate.Tests</PackageId>
     <Version>1.0.0.16087</Version>
     <Company>Logibit AB</Company>
     <Description>A library for making it easier to deal with NHibernate and Transactions</Description>
@@ -29,7 +29,6 @@
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.108" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Castle.Facilities.NHibernate\Castle.Facilities.NHibernate.csproj" />
     <ProjectReference Include="..\DryIoc.Facilities.AutoTx\DryIoc.Facilities.AutoTx.csproj" />
     <ProjectReference Include="..\DryIoc.Facilities.NHibernate\DryIoc.Facilities.NHibernate.csproj" />
     <ProjectReference Include="..\DryIoc.Transactions\DryIoc.Transactions.csproj" />
