@@ -40,8 +40,6 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			logger.Debug("running tear-down, removing components");
 
-			c.Register<TearDownService>(Reuse.Transient);
-
 			using (var s = c.ResolveScope<TearDownService>())
 			{
 				s.Service.ClearThings();
@@ -55,9 +53,10 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			var c = new Container();
 			c.AddNLogLogging();
 			c.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
+			c.Register<TearDownService>(Reuse.Transient);
 
 			// Adding AutoTx and NHibernate must be done after all components are initialized
-			
+
 			return c;
 		}
 

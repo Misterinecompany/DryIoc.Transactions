@@ -37,10 +37,10 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			container = new Container();
 			container.AddNLogLogging();
-			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
+			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
+			container.Register<ThreadedService>(Reuse.Transient);
 			container.AddAutoTx();
 			container.AddNHibernate();
-			container.Register<ThreadedService>(Reuse.Transient);
 		}
 
 		[TearDown]

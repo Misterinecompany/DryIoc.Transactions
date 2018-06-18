@@ -66,11 +66,11 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			var container = new Container();
 			container.UseInstance<INHibernateInstaller>(new ExampleInstaller(new ThrowingInterceptor()));
 			
-			container.AddAutoTx();
-			container.AddNHibernate();
-			
 			container.Register<Test>(Reuse.Transient);
 			container.Register<NestedTransactionService>(Reuse.Transient);
+
+			container.AddAutoTx();
+			container.AddNHibernate();
 
 			return container;
 		}

@@ -177,6 +177,7 @@ namespace DryIoc.Facilities.NHibernate
 
 			var added = new HashSet<string>();
 
+			var isDefaultRegistered = false;
 			var installed = installers
 				.Select(x =>
 				{
@@ -207,19 +208,18 @@ namespace DryIoc.Facilities.NHibernate
 				})
 				.Do(x =>
 				{
+					if (x.Instance.IsDefault && isDefaultRegistered)
+					{
+						throw new InvalidOperationException("Can't register more than one default NHibernateFacility");
+					}
+					
 					container.UseInstance(x.Config, serviceKey: $"{x.Instance.SessionFactoryKey}-cfg");
 					container.UseInstance(x.Factory, serviceKey: x.Instance.SessionFactoryKey);
 
-					if (x.Instance.IsDefault)
-					{
-						container.UseInstance(x.Config);
-						container.UseInstance(x.Factory);
-					}
-
-					RegisterSession(container, x, 0);
+					RegisterSession(container, x, 0, x.Instance.IsDefault);
 					RegisterSession(container, x, 1);
 					RegisterSession(container, x, 2);
-					RegisterStatelessSession(container, x, 0);
+					RegisterStatelessSession(container, x, 0, x.Instance.IsDefault);
 					RegisterStatelessSession(container, x, 1);
 					RegisterStatelessSession(container, x, 2);
 
@@ -239,7 +239,14 @@ namespace DryIoc.Facilities.NHibernate
 							}),
 						serviceKey: x.Instance.SessionFactoryKey + SessionManagerSuffix);
 
-					// TODO try change creating inner func to direct ISession resolving or at least non-anonymous factory method
+					if (x.Instance.IsDefault)
+					{
+						container.UseInstance(x.Config);
+						container.UseInstance(x.Factory);
+						container.RegisterMapping<ISessionManager, ISessionManager>(registeredServiceKey: x.Instance.SessionFactoryKey + SessionManagerSuffix);
+
+						isDefaultRegistered = true;
+					}
 
 					//container.Register(
 						//Component.For<Configuration>()
@@ -279,7 +286,7 @@ namespace DryIoc.Facilities.NHibernate
 				logger.LogDebug("Initialized NHibernateFacility");
 		}
 
-		private void RegisterStatelessSession(IContainer container, Data x, uint index)
+		private void RegisterStatelessSession(IContainer container, Data x, uint index, bool registerAsDefault = false)
 		{
 			Contract.Requires(index < 3,
 							  "there are only three supported lifestyles; per transaction, per web request and transient");
@@ -295,6 +302,11 @@ namespace DryIoc.Facilities.NHibernate
 			container.Register<IStatelessSession>(nameAndLifeStyle.Item2,
 				Made.Of(() => Arg.Of<ISessionFactory>(sessionFactoryKey).OpenStatelessSession()),
 				serviceKey: nameAndLifeStyle.Item1);
+
+			if (registerAsDefault)
+			{
+				container.RegisterMapping<IStatelessSession, IStatelessSession>(registeredServiceKey: nameAndLifeStyle.Item1);
+			}
 		}
 
 		private static ISession CreateSession(ISessionFactory factory, Data x, FlushMode flushMode)
@@ -307,7 +319,7 @@ namespace DryIoc.Facilities.NHibernate
 			return s;
 		}
 
-		private void RegisterSession(IContainer container, Data x, uint index)
+		private void RegisterSession(IContainer container, Data x, uint index, bool registerAsDefault = false)
 		{
 			Contract.Requires(index < 3,
 							  "there are only three supported lifestyles; per transaction, per web request and transient");
@@ -332,6 +344,11 @@ namespace DryIoc.Facilities.NHibernate
 			container.Register<ISession>(nameAndLifeStyle.Item2,
 				Made.Of(() => CreateSession(Arg.Of<ISessionFactory>(sessionFactoryKey), x, localFlushMode)),
 				serviceKey: nameAndLifeStyle.Item1);
+
+			if (registerAsDefault)
+			{
+				container.RegisterMapping<ISession, ISession>(registeredServiceKey: nameAndLifeStyle.Item1);
+			}
 		}
 
 		private Tuple<string, IReuse> GetNameAndLifeStyle(uint index, string baseName)

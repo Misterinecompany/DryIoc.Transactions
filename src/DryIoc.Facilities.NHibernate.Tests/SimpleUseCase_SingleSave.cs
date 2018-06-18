@@ -39,8 +39,6 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			logger.Debug("running tear-down, removing components");
 
-			c.Register<TearDownService>(Reuse.Transient);
-
 			using (var s = c.ResolveScope<TearDownService>())
 			{
 				s.Service.ClearThings();
@@ -57,8 +55,6 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[Test]
 		public void SavingWith_PerTransaction_Lifestyle()
 		{
-			c.Register<ServiceUsingPerTransactionSessionLifestyle>(Reuse.Transient);
-
 			// given
 			using (var scope = c.ResolveScope<ServiceUsingPerTransactionSessionLifestyle>())
 			{
@@ -72,7 +68,9 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		{
 			var c = new Container();
 
-			c.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
+			c.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
+			c.Register<ServiceUsingPerTransactionSessionLifestyle>(Reuse.Transient);
+			c.Register<TearDownService>(Reuse.Transient);
 
 			c.AddNLogLogging();
 			c.AddAutoTx();

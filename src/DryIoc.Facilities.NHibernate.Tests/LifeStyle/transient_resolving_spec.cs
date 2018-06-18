@@ -29,7 +29,7 @@ namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 		public void given_transient_registration()
 		{
 			container = new Container();
-			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
+			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 			container.AddAutoTx();
 			container.AddNHibernate(DefaultSessionLifeStyleOption.SessionTransient);
 		}
