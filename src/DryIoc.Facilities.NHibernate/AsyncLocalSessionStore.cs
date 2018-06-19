@@ -1,45 +1,25 @@
-﻿using System.Collections.Concurrent;
-using System.Threading;
+﻿using System.Threading;
 using NHibernate;
 
 namespace DryIoc.Facilities.NHibernate
 {
-	public class AsyncLocalSessionStore
+	public class AsyncLocalSessionStore : ISessionStore
 	{
-		private readonly AsyncLocal<ConcurrentDictionary<string, ISession>> _State = new AsyncLocal<ConcurrentDictionary<string, ISession>>();
+		private readonly AsyncLocal<ISession> _AsyncLocalSession = new AsyncLocal<ISession>();
 
-		public void SetData(string sessionId, ISession data)
+		public void SetData(ISession data)
 		{
-			var dictionary = _State.Value;
-			if (dictionary == null)
-			{
-				dictionary = new ConcurrentDictionary<string, ISession>();
-				_State.Value = dictionary;
-			}
-
-			dictionary.TryAdd(sessionId, data);
+			_AsyncLocalSession.Value = data;
 		}
 
-		public ISession GetData(string sessionId)
+		public ISession GetData()
 		{
-			ISession data = null;
-			_State.Value?.TryGetValue(sessionId, out data);
-			return data;
+			return _AsyncLocalSession.Value;
 		}
 
-		public void ClearData(string sessionId)
+		public void ClearData()
 		{
-			var dictionary = _State.Value;
-			if (dictionary == null)
-			{
-				return;
-			}
-
-			dictionary.TryRemove(sessionId, out _);
-			if (dictionary.Count == 0)
-			{
-				_State.Value = null;
-			}
+			_AsyncLocalSession.Value = null;
 		}
 	}
 }

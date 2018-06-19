@@ -30,23 +30,23 @@ namespace DryIoc.Facilities.NHibernate
 	public class SessionManager : ISessionManager
 	{
 		private readonly Func<ISession> getSession;
-		private readonly Guid privateSessionId = Guid.NewGuid();
 		private readonly ITransactionManager transactionManager;
-		private readonly AsyncLocalSessionStore sessionStore;
+		private readonly ISessionStore sessionStore;
 
 		/// <summary>
-	    /// 	Constructor.
-	    /// </summary>
-	    /// <param name = "getSession"></param>
-	    /// <param name="transactionManager"></param>
-	    public SessionManager(Func<ISession> getSession, ITransactionManager transactionManager)
+		/// 	Constructor.
+		/// </summary>
+		/// <param name = "getSession"></param>
+		/// <param name="transactionManager"></param>
+		/// <param name="sessionStore"></param>
+		public SessionManager(Func<ISession> getSession, ITransactionManager transactionManager, ISessionStore sessionStore)
 		{
 			Contract.Requires(getSession != null);
 			Contract.Ensures(this.getSession != null);
 
 			this.getSession = getSession;
 			this.transactionManager = transactionManager;
-			sessionStore = new AsyncLocalSessionStore();
+			this.sessionStore = sessionStore;
 		}
 
 		ISession ISessionManager.OpenSession()
@@ -117,7 +117,7 @@ namespace DryIoc.Facilities.NHibernate
 		/// <param name="session">current session</param>
 		private void StoreSession(ISession session)
 		{
-			sessionStore.SetData(privateSessionId.ToString(), session);
+			sessionStore.SetData(session);
 		}
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace DryIoc.Facilities.NHibernate
 		/// <returns></returns>
 		private ISession GetStoredSession()
 		{
-			return sessionStore.GetData(privateSessionId.ToString());
+			return sessionStore.GetData();
 		}
 
 		/// <summary>
@@ -135,7 +135,7 @@ namespace DryIoc.Facilities.NHibernate
 		/// <returns></returns>
 		private void ClearStoredSession()
 		{
-			sessionStore.ClearData(privateSessionId.ToString());
+			sessionStore.ClearData();
 		}
 
 	}

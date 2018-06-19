@@ -156,6 +156,8 @@ namespace DryIoc.Facilities.NHibernate
 				container.Register<IConfigurationPersister, FileConfigurationPersister>();
 			}
 
+			container.Register<ISessionStore, AsyncLocalSessionStore>(Reuse.Transient);
+
 			var installers = container.ResolveMany<INHibernateInstaller>().ToList();
 
 			Contract.Assume(installers != null, "ResolveAll shouldn't return null");
@@ -224,7 +226,7 @@ namespace DryIoc.Facilities.NHibernate
 					RegisterStatelessSession(container, x, 2);
 
 					container.Register<ISessionManager>(Reuse.Singleton,
-						Made.Of(() => new SessionManager(Arg.Index<Func<ISession>>(0), Arg.Of<ITransactionManager>()),
+						Made.Of(() => new SessionManager(Arg.Index<Func<ISession>>(0), Arg.Of<ITransactionManager>(), Arg.Of<ISessionStore>()),
 							request =>
 							{
 								var factory = container.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);
