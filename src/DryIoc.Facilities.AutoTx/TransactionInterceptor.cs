@@ -92,7 +92,6 @@ namespace DryIoc.Facilities.AutoTx
 				{
 					if (mTxMethod.HasValue && mTxMethod.Value.Mode == TransactionScopeOption.Suppress)
 					{
-						_Logger.LogInformation("supressing ambient transaction");
 						if (_Logger.IsEnabled(LogLevel.Information))
 							_Logger.LogInformation("supressing ambient transaction");
 
@@ -151,14 +150,14 @@ namespace DryIoc.Facilities.AutoTx
 				catch (TransactionException ex)
 				{
 					if (_Logger.IsEnabled(LogLevel.Critical))
-						_Logger.LogCritical("internal error in transaction system - synchronized case", ex);
+						_Logger.LogCritical(ex, "internal error in transaction system - synchronized case");
 
 					throw;
 				}
 				catch (AggregateException ex)
 				{
 					if (_Logger.IsEnabled(LogLevel.Warning))
-						_Logger.LogWarning("one or more dependent transactions failed, re-throwing exceptions!", ex);
+						_Logger.LogWarning(ex, "one or more dependent transactions failed, re-throwing exceptions!");
 
 					throw;
 				}
@@ -221,7 +220,7 @@ namespace DryIoc.Facilities.AutoTx
 						hasException = true;
 
 						if (_Logger.IsEnabled(LogLevel.Warning))
-							_Logger.LogWarning("transaction aborted", ex);
+							_Logger.LogWarning(ex, "transaction aborted");
 
 						throw new TransactionAbortedException(
 							"Parallel/forked transaction aborted! See inner exception for details.", ex);

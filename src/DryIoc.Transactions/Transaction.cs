@@ -213,18 +213,18 @@ namespace DryIoc.Transactions
 			catch (TimeoutException e)
 			{
 				_State = TransactionState.Aborted;
-				_Logger.LogWarning("transaction timed out", e);
+				_Logger.LogWarning(e, "transaction timed out");
 			}
 			catch (TransactionAbortedException e)
 			{
 				_State = TransactionState.Aborted;
-				_Logger.LogWarning("transaction aborted", e);
+				_Logger.LogWarning(e, "transaction aborted");
 				throw;
 			}
 			catch (AggregateException e)
 			{
 				_State = TransactionState.Aborted;
-				_Logger.LogWarning("dependent transactions failed, so we are not performing the rollback (as they will have notified their parent!)", e);
+				_Logger.LogWarning(e, "dependent transactions failed, so we are not performing the rollback (as they will have notified their parent!)");
 				throw;
 			}
 			catch (Exception e)
