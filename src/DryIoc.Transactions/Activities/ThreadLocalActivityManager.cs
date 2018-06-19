@@ -41,5 +41,11 @@ namespace DryIoc.Transactions.Activities
 
 			return activity;
 		}
+
+		public void CreateNewActivity()
+		{
+			var activity = new Activity(NullLogger.Instance);
+			_ThreadLocalActivity.Value = activity;
+		}
 	}
 }
