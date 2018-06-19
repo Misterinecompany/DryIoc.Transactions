@@ -81,7 +81,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 		}
 
 		public static readonly Lazy<Expression> PerTransactionReuseExpr = new Lazy<Expression>(() =>
-			Expression.Field(null, typeof(AutoTxReuse).GetFieldOrNull("PerTransaction")));
+			Expression.Property(null, typeof(AutoTxReuse).GetPropertyOrNull("PerTransaction")));
 
 		public override Expression ToExpression(Func<object, Expression> fallbackConverter)
 		{
@@ -96,7 +96,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 		}
 
 		public static readonly Lazy<Expression> PerTopTransactionReuseExpr = new Lazy<Expression>(() =>
-			Expression.Field(null, typeof(AutoTxReuse).GetFieldOrNull("PerTopTransaction")));
+			Expression.Property(null, typeof(AutoTxReuse).GetPropertyOrNull("PerTopTransaction")));
 
 		public override Expression ToExpression(Func<object, Expression> fallbackConverter)
 		{

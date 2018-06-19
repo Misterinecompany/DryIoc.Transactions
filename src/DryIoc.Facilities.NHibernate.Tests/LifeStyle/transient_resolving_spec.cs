@@ -62,7 +62,7 @@ namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 		[Test]
 		public void then_per_web_throws()
 		{
-			Assert.Throws<InvalidOperationException>(
+			Assert.Throws<ContainerException>(
 				() => container.Resolve<ISession>(ExampleInstaller.Key + NHibernateFacility.SessionPWRSuffix));
 		}
 	}
