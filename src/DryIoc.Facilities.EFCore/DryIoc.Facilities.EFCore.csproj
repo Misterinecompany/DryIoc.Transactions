@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>DryIoc.Facilities.EFCore</AssemblyName>
+    <PackageId>DryIoc.Facilities.EFCore</PackageId>
+    <Version>1.0.0.16087</Version>
+    <Company>Misterine</Company>
+    <Description>A library for making it easier to deal with Entity Framework Core and Transactions</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DryIoc.Facilities.AutoTx\DryIoc.Facilities.AutoTx.csproj" />
+    <ProjectReference Include="..\DryIoc.Transactions\DryIoc.Transactions.csproj" />
+  </ItemGroup>
+
+</Project>

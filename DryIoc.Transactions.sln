@@ -25,6 +25,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{7DF6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DryIoc.Facilities.NHibernate.ExampleConsoleApp", "src\DryIoc.Facilities.NHibernate.ExampleConsoleApp\DryIoc.Facilities.NHibernate.ExampleConsoleApp.csproj", "{9B977E07-808A-4773-B378-EB3665679082}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DryIoc.Facilities.EFCore", "src\DryIoc.Facilities.EFCore\DryIoc.Facilities.EFCore.csproj", "{3B328D3C-7892-43FF-A98F-D3E9BFFD0272}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DryIoc.Facilities.EFCore.Tests", "src\DryIoc.Facilities.EFCore.Tests\DryIoc.Facilities.EFCore.Tests.csproj", "{9485AFB1-C66E-4CE3-90D2-0B1B27E9B796}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +63,14 @@ Global
 		{9B977E07-808A-4773-B378-EB3665679082}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B977E07-808A-4773-B378-EB3665679082}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B977E07-808A-4773-B378-EB3665679082}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B328D3C-7892-43FF-A98F-D3E9BFFD0272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B328D3C-7892-43FF-A98F-D3E9BFFD0272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B328D3C-7892-43FF-A98F-D3E9BFFD0272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B328D3C-7892-43FF-A98F-D3E9BFFD0272}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9485AFB1-C66E-4CE3-90D2-0B1B27E9B796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9485AFB1-C66E-4CE3-90D2-0B1B27E9B796}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9485AFB1-C66E-4CE3-90D2-0B1B27E9B796}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9485AFB1-C66E-4CE3-90D2-0B1B27E9B796}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

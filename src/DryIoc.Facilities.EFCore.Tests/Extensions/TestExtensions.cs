@@ -1,0 +1,18 @@
+﻿using DryIoc.Facilities.AutoTx.Extensions;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+
+namespace DryIoc.Facilities.EFCore.Tests.Extensions
+{
+    public static class TestExtensions
+    {
+	    public static void AddNLogLogging(this IContainer container)
+	    {
+			container.Register<ILoggerFactory, NLogLoggerFactory>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
+		    if (!container.IsRegistered(typeof(ILogger)))
+		    {
+			    container.AddLoggerResolving();
+		    }
+	    }
+    }
+}
