@@ -27,7 +27,7 @@ namespace DryIoc.Transactions.Tests.TransactionManager
 		[SetUp]
 		public void given_manager()
 		{
-			subject = new Transactions.TransactionManager(new ThreadLocalActivityManager(), NullLoggerFactory.Instance);
+			subject = new Transactions.TransactionManager(new AsyncLocalActivityManager(), NullLoggerFactory.Instance);
 		}
 
 		[TearDown]

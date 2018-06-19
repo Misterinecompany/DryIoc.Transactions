@@ -42,7 +42,7 @@ namespace DryIoc.Facilities.AutoTx.Tests
 			// the activity manager shouldn't have the same lifestyle as TransactionInterceptor, as it
 			// calls a static .Net/Mono framework method, and it's the responsibility of
 			// that framework method to keep track of the call context.
-			_Container.Register<IActivityManager, ThreadLocalActivityManager>(Reuse.Singleton);
+			_Container.Register<IActivityManager, AsyncLocalActivityManager>(Reuse.Singleton);
 
 			_TransactionManager = _Container.Resolve<ITransactionManager>();
 		}

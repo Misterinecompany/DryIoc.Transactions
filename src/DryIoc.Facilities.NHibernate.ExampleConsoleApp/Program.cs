@@ -56,7 +56,7 @@ namespace DryIoc.Facilities.NHibernate.ExampleConsoleApp
 		private void Start()
 		{
 			container = new Container();
-			container.Register<ILoggerFactory, NLogLoggerFactory>();
+			container.Register<ILoggerFactory, NLogLoggerFactory>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 			container.AddLoggerResolving();
 
 			container.Register<INHibernateInstaller, NHibInstaller>(Reuse.Singleton);

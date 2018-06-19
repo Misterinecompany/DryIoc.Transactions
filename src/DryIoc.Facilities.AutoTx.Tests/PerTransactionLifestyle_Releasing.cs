@@ -17,6 +17,7 @@ using System.Diagnostics.Contracts;
 using System.Threading;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.AutoTx.Tests.Extensions;
 using DryIoc.Transactions;
 using NLog;
 using NUnit.Framework;
@@ -223,6 +224,7 @@ Test 'Castle.Facilities.AutoTx.Tests.PerTransactionLifestyle_Releasing.Concurren
 		{
 			var container = new Container();
 			
+			container.AddNLogLogging();
 			container.Register<IPerTxServiceFactory, ServiceFactory>(Reuse.Singleton, serviceKey: "per-tx-session.factory");
 			container.Register<IPerTxService>(AutoTxReuse.PerTransaction, Made.Of(() => CreatePerTransactionService(container)));
 			container.Register<Service>(Reuse.Singleton);

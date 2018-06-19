@@ -4,6 +4,7 @@ using System.Threading;
 using System.Transactions;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.AutoTx.Tests.Extensions;
 using DryIoc.Facilities.AutoTx.Tests.TestClasses;
 using DryIoc.Transactions;
 using NUnit.Framework;
@@ -24,6 +25,7 @@ namespace DryIoc.Facilities.AutoTx.Tests
 		{
 			_Container = new Container();
 			_Container.Register<MyService>(Reuse.Singleton);
+			_Container.AddNLogLogging();
 			_Container.AddAutoTx();
 		}
 

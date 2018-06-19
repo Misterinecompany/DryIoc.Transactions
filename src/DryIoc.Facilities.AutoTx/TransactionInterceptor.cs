@@ -226,9 +226,13 @@ namespace DryIoc.Facilities.AutoTx
 						throw new TransactionAbortedException(
 							"Parallel/forked transaction aborted! See inner exception for details.", ex);
 					}
-					catch (Exception)
+					catch (Exception ex)
 					{
 						hasException = true;
+
+						if (_Logger.IsEnabled(LogLevel.Debug))
+							_Logger.LogDebug(ex, ex.Message);
+
 						throw;
 					}
 					finally
