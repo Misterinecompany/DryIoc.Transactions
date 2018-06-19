@@ -14,7 +14,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using System.Threading;
+using System.Threading.Tasks;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Testing;
 using DryIoc.Facilities.AutoTx.Tests.Extensions;
@@ -108,12 +108,12 @@ namespace DryIoc.Facilities.AutoTx.Tests
 		}
 
 		[Test]
-		public void Concurrent_DependentTransaction_AndDisposing()
+		public async Task Concurrent_DependentTransaction_AndDisposing()
 		{
 			// given
 			var container = GetContainer();
-			var childStarted = new ManualResetEvent(false);
-			var childComplete = new ManualResetEvent(false);
+			var childStartedTaskCompletition = new TaskCompletionSource<bool>();
+			Task childCompleteTask;
 
 			// exports from actions, to assert end-state
 			IPerTxService serviceUsed;
@@ -133,7 +133,7 @@ namespace DryIoc.Facilities.AutoTx.Tests
 				Assert.That(createdTx2.ShouldFork, Is.True, "because we're in an ambient and have specified the option");
 				Assert.That(manager.Service.Count, Is.EqualTo(1), "transaction count correct");
 
-				ThreadPool.QueueUserWorkItem(_ =>
+				childCompleteTask = Task.Run(() =>
 				{
 					IPerTxService perTxService;
 
@@ -148,7 +148,7 @@ namespace DryIoc.Facilities.AutoTx.Tests
 							Assert.That(manager.Service.Count, Is.EqualTo(1), "transaction count correct");
 
 							// tell parent it can go on and complete
-							childStarted.Set();
+							Task.Run(() => childStartedTaskCompletition.SetResult(true));
 
 							Assert.That(perTxService.Disposed, Is.False);
 
@@ -162,14 +162,14 @@ namespace DryIoc.Facilities.AutoTx.Tests
 					{
 						possibleException = ex;
 						logger.Debug(ex, "child fault");
+						childStartedTaskCompletition.SetException(ex);
 					}
 					finally
 					{
 						logger.Debug("child finally");
-						childComplete.Set();
 					}
 				});
-				childStarted.WaitOne();
+				await childStartedTaskCompletition.Task.ConfigureAwait(false);
 
 				serviceUsed = resolved;
 
@@ -182,7 +182,7 @@ namespace DryIoc.Facilities.AutoTx.Tests
 
 			Assert.That(serviceUsed.Disposed, Is.True);
 
-			childComplete.WaitOne();
+			await childCompleteTask.ConfigureAwait(false);
 
 			// throw any thread exceptions
 			if (possibleException != null)
