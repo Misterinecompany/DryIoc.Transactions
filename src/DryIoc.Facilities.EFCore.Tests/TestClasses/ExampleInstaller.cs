@@ -9,16 +9,15 @@ namespace DryIoc.Facilities.EFCore.Tests.TestClasses
 
 		public bool IsDefault => true;
 
-		public string SessionFactoryKey => Key;
+		public string DbContextFactoryKey => Key;
 
 		public Type DbContextImplementationType => typeof(ExampleDbContext);
 
 		public DbContextOptionsBuilder Config => new DbContextOptionsBuilder()
-			.UseSqlite("Data Source=DataStore.db;Version=3");
-	}
+			.UseSqlite("Data Source=DataStore.db");
 
-	internal class ExampleDbContext : DbContext
-	{
-
+		public void Registered()
+		{
+		}
 	}
 }

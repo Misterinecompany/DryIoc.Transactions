@@ -15,25 +15,25 @@
 namespace DryIoc.Facilities.EFCore
 {
 	/// <summary>
-	/// 	Specifies the default session management strategy.
+	/// 	Specifies the default DbContext management strategy.
 	/// </summary>
 	public enum DefaultLifeStyleOption : uint // internally, this uint corresponds to the order in which components are registered
 	{
 		/// <summary>
-		/// 	Specifies that sessions should be opened and closed per transaction. This has the semantics
-		/// 	that the session is kept per top transaction, unless the dependent transaction is forked, in
-		/// 	which case, a new session is resolved to avoid sharing the session accross threads.
+		/// 	Specifies that DbContext should be opened and closed per transaction. This has the semantics
+		/// 	that the DbContext is kept per top transaction, unless the dependent transaction is forked, in
+		/// 	which case, a new DbContext is resolved to avoid sharing the DbContext accross threads.
 		/// </summary>
-		SessionPerTransaction = 0,
+		PerTransaction = 0,
 
 		/// <summary>
-		/// 	Specifies that sessions should be opened and closed per web request.
+		/// 	Specifies that DbContext should be opened and closed per web request.
 		/// </summary>
-		SessionPerWebRequest = 1,
+		PerWebRequest = 1,
 
 		/// <summary>
-		/// 	Specifies that the session should be transiently registered.
+		/// 	Specifies that the DbContext should be transiently registered.
 		/// </summary>
-		SessionTransient = 2
+		Transient = 2
 	}
 }

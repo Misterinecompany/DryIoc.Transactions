@@ -15,14 +15,14 @@ namespace DryIoc.Facilities.EFCore
 
 		public static void AddEFCore(this IContainer container)
 		{
-			var nhibernateFacility = new EFCoreFacility();
-			nhibernateFacility.Init(container);
+			var efCoreFacility = new EFCoreFacility();
+			efCoreFacility.Init(container);
 		}
 
 		public static void AddEFCore(this IContainer container, DefaultLifeStyleOption defaultLifeStyle)
 		{
-			var nhibernateFacility = new EFCoreFacility(defaultLifeStyle);
-			nhibernateFacility.Init(container);
+			var efCoreFacility = new EFCoreFacility(defaultLifeStyle);
+			efCoreFacility.Init(container);
 		}
 	}
 }

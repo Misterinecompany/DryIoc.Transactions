@@ -1,5 +1,4 @@
 ﻿using System;
-using DryIoc.Transactions;
 using Microsoft.EntityFrameworkCore;
 
 namespace DryIoc.Facilities.EFCore
@@ -7,34 +6,30 @@ namespace DryIoc.Facilities.EFCore
 	public interface IEFCoreInstaller
 	{
 		/// <summary>
-		/// 	Is this the default session factory
+		/// 	Is this the default DbContext factory
 		/// </summary>
 		bool IsDefault { get; }
 
 		/// <summary>
-		/// 	Gets a session factory key. This key must be unique for the registered
-		/// 	NHibernate installers.
+		/// 	Gets a DbContext factory key. This key must be unique for the registered
+		/// 	EFCore installers.
 		/// </summary>
-		string SessionFactoryKey { get; }
+		string DbContextFactoryKey { get; }
 
-		///// <summary>
-		///// 	An interceptor to assign to the ISession being resolved through this session factory.
-		///// </summary>
-		//Maybe<IInterceptor> Interceptor { get; }
-
-		// TODO add doc-comment here
+		/// <summary>
+		///		Class which inherits from DbContext used as DbContext.
+		/// </summary>
 		Type DbContextImplementationType { get; }
 
 		/// <summary>
 		/// Returns Entity Framework Core configuration
 		/// </summary>
-		DbContextOptionsBuilder Config { get; } //TODO but internally work with DbContextOptions (Builder is only wrapper on DbContextOptions)
+		DbContextOptionsBuilder Config { get; }
 
-		///// <summary>
-		///// 	Call-back to the installer, when the factory is registered
-		///// 	and correctly set up in Windsor..
-		///// </summary>
-		///// <param name = "factory"></param>
-		//void Registered(ISessionFactory factory);
+		/// <summary>
+		/// 	Call-back to the installer, when the factory is registered
+		/// 	and correctly set up in Container
+		/// </summary>
+		void Registered();
 	}
 }
