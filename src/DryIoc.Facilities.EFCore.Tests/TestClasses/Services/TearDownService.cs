@@ -17,7 +17,7 @@ using System.Diagnostics.Contracts;
 using DryIoc.Transactions;
 using NLog;
 
-namespace DryIoc.Facilities.EFCore.Tests.TestClasses
+namespace DryIoc.Facilities.EFCore.Tests.TestClasses.Services
 {
 	public class TearDownService
 	{

@@ -14,7 +14,7 @@
 
 using System;
 
-namespace DryIoc.Facilities.EFCore.Tests.TestClasses
+namespace DryIoc.Facilities.EFCore.Tests.TestClasses.Entities
 {
 	public class EfcThing
 	{

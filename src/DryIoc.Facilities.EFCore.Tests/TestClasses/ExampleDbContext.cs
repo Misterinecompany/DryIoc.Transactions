@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DryIoc.Facilities.EFCore.Tests.TestClasses.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DryIoc.Facilities.EFCore.Tests.TestClasses
 {

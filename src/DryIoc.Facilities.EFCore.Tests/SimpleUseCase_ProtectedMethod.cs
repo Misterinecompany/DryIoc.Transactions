@@ -1,4 +1,4 @@
-// Copyright 2004-2011 Castle Project - http://www.castleproject.org/
+﻿// Copyright 2004-2011 Castle Project - http://www.castleproject.org/
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,10 @@ using NUnit.Framework;
 
 namespace DryIoc.Facilities.EFCore.Tests
 {
-	public class SimpleUseCase_SingleSave : EnsureSchema
+	public class SimpleUseCase_ProtectedMethod : EnsureSchema
 	{
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
 		private Container c;
 
 		[SetUp]
@@ -48,33 +49,32 @@ namespace DryIoc.Facilities.EFCore.Tests
 			c.Dispose();
 		}
 
-		[Test]
-		public void SavingWith_PerTransaction_Lifestyle()
-		{
-			// given
-			using (var scope = c.ResolveScope<ServiceUsingPerTransactionSessionLifestyle>())
-			{
-				// then
-				scope.Service.SaveNewThing();
-				Assert.That(scope.Service.LoadNewThing(), Is.Not.Null, "because it was saved by the previous method call");
-			}
-		}
-
 		private static Container GetContainer()
 		{
 			var c = new Container();
-
-			c.Register<IEFCoreInstaller, ExampleInstaller>(Reuse.Singleton);
-			c.Register<ServiceUsingPerTransactionSessionLifestyle>(Reuse.Transient);
+			c.AddNLogLogging();
+			c.Register<IEFCoreInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 			c.Register<TearDownService>(Reuse.Transient);
 
-			c.AddNLogLogging();
+			// Adding AutoTx and EFCore must be done after all components are initialized
+
+			return c;
+		}
+
+		[Test]
+		public void Register_Run()
+		{
+			c.Register<ServiceWithProtectedMethodInTransaction>(Reuse.Singleton);
+
 			c.AddAutoTx();
 			c.AddEFCore();
 
 			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
 
-			return c;
+			using (var s = c.ResolveScope<ServiceWithProtectedMethodInTransaction>())
+			{
+				s.Service.Do();
+			}
 		}
 	}
 }

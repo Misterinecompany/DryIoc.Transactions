@@ -1,6 +1,7 @@
 ﻿using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.EFCore.Tests.Extensions;
 using DryIoc.Facilities.EFCore.Tests.TestClasses;
+using DryIoc.Facilities.EFCore.Tests.TestClasses.Entities;
 using DryIoc.Transactions;
 using NUnit.Framework;
 
