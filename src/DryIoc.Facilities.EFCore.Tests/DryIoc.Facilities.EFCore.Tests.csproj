@@ -27,6 +27,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DryIoc.EFCore.Sqlite\DryIoc.EFCore.Sqlite.csproj" />
     <ProjectReference Include="..\DryIoc.Facilities.AutoTx\DryIoc.Facilities.AutoTx.csproj" />
     <ProjectReference Include="..\DryIoc.Facilities.EFCore\DryIoc.Facilities.EFCore.csproj" />
     <ProjectReference Include="..\DryIoc.Transactions\DryIoc.Transactions.csproj" />
