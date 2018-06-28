@@ -125,9 +125,15 @@ namespace DryIoc.Facilities.EFCore
 				.OrderByDescending(x => x.Instance.IsDefault)
 				.Do(x =>
 				{
+					// Validate EFCoreInstaller values
+
 					if (!added.Add(x.Instance.DbContextFactoryKey))
 						throw new EFCoreFacilityException(
 							$"Duplicate DbContext factory keys '{x.Instance.DbContextFactoryKey}' added. Verify that your IEFCoreInstaller instances are not named the same.");
+
+					CheckValidDbContextType(x.DbContextImplementationType);
+					CheckValidDbContextConstructor(x.DbContextImplementationType);
+					CheckValidDbContextManagerType(x.Instance.TypedDbContextManagerType);
 				})
 				.Do(x =>
 				{
@@ -142,16 +148,34 @@ namespace DryIoc.Facilities.EFCore
 					RegisterDbContext(container, x, 1);
 					RegisterDbContext(container, x, 2);
 
+					// Register DbContextManager for getting/creating DbContext by current context
 					var dbContextServiceKey = x.Instance.DbContextFactoryKey + DbContextTransientSuffix;
 					var transactionCommitAction = x.Instance.TransactionCommitAction;
 					container.Register<IDbContextManager>(Reuse.Singleton,
 						Made.Of(() => new DbContextManager(Arg.Of<Func<DbContext>>(dbContextServiceKey), Arg.Of<ITransactionManager>(), Arg.Of<IDbContextStore>(), transactionCommitAction)),
 						serviceKey: x.Instance.DbContextFactoryKey + DbContextManagerSuffix);
 
+					// Register typed version of DbContextManager (wrapper) for getting correctly casted DbContext
+					if (x.Instance.TypedDbContextManagerType != null)
+					{
+						container.Register(x.Instance.TypedDbContextManagerType, Reuse.Singleton,
+							serviceKey: x.Instance.DbContextFactoryKey + DbContextManagerSuffix);
+					}
+					
+					// Register default services mapping (without serviceKey specification)
 					if (x.Instance.IsDefault)
 					{
+						// Register default DbContextOptions and DbContextManager
 						container.UseInstance(x.Config);
 						container.RegisterMapping<IDbContextManager, IDbContextManager>(registeredServiceKey: x.Instance.DbContextFactoryKey + DbContextManagerSuffix);
+
+						// Register default typed version of DbContextManager (wrapper)
+						if (x.Instance.TypedDbContextManagerType != null)
+						{
+							container.RegisterMapping(x.Instance.TypedDbContextManagerType,
+								x.Instance.TypedDbContextManagerType,
+								registeredServiceKey: x.Instance.DbContextFactoryKey + DbContextManagerSuffix);
+						}
 
 						isDefaultRegistered = true;
 					}
@@ -165,6 +189,31 @@ namespace DryIoc.Facilities.EFCore
 
 			if (logger.IsEnabled(LogLevel.Debug))
 				logger.LogDebug("Initialized EFCoreFacility");
+		}
+
+		private static void CheckValidDbContextConstructor(Type dbContextImplementationType)
+		{
+			var constructor = dbContextImplementationType.GetPublicInstanceConstructors().FirstOrDefault(c => c.GetParameters().Any(p => p.ParameterType == typeof(DbContextOptions)));
+			if (constructor == null)
+			{
+				throw new EFCoreFacilityException($"Type {dbContextImplementationType} must contain constructor with parameter DbContextOptions which calls base constructor with this parameter");
+			}
+		}
+
+		private static void CheckValidDbContextType(Type dbContextImplementationType)
+		{
+			if (!dbContextImplementationType.IsAssignableTo(typeof(DbContext)))
+			{
+				throw new EFCoreFacilityException($"Type {dbContextImplementationType} is not valid DbContext (it doesn't inherit from DbContext)");
+			}
+		}
+
+		private static void CheckValidDbContextManagerType(Type typedDbContextManagerType)
+		{
+			if (typedDbContextManagerType != null && !typedDbContextManagerType.IsAssignableToGenericType(typeof(DbContextManager<>)))
+			{
+				throw new EFCoreFacilityException($"Type {typedDbContextManagerType} is not valid DbContextManager (it doesn't inherit from {typeof(DbContextManager<>)})");
+			}
 		}
 
 		private void RegisterDbContext(IContainer container, Data x, uint index, bool registerAsDefault = false)

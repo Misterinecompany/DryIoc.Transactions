@@ -21,6 +21,8 @@ namespace DryIoc.Facilities.EFCore.Tests.TestClasses
 
 		public Type DbContextImplementationType => typeof(ExampleDbContext);
 
+		public Type TypedDbContextManagerType => typeof(ExampleDbContextManager);
+
 		public DbContextOptionsBuilder Config => new DbContextOptionsBuilder()
 			.UseLoggerFactory(_LoggerFactory)
 			//.UseSqliteWithIgnoredAmbientTransaction("Data Source=C:\\DataStore.db");

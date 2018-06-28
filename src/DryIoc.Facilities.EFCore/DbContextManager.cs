@@ -50,7 +50,7 @@ namespace DryIoc.Facilities.EFCore
 			this.commitAction = commitAction;
 		}
 
-		DbContext IDbContextManager.OpenDbContext()
+		public DbContext OpenDbContext()
 		{
 			Maybe<ITransaction> transaction = ObtainCurrentTransaction();
 
@@ -91,6 +91,11 @@ namespace DryIoc.Facilities.EFCore
 					return dbContext;
 				}
 			}
+		}
+
+		public TDbContext OpenDbContextTyped<TDbContext>() where TDbContext : DbContext
+		{
+			return (TDbContext) OpenDbContext();
 		}
 
 		/// <summary>
@@ -150,6 +155,25 @@ namespace DryIoc.Facilities.EFCore
 		private void ClearStoredDbContext()
 		{
 			dbContextStore.ClearData();
+		}
+	}
+
+	/// <summary>
+	///		DbContextManager&lt;TDbContext&gt; is wrapper around DbContextManager for returning DbContext casted to correct type.
+	/// </summary>
+	/// <typeparam name="TDbContext"></typeparam>
+	public class DbContextManager<TDbContext> where TDbContext : DbContext
+	{
+		private readonly IDbContextManager _DbContextManager;
+
+		public DbContextManager(IDbContextManager dbContextManager)
+		{
+			_DbContextManager = dbContextManager;
+		}
+
+		public TDbContext OpenDbContext()
+		{
+			return _DbContextManager.OpenDbContextTyped<TDbContext>();
 		}
 	}
 }

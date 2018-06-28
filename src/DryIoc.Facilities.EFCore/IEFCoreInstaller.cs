@@ -17,9 +17,15 @@ namespace DryIoc.Facilities.EFCore
 		string DbContextFactoryKey { get; }
 
 		/// <summary>
-		///		Class which inherits from DbContext used as DbContext.
+		///		Class which inherits from <see cref="DbContext"/> used as DbContext.
 		/// </summary>
 		Type DbContextImplementationType { get; }
+
+		/// <summary>
+		///		It's possible to register typed DbContextManager to IoC. This type then will return correctly casted DbContext.
+		///		This type should inherit from <see cref="DbContextManager{TDbContext}"/>
+		/// </summary>
+		Type TypedDbContextManagerType { get; }
 
 		/// <summary>
 		/// Returns Entity Framework Core configuration

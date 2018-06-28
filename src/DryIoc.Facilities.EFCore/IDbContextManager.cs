@@ -27,5 +27,12 @@ namespace DryIoc.Facilities.EFCore
 		/// </summary>
 		/// <returns>A non-null DbContext.</returns>
 		DbContext OpenDbContext();
+
+		/// <summary>
+		///		Helper method for getting DbContext with specific type. Gets a new or existing DbContext depending on your context.
+		/// </summary>
+		/// <typeparam name="TDbContext"></typeparam>
+		/// <returns>A non-null DbContext.</returns>
+		TDbContext OpenDbContextTyped<TDbContext>() where TDbContext : DbContext;
 	}
 }
