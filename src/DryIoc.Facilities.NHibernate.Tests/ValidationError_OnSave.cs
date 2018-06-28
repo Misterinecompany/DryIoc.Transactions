@@ -211,12 +211,43 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			var t = LoadThing();
 		}
 
+		public virtual void RunWithRollback()
+		{
+			Exception error = null;
+			try
+			{
+				SaveNewThingWithFollowingError();
+			}
+			catch (InvalidOperationException exception)
+			{
+				error = exception;
+			}
+
+			Assert.IsNotNull(error, "Saving should failed with InvalidOperationException");
+
+			var thing = GetThing();
+			Assert.IsNull(thing, "Saved item should rollback, but is still in database");
+		}
+
 		[Transaction]
 		protected virtual void SaveNewThing()
 		{
 			var s = sessionManager.OpenSession();
 			var thing = new Thing(18.0);
 			thingId = (Guid)s.Save(thing);
+		}
+
+		[Transaction]
+		protected virtual void SaveNewThingWithFollowingError()
+		{
+			using (var s = sessionManager.OpenSession())
+			{
+				var thing = new Thing(37.0);
+				thingId = (Guid)s.Save(thing);
+				s.Flush();
+
+				throw new InvalidOperationException("Artificial error after saving item");
+			}
 		}
 
 		[Transaction]
@@ -233,7 +264,12 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			var s = sessionManager.OpenSession(); // we are expecting this to be a new session
 			return s.Load<Thing>(thingId);
 		}
-	}
 
-	
+		[Transaction]
+		protected virtual Thing GetThing()
+		{
+			var s = sessionManager.OpenSession();
+			return s.QueryOver<Thing>().Where(x => x.Id == thingId).SingleOrDefault();
+		}
+	}
 }

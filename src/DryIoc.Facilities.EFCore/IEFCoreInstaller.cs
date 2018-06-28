@@ -27,9 +27,20 @@ namespace DryIoc.Facilities.EFCore
 		DbContextOptionsBuilder Config { get; }
 
 		/// <summary>
+		/// Action performed after transaction commit for DbContext obtained from DbContextManager
+		/// </summary>
+		TransactionCommitAction TransactionCommitAction { get; }
+
+		/// <summary>
 		/// 	Call-back to the installer, when the factory is registered
 		/// 	and correctly set up in Container
 		/// </summary>
 		void Registered();
+	}
+
+	public enum TransactionCommitAction
+	{
+		Nothing,
+		Dispose,
 	}
 }

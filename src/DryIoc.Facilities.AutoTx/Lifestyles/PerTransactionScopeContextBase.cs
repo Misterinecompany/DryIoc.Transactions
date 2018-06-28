@@ -61,18 +61,22 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 			lock (_LockObject)
 			{
+				if (_Logger.IsEnabled(LogLevel.Debug))
+					_Logger.LogDebug($"Scope for key '{key}' not found in per-tx storage. Creating new Scope instance.");
+
 				scope = new Scope(name: RootScopeName);
 				_ScopePerTransactionIdStorage.Add(key, scope);
 
 				transaction.Inner.TransactionCompleted += (sender, args) =>
 				{
+					if (_Logger.IsEnabled(LogLevel.Debug))
+						_Logger.LogDebug($"Transaction#{key} completed, disposing whole Scope assigned to this transaction");
+
 					lock (_LockObject)
 					{
 						var scopeFromStorage = _ScopePerTransactionIdStorage[key];
 						if (!_Disposed)
 						{
-							Contract.Assume(_ScopePerTransactionIdStorage.Count > 0);
-
 							_ScopePerTransactionIdStorage.Remove(key);
 							scopeFromStorage.Dispose();
 						}

@@ -17,9 +17,11 @@ namespace DryIoc.Facilities.NHibernate
 			return _AsyncLocalSession.Value;
 		}
 
-		public void ClearData()
+		public ISession GetAndClearData()
 		{
+			var data = _AsyncLocalSession.Value;
 			_AsyncLocalSession.Value = null;
+			return data;
 		}
 	}
 }

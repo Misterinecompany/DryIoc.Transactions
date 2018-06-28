@@ -73,9 +73,10 @@ namespace DryIoc.Facilities.EFCore.Tests.TestClasses
 				};
 
 				dbContext.Add(thing);
+				dbContext.SaveChanges();
 
 				id = thing.Id;
-
+				
 				logger.Debug("exiting using-block of session");
 			}
 		}
@@ -83,7 +84,8 @@ namespace DryIoc.Facilities.EFCore.Tests.TestClasses
 		[Transaction]
 		public virtual EfcThing LoadNewThing()
 		{
-			// be aware how I'm not manually disposing the ISession here; I could, but it would make no difference
+			// be aware how I'm not manually disposing the DbContext here; I could, but it would make no difference
+			// (DbContext is resolved from Container where is registered with Reuse.PerTopTransaction)
 			return getDbContext().Things.Find(id);
 		}
 	}

@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using DryIoc.Facilities.EFCore.Tests.TestClasses;
+using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
 
 namespace DryIoc.Facilities.EFCore.Tests.Framework
@@ -22,7 +23,7 @@ namespace DryIoc.Facilities.EFCore.Tests.Framework
 	    [OneTimeSetUp]
 		public void Setup()
 		{
-			var configuration = new ExampleInstaller().Config;
+			var configuration = new ExampleInstaller(NullLoggerFactory.Instance).Config;
 			using (var dbContext = new ExampleDbContext(configuration.Options))
 			{
 				dbContext.Database.EnsureCreated();

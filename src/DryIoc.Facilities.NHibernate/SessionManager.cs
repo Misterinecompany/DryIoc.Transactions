@@ -135,7 +135,8 @@ namespace DryIoc.Facilities.NHibernate
 		/// <returns></returns>
 		private void ClearStoredSession()
 		{
-			sessionStore.ClearData();
+			var session = sessionStore.GetAndClearData();
+			session.Dispose();
 		}
 
 	}

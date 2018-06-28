@@ -6,6 +6,6 @@ namespace DryIoc.Facilities.NHibernate
 	{
 		void SetData(ISession data);
 		ISession GetData();
-		void ClearData();
+		ISession GetAndClearData();
 	}
 }

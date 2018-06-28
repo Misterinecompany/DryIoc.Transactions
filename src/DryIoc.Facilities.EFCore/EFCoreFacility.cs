@@ -143,8 +143,9 @@ namespace DryIoc.Facilities.EFCore
 					RegisterDbContext(container, x, 2);
 
 					var dbContextServiceKey = x.Instance.DbContextFactoryKey + DbContextTransientSuffix;
+					var transactionCommitAction = x.Instance.TransactionCommitAction;
 					container.Register<IDbContextManager>(Reuse.Singleton,
-						Made.Of(() => new DbContextManager(Arg.Of<Func<DbContext>>(dbContextServiceKey), Arg.Of<ITransactionManager>(), Arg.Of<IDbContextStore>())),
+						Made.Of(() => new DbContextManager(Arg.Of<Func<DbContext>>(dbContextServiceKey), Arg.Of<ITransactionManager>(), Arg.Of<IDbContextStore>(), transactionCommitAction)),
 						serviceKey: x.Instance.DbContextFactoryKey + DbContextManagerSuffix);
 
 					if (x.Instance.IsDefault)
@@ -178,12 +179,15 @@ namespace DryIoc.Facilities.EFCore
 			container.Register(x.DbContextImplementationType, nameAndLifeStyle.Item2,
 				Made.Of(type => type.GetPublicInstanceConstructors().SingleOrDefault(c =>
 					c.GetParameters().Any(p => p.ParameterType == typeof(DbContextOptions)))),
-				Setup.With(allowDisposableTransient: true), // TODO resolve handling disposing
+				Setup.With(allowDisposableTransient: true), // Transient disposing is handled by DbContextManager or must be hadled manually by user
 				serviceKey: nameAndLifeStyle.Item1);
+
+			container.RegisterMapping(typeof(DbContext), x.DbContextImplementationType, nameAndLifeStyle.Item1, nameAndLifeStyle.Item1);
 
 			if (registerAsDefault)
 			{
 				container.RegisterMapping(x.DbContextImplementationType, x.DbContextImplementationType, registeredServiceKey: nameAndLifeStyle.Item1);
+				container.RegisterMapping(typeof(DbContext), x.DbContextImplementationType, registeredServiceKey: nameAndLifeStyle.Item1);
 			}
 		}
 

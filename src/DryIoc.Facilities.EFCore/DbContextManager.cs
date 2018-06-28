@@ -30,6 +30,7 @@ namespace DryIoc.Facilities.EFCore
 		private readonly Func<DbContext> getDbContext;
 		private readonly ITransactionManager transactionManager;
 		private readonly IDbContextStore dbContextStore;
+		private readonly TransactionCommitAction commitAction;
 
 		/// <summary>
 		/// 	Constructor.
@@ -37,7 +38,8 @@ namespace DryIoc.Facilities.EFCore
 		/// <param name="getDbContext"></param>
 		/// <param name="transactionManager"></param>
 		/// <param name="dbContextStore"></param>
-		public DbContextManager(Func<DbContext> getDbContext, ITransactionManager transactionManager, IDbContextStore dbContextStore)
+		/// <param name="commitAction"></param>
+		public DbContextManager(Func<DbContext> getDbContext, ITransactionManager transactionManager, IDbContextStore dbContextStore, TransactionCommitAction commitAction)
 		{
 			Contract.Requires(getDbContext != null);
 			Contract.Ensures(this.getDbContext != null);
@@ -45,6 +47,7 @@ namespace DryIoc.Facilities.EFCore
 			this.getDbContext = getDbContext;
 			this.transactionManager = transactionManager;
 			this.dbContextStore = dbContextStore;
+			this.commitAction = commitAction;
 		}
 
 		DbContext IDbContextManager.OpenDbContext()
@@ -97,6 +100,19 @@ namespace DryIoc.Facilities.EFCore
 		/// <param name="e">Just event stuff</param>
 		void Inner_TransactionCompleted(object sender, System.Transactions.TransactionEventArgs e)
 		{
+			var dbContext = dbContextStore.GetData();
+
+			switch (commitAction)
+			{
+				case TransactionCommitAction.Nothing:
+					break;
+				case TransactionCommitAction.Dispose:
+					dbContext.Dispose();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+			
 			ClearStoredDbContext();
 		}
 
@@ -135,6 +151,5 @@ namespace DryIoc.Facilities.EFCore
 		{
 			dbContextStore.ClearData();
 		}
-
 	}
 }
