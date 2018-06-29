@@ -70,7 +70,7 @@ namespace DryIoc.Facilities.EFCore.Tests
 			x.Service.RunAndAssert();
 
 			//Assert
-			Assert.AreEqual(x.Service.GetThingsCount(), thingCount + 1, "A thing was created");
+			Assert.AreEqual(thingCount + 1, x.Service.GetThingsCount(), "A thing was created and transaction commited");
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace DryIoc.Facilities.EFCore.Tests
 			}
 
 			//Assert
-			Assert.AreEqual(x.Service.GetThingsCount(), thingCount, "No thing was created");
+			Assert.AreEqual(thingCount, x.Service.GetThingsCount(), "No thing was created");
 		}
 	}
 
@@ -125,7 +125,7 @@ namespace DryIoc.Facilities.EFCore.Tests
 			SaveNewThing();
 
 			//Assert
-			Assert.AreEqual(GetThingsCount(), thingCount, "No thing was created yet");
+			Assert.AreEqual(thingCount + 1, GetThingsCount(), "New thing was created, but transaction is not commited yet");
 		}
 
 		[Transaction]
