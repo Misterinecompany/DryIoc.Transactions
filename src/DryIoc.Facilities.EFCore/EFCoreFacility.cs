@@ -23,7 +23,7 @@ namespace DryIoc.Facilities.EFCore
 	public class EFCoreFacility
 	{
 		private ILogger logger = NullLogger.Instance;
-		private readonly DefaultLifeStyleOption defaultLifeStyle;
+		private readonly DefaultLifeStyleOption _defaultDbContextLifeStyle;
 
 		/// <summary>
 		/// 	The suffix on the name of the component that has a lifestyle of Per Transaction.
@@ -55,10 +55,10 @@ namespace DryIoc.Facilities.EFCore
 		/// <summary>
 		/// 	Instantiates a new EFCoreFacility with a given lifestyle option.
 		/// </summary>
-		/// <param name = "defaultLifeStyle">The default DbContext life style.</param>
-		public EFCoreFacility(DefaultLifeStyleOption defaultLifeStyle)
+		/// <param name = "defaultDbContextLifeStyle">The default DbContext life style.</param>
+		public EFCoreFacility(DefaultLifeStyleOption defaultDbContextLifeStyle)
 		{
-			this.defaultLifeStyle = defaultLifeStyle;
+			_defaultDbContextLifeStyle = defaultDbContextLifeStyle;
 		}
 
 		///<summary>
@@ -246,7 +246,7 @@ namespace DryIoc.Facilities.EFCore
 							  "there are only three supported lifestyles; per transaction, per web request and transient");
 			Contract.Ensures(Contract.Result<Tuple<string, IReuse>>() != null);
 
-			switch (defaultLifeStyle)
+			switch (_defaultDbContextLifeStyle)
 			{
 				case DefaultLifeStyleOption.PerTransaction:
 					if (index == 0)

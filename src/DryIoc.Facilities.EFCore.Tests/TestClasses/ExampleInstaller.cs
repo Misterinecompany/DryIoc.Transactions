@@ -1,12 +1,18 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace DryIoc.Facilities.EFCore.Tests.TestClasses
 {
 	internal class ExampleInstaller : IEFCoreInstaller
 	{
 		private readonly ILoggerFactory _LoggerFactory;
+
+		public ExampleInstaller()
+		{
+			_LoggerFactory = NullLoggerFactory.Instance;
+		}
 
 		public ExampleInstaller(ILoggerFactory loggerFactory)
 		{

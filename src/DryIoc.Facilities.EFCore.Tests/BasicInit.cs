@@ -16,7 +16,7 @@ namespace DryIoc.Facilities.EFCore.Tests
 		{
 			var c = new Container();
 			c.AddNLogLogging();
-			c.Register<IEFCoreInstaller, ExampleInstaller>(Reuse.Singleton);
+			c.Register<IEFCoreInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 			c.Register<SimpleService>(Reuse.Singleton);
 			c.AddAutoTx();
 			c.AddEFCore();

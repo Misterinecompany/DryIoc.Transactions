@@ -1,4 +1,5 @@
-﻿using DryIoc.Facilities.EFCore.Tests.TestClasses.Entities;
+﻿using System;
+using DryIoc.Facilities.EFCore.Tests.TestClasses.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DryIoc.Facilities.EFCore.Tests.TestClasses
@@ -10,6 +11,8 @@ namespace DryIoc.Facilities.EFCore.Tests.TestClasses
 		}
 
 		public DbSet<EfcThing> Things { get; set; }
+
+		public Guid DbContextId { get; } = Guid.NewGuid();
 	}
 
 	public class ExampleDbContextManager : DbContextManager<ExampleDbContext>

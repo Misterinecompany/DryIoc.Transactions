@@ -64,7 +64,7 @@ namespace DryIoc.Facilities.EFCore.Tests
 		{
 			var c = new Container();
 
-			c.Register<IEFCoreInstaller, ExampleInstaller>(Reuse.Singleton);
+			c.Register<IEFCoreInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 			c.Register<ServiceUsingPerTransactionSessionLifestyle>(Reuse.Transient);
 			c.Register<TearDownService>(Reuse.Transient);
 

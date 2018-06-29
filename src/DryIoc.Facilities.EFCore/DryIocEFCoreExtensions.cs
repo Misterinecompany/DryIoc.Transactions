@@ -19,9 +19,9 @@ namespace DryIoc.Facilities.EFCore
 			efCoreFacility.Init(container);
 		}
 
-		public static void AddEFCore(this IContainer container, DefaultLifeStyleOption defaultLifeStyle)
+		public static void AddEFCore(this IContainer container, DefaultLifeStyleOption defaultDbContextLifeStyle)
 		{
-			var efCoreFacility = new EFCoreFacility(defaultLifeStyle);
+			var efCoreFacility = new EFCoreFacility(defaultDbContextLifeStyle);
 			efCoreFacility.Init(container);
 		}
 	}
