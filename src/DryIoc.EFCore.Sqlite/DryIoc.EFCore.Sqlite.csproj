@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <Copyright>Copyright (c) .NET Foundation and Contributors</Copyright>
+    <Version>0.1.0</Version>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageOutputPath>..\..\build\</PackageOutputPath>
+    <Authors>Microsoft</Authors>
+    <Description>SQLite implementation with disabled ambient transaction handling.</Description>
   </PropertyGroup>
 
   <ItemGroup>

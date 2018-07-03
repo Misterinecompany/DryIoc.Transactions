@@ -46,14 +46,14 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\buildscripts\CastleKey.snk</AssemblyOriginatorKeyFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageOutputPath>..\..\build\nuget\</PackageOutputPath>
+    <PackageOutputPath>..\..\build\</PackageOutputPath>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>1.0.0</Version>
+    <Version>0.1.0</Version>
     <Product>DryIoc AutoTx Facility</Product>
     <Authors>Henrik Feldt</Authors>
     <Company />
     <Description>This facility enables ambient easy-to-use declarative transactions through the [Transaction] attribute. This is the glue that holds the bits and pieces from DryIoc Transactions together and the stuff that will make your co-workers googly-eyed and impressed.</Description>
-    <PackageProjectUrl>https://github.com/castleproject/Castle.Transactions</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Misterinecompany/DryIoc.Transactions</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <Copyright>Apache 2.0 Licensed. (c) The Castle Project 2004-2011</Copyright>
   </PropertyGroup>

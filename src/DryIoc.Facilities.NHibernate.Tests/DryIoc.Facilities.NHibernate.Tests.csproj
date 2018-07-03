@@ -4,10 +4,11 @@
     <TargetFramework>net461</TargetFramework>
     <AssemblyName>DryIoc.Facilities.NHibernate.Tests</AssemblyName>
     <PackageId>DryIoc.Facilities.NHibernate.Tests</PackageId>
-    <Version>1.0.0.16087</Version>
-    <Company>Logibit AB</Company>
+    <Version>1.0.0</Version>
+    <Company>Henrik Feldt</Company>
     <Description>A library for making it easier to deal with NHibernate and Transactions</Description>
     <Copyright>(c) 2015 by Henrik Feldt</Copyright>
+    <Authors>Henrik Feldt</Authors>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config">

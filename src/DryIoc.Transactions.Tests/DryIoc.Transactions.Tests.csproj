@@ -23,7 +23,7 @@
     <Copyright>Apache 2.0 Licensed. (c) The Castle Project 2004-2011</Copyright>
     <Authors>Henrik Feldt</Authors>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/castleproject/Castle.Transactions</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/Misterinecompany/DryIoc.Transactions</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\buildscripts\TestAssemblyInfo.cs" Link="TestAssemblyInfo.cs" />

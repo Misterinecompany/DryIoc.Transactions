@@ -43,10 +43,16 @@
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\buildscripts\CastleKey.snk</AssemblyOriginatorKeyFile>
-    <Version>1.0.0.16087</Version>
-    <Company>Logibit AB</Company>
+    <Version>0.1.0</Version>
+    <Company>Henrik Feldt</Company>
     <Description>A library for making it easier to deal with NHibernate and Transactions</Description>
     <Copyright>(c) 2015 by Henrik Feldt</Copyright>
+    <Authors>Henrik Feldt</Authors>
+    <PackageProjectUrl>https://github.com/Misterinecompany/DryIoc.Transactions</PackageProjectUrl>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageOutputPath>..\..\build\</PackageOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\buildscripts\CastleKey.snk">
