@@ -5,7 +5,7 @@ using DryIoc.Facilities.AutoTx.Extensions;
 
 namespace DryIoc.Facilities.AutoTx.Lifestyles
 {
-	public abstract class PerTransactionReuseBase : IReuse, IReuseV3
+	public abstract class PerTransactionReuseBase : IReuse
 	{
 		private readonly PerTransactionScopeContextBase _PerTransactionScopeContextBase;
 
@@ -16,7 +16,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 		public int Lifespan => 50;
 
-		#region IReuseV3 implementation
+		public object Name => null;
 
 		/// <summary>Returns item from transaction scope.</summary>
 		/// <param name="scopeContext">Transaction scope context to select from.</param>
@@ -34,15 +34,15 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 			typeof(PerTransactionReuseBase).GetSingleMethodOrNull("GetOrAddItemOrDefault");
 
 		/// <summary>Returns expression call to <see cref="GetOrAddItemOrDefault"/>.</summary>
-		public Expression Apply(Request request, bool trackTransientDisposable, Expression createItemExpr)
+		public Expression Apply(Request request, Expression serviceFactoryExpr)
 		{
-			var itemId = trackTransientDisposable ? -1 : request.FactoryID;
+			var itemId = request.TracksTransientDisposable ? -1 : request.FactoryID;
 
 			return Expression.Call(_GetOrAddOrDefaultMethod,
 				Expression.Constant(_PerTransactionScopeContextBase),
 				Expression.Constant(request),
 				Expression.Constant(itemId),
-				Expression.Lambda<CreateScopedValue>(createItemExpr));
+				Expression.Lambda<CreateScopedValue>(serviceFactoryExpr));
 		}
 
 		public bool CanApply(Request request)
@@ -51,27 +51,6 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 		}
 
 		public abstract Expression ToExpression(Func<object, Expression> fallbackConverter);
-
-		#endregion
-
-		#region Reuse implementation
-
-		public IScope GetScopeOrDefault(Request request)
-		{
-			return _PerTransactionScopeContextBase.GetCurrentOrDefault(request.ServiceType);
-		}
-
-		public Expression GetScopeExpression(Request request)
-		{
-			return Throw.For<Expression>(Error.Of("Obsolete"));
-		}
-
-		public int GetScopedItemIdOrSelf(int factoryId, Request request)
-		{
-			return GetScopeOrDefault(request).GetScopedItemIdOrSelf(factoryId);
-		}
-
-		#endregion
 	}
 
 	public class PerTransactionReuse : PerTransactionReuseBase

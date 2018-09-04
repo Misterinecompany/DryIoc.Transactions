@@ -10,7 +10,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 	/// The lifestyle class with underlying lifestyle class which is resolved from the Container
 	/// </summary>
 	/// <typeparam name="T">Primary lifestyle manager which has its constructor resolved through the Container.</typeparam>
-	public abstract class WrapperReuseBase<T> : IReuse, IReuseV3 where T : PerTransactionReuseBase
+	public abstract class WrapperReuseBase<T> : IReuse where T : PerTransactionReuseBase
 	{
 		private readonly object _Lock = new object();
 		private ILogger _Logger;
@@ -19,9 +19,11 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 		public int Lifespan => 50;
 
-		public Expression Apply(Request request, bool trackTransientDisposable, Expression createItemExpr)
+		public object Name => null;
+
+		public Expression Apply(Request request, Expression serviceFactoryExpr)
 		{
-			return GetInnerReuse(request).Apply(request, trackTransientDisposable, createItemExpr);
+			return GetInnerReuse(request).Apply(request, serviceFactoryExpr);
 		}
 
 		public bool CanApply(Request request)
@@ -30,21 +32,6 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 		}
 
 		public abstract Expression ToExpression(Func<object, Expression> fallbackConverter);
-
-		public IScope GetScopeOrDefault(Request request)
-		{
-			return GetInnerReuse(request).GetScopeOrDefault(request);
-		}
-
-		public Expression GetScopeExpression(Request request)
-		{
-			return GetInnerReuse(request).GetScopeExpression(request);
-		}
-
-		public int GetScopedItemIdOrSelf(int factoryId, Request request)
-		{
-			return GetInnerReuse(request).GetScopedItemIdOrSelf(factoryId, request);
-		}
 
 		private T GetInnerReuse(Request request)
 		{

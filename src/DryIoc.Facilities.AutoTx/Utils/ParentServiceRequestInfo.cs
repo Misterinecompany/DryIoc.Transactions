@@ -7,13 +7,13 @@ namespace DryIoc.Facilities.AutoTx.Utils
 	{
 		private readonly ProxyTypeStorage _ProxyTypeStorage;
 
-		public ParentServiceRequestInfo(RequestInfo requestInfo, ProxyTypeStorage proxyTypeStorage)
+		public ParentServiceRequestInfo(Request requestInfo, ProxyTypeStorage proxyTypeStorage)
 		{
 			_ProxyTypeStorage = proxyTypeStorage;
 			RequestInfo = requestInfo.Parent.Parent;
 		}
 
-		public RequestInfo RequestInfo { get; }
+		public Request RequestInfo { get; }
 
 		public Type ImplementationType
 		{

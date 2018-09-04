@@ -62,7 +62,7 @@ namespace DryIoc.Facilities.AutoTx
 			// add capability to inject info about requested service to the constructor
 			container.Register<ProxyTypeStorage>(Reuse.Singleton);
 			container.Register(Made.Of(
-				() => new ParentServiceRequestInfo(Arg.Index<RequestInfo>(0), Arg.Of<ProxyTypeStorage>()), 
+				() => new ParentServiceRequestInfo(Arg.Index<Request>(0), Arg.Of<ProxyTypeStorage>()), 
 				request => request), setup: Setup.With(asResolutionCall: true));
 
 			// register PerTransactionScopeContext to container as singleton (one storage for scope-per-transaction)

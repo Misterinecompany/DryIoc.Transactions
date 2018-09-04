@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.3.1" />
-    <PackageReference Include="DryIoc.dll" Version="2.12.10" />
+    <PackageReference Include="DryIoc.dll" Version="3.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DryIoc.Transactions\DryIoc.Transactions.csproj" />

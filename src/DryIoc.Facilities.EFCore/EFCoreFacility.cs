@@ -193,7 +193,7 @@ namespace DryIoc.Facilities.EFCore
 
 		private static void CheckValidDbContextConstructor(Type dbContextImplementationType)
 		{
-			var constructor = dbContextImplementationType.GetPublicInstanceConstructors().FirstOrDefault(c => c.GetParameters().Any(p => p.ParameterType == typeof(DbContextOptions)));
+			var constructor = dbContextImplementationType.PublicConstructors().FirstOrDefault(c => c.GetParameters().Any(p => p.ParameterType == typeof(DbContextOptions)));
 			if (constructor == null)
 			{
 				throw new EFCoreFacilityException($"Type {dbContextImplementationType} must contain constructor with parameter DbContextOptions which calls base constructor with this parameter");
@@ -226,7 +226,7 @@ namespace DryIoc.Facilities.EFCore
 			var nameAndLifeStyle = GetNameAndLifeStyle(index, dbContextFactoryKey);
 
 			container.Register(x.DbContextImplementationType, nameAndLifeStyle.Item2,
-				Made.Of(type => type.GetPublicInstanceConstructors().SingleOrDefault(c =>
+				Made.Of(type => type.PublicConstructors().SingleOrDefault(c =>
 					c.GetParameters().Any(p => p.ParameterType == typeof(DbContextOptions)))),
 				Setup.With(allowDisposableTransient: true), // Transient disposing is handled by DbContextManager or must be hadled manually by user
 				serviceKey: nameAndLifeStyle.Item1);
