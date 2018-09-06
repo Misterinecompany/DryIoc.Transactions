@@ -1,23 +1,23 @@
 ﻿using System.Threading;
-using NHibernate;
+using DryIoc.Facilities.NHibernate.UnitOfWork;
 
 namespace DryIoc.Facilities.NHibernate
 {
 	public class AsyncLocalSessionStore : ISessionStore
 	{
-		private readonly AsyncLocal<ISession> _AsyncLocalSession = new AsyncLocal<ISession>();
+		private readonly AsyncLocal<IUnitOfWork> _AsyncLocalSession = new AsyncLocal<IUnitOfWork>();
 
-		public void SetData(ISession data)
+		public void SetData(IUnitOfWork data)
 		{
 			_AsyncLocalSession.Value = data;
 		}
 
-		public ISession GetData()
+		public IUnitOfWork GetData()
 		{
 			return _AsyncLocalSession.Value;
 		}
 
-		public ISession GetAndClearData()
+		public IUnitOfWork GetAndClearData()
 		{
 			var data = _AsyncLocalSession.Value;
 			_AsyncLocalSession.Value = null;

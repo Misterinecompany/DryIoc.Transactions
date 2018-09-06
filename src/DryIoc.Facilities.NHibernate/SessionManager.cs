@@ -14,7 +14,10 @@
 
 using System;
 using System.Diagnostics.Contracts;
+using System.Transactions;
+using DryIoc.Facilities.AutoTx;
 using DryIoc.Facilities.NHibernate.Errors;
+using DryIoc.Facilities.NHibernate.UnitOfWork;
 using DryIoc.Transactions;
 using NHibernate;
 
@@ -29,9 +32,10 @@ namespace DryIoc.Facilities.NHibernate
 	/// </summary>
 	public class SessionManager : ISessionManager
 	{
-		private readonly Func<ISession> getSession;
-		private readonly ITransactionManager transactionManager;
-		private readonly ISessionStore sessionStore;
+		private readonly Func<ISession> _GetSession;
+		private readonly ITransactionManager _TransactionManager;
+		private readonly ISessionStore _SessionStore;
+		private readonly AutoTxOptions _AutoTxOptions;
 
 		/// <summary>
 		/// 	Constructor.
@@ -39,14 +43,16 @@ namespace DryIoc.Facilities.NHibernate
 		/// <param name = "getSession"></param>
 		/// <param name="transactionManager"></param>
 		/// <param name="sessionStore"></param>
-		public SessionManager(Func<ISession> getSession, ITransactionManager transactionManager, ISessionStore sessionStore)
+		/// <param name="autoTxOptions"></param>
+		public SessionManager(Func<ISession> getSession, ITransactionManager transactionManager, ISessionStore sessionStore, AutoTxOptions autoTxOptions)
 		{
 			Contract.Requires(getSession != null);
-			Contract.Ensures(this.getSession != null);
+			Contract.Ensures(this._GetSession != null);
 
-			this.getSession = getSession;
-			this.transactionManager = transactionManager;
-			this.sessionStore = sessionStore;
+			_GetSession = getSession;
+			_TransactionManager = transactionManager;
+			_SessionStore = sessionStore;
+			_AutoTxOptions = autoTxOptions;
 		}
 
 		ISession ISessionManager.OpenSession()
@@ -56,7 +62,7 @@ namespace DryIoc.Facilities.NHibernate
 			//This is a new transaction or no transaction is required
 			if (!transaction.HasValue)
 			{
-				var session = getSession();
+				var session = _GetSession();
 
 				if (session == null)
 					throw new NHibernateFacilityException(
@@ -71,7 +77,7 @@ namespace DryIoc.Facilities.NHibernate
 				//There is an active transaction but no session is created yet
 				if (session == null)
 				{
-					session = getSession();
+					session = _GetSession();
 
 					if (session == null)
 						throw new NHibernateFacilityException(
@@ -97,9 +103,9 @@ namespace DryIoc.Facilities.NHibernate
 		/// </summary>
 		/// <param name="sender">Just event stuff</param>
 		/// <param name="e">Just event stuff</param>
-		void Inner_TransactionCompleted(object sender, System.Transactions.TransactionEventArgs e)
+		void Inner_TransactionCompleted(object sender, TransactionEventArgs e)
 		{
-			ClearStoredSession();
+			FinishStoredSession(e.Transaction.TransactionInformation.Status);
 		}
 
 		/// <summary>
@@ -108,7 +114,20 @@ namespace DryIoc.Facilities.NHibernate
 		/// <returns>The current transaction</returns>
 		private Maybe<ITransaction> ObtainCurrentTransaction()
 		{
-			return transactionManager.CurrentTransaction;
+			return _TransactionManager.CurrentTransaction;
+		}
+
+		private IUnitOfWork CreateUnitOfWork(ISession session)
+		{
+			switch (_AutoTxOptions.AmbientTransaction)
+			{
+				case AmbientTransactionOption.Enabled:
+					return new NHibernateImplictUnitOfWork(session);
+				case AmbientTransactionOption.Disabled:
+					return new NHibernateExplicitUnitOfWork(session);
+				default:
+					throw new ArgumentOutOfRangeException($"Unknown value: {_AutoTxOptions.AmbientTransaction}", (Exception) null);
+			}
 		}
 
 		/// <summary>
@@ -117,7 +136,8 @@ namespace DryIoc.Facilities.NHibernate
 		/// <param name="session">current session</param>
 		private void StoreSession(ISession session)
 		{
-			sessionStore.SetData(session);
+			var unitOfWork = CreateUnitOfWork(session);
+			_SessionStore.SetData(unitOfWork);
 		}
 
 		/// <summary>
@@ -126,17 +146,32 @@ namespace DryIoc.Facilities.NHibernate
 		/// <returns></returns>
 		private ISession GetStoredSession()
 		{
-			return sessionStore.GetData();
+			return _SessionStore.GetData()?.CurrentSession;
 		}
 
 		/// <summary>
 		/// Removes the session stored in the callcontext
 		/// </summary>
+		/// <param name="transactionStatus"></param>
 		/// <returns></returns>
-		private void ClearStoredSession()
+		private void FinishStoredSession(TransactionStatus transactionStatus)
 		{
-			var session = sessionStore.GetAndClearData();
-			session.Dispose();
+			using (var unitOfWork = _SessionStore.GetAndClearData())
+			{
+				switch (transactionStatus)
+				{
+					case TransactionStatus.Committed:
+						unitOfWork.Commit();
+						break;
+					case TransactionStatus.Aborted:
+					case TransactionStatus.Active:
+					case TransactionStatus.InDoubt:
+						unitOfWork.Rollback();
+						break;
+					default:
+						throw new ArgumentOutOfRangeException(nameof(transactionStatus), transactionStatus, null);
+				}
+			}
 		}
 
 	}

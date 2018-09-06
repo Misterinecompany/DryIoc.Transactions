@@ -39,9 +39,10 @@ namespace DryIoc.Facilities.NHibernate
 	///</summary>
 	public class NHibernateFacility
 	{
-		private ILogger logger = NullLogger.Instance;
-		private DefaultSessionLifeStyleOption defaultLifeStyle;
-		private FlushMode flushMode;
+		private ILogger _Logger = NullLogger.Instance;
+		private DefaultSessionLifeStyleOption _DefaultLifeStyle;
+		private FlushMode _FlushMode;
+		private readonly AmbientTransactionOption _AmbientTransaction;
 
 		/// <summary>
 		/// 	The suffix on the name of the component that has a lifestyle of Per Transaction.
@@ -69,31 +70,19 @@ namespace DryIoc.Facilities.NHibernate
 		/// </summary>
 		public const string SessionStatelessInfix = "-stateless";
 
-		/// <summary>
-		/// 	Instantiates a new NHibernateFacility with the default options, session per transaction
-		/// 	and automatic flush mode.
-		/// </summary>
-		public NHibernateFacility() : this(DefaultSessionLifeStyleOption.SessionPerTransaction, FlushMode.Auto)
-		{
-		}
-
-		/// <summary>
-		/// 	Instantiates a new NHibernateFacility with a given lifestyle option and automatic flush mode.
-		/// </summary>
-		/// <param name = "defaultLifeStyle">The Session flush mode.</param>
-		public NHibernateFacility(DefaultSessionLifeStyleOption defaultLifeStyle) : this(defaultLifeStyle, FlushMode.Auto)
-		{
-		}
 
 		/// <summary>
 		/// 	Instantiates a new NHibernateFacility with the default options.
 		/// </summary>
-		/// <param name = "defaultLifeStyle">The </param>
+		/// <param name = "defaultLifeStyle">The default session life style option </param>
 		/// <param name = "flushMode">The session flush mode</param>
-		public NHibernateFacility(DefaultSessionLifeStyleOption defaultLifeStyle, FlushMode flushMode)
+		/// <param name = "ambientTransaction">Configure how to handle transactions</param>
+		public NHibernateFacility(DefaultSessionLifeStyleOption defaultLifeStyle = DefaultSessionLifeStyleOption.SessionPerTransaction,
+			FlushMode flushMode = FlushMode.Auto, AmbientTransactionOption ambientTransaction = AmbientTransactionOption.Enabled)
 		{
-			this.defaultLifeStyle = defaultLifeStyle;
-			this.flushMode = flushMode;
+			_DefaultLifeStyle = defaultLifeStyle;
+			_FlushMode = flushMode;
+			_AmbientTransaction = ambientTransaction;
 		}
 
 		/// <summary>
@@ -101,8 +90,8 @@ namespace DryIoc.Facilities.NHibernate
 		/// </summary>
 		public DefaultSessionLifeStyleOption DefaultLifeStyle
 		{
-			get { return defaultLifeStyle; }
-			set { defaultLifeStyle = value; }
+			get { return _DefaultLifeStyle; }
+			set { _DefaultLifeStyle = value; }
 		}
 
 		/// <summary>
@@ -111,8 +100,8 @@ namespace DryIoc.Facilities.NHibernate
 		/// </summary>
 		public FlushMode FlushMode
 		{
-			get { return flushMode; }
-			set { flushMode = value; }
+			get { return _FlushMode; }
+			set { _FlushMode = value; }
 		}
 
 		///<summary>
@@ -145,11 +134,11 @@ namespace DryIoc.Facilities.NHibernate
 				// get logger factory
 				var loggerFactory = container.Resolve<ILoggerFactory>();
 				// get logger
-				logger = loggerFactory.CreateLogger(typeof(NHibernateFacility));
+				_Logger = loggerFactory.CreateLogger(typeof(NHibernateFacility));
 			}
 
-			if (logger.IsEnabled(LogLevel.Debug))
-				logger.LogDebug("initializing NHibernateFacility");
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("initializing NHibernateFacility");
 
 			if (!container.IsRegistered(typeof(IConfigurationPersister)))
 			{
@@ -174,8 +163,11 @@ namespace DryIoc.Facilities.NHibernate
 
 			container.AssertHasFacility<AutoTxFacility>();
 
-			if (logger.IsEnabled(LogLevel.Debug))
-				logger.LogDebug("registering facility components");
+			var autoTxOptions = container.Resolve<AutoTxOptions>();
+			autoTxOptions.AmbientTransaction = _AmbientTransaction; // override setting by local configuration
+
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("registering facility components");
 
 			var added = new HashSet<string>();
 
@@ -226,11 +218,11 @@ namespace DryIoc.Facilities.NHibernate
 					RegisterStatelessSession(container, x, 2);
 
 					container.Register<ISessionManager>(Reuse.Singleton,
-						Made.Of(() => new SessionManager(Arg.Index<Func<ISession>>(0), Arg.Of<ITransactionManager>(), Arg.Of<ISessionStore>()),
+						Made.Of(() => new SessionManager(Arg.Index<Func<ISession>>(0), Arg.Of<ITransactionManager>(), Arg.Of<ISessionStore>(), Arg.Of<AutoTxOptions>()),
 							request =>
 							{
 								var factory = container.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);
-								return new Func<ISession>(() => CreateSession(factory, x, flushMode));
+								return new Func<ISession>(() => CreateSession(factory, x, _FlushMode));
 								//return new Func<ISession>(() =>
 								//{
 								//	var s = x.Instance.Interceptor.Do(y => factory.WithOptions().Interceptor(y).OpenSession())
@@ -279,13 +271,13 @@ namespace DryIoc.Facilities.NHibernate
 				})
 				.ToList();
 
-			if (logger.IsEnabled(LogLevel.Debug))
-				logger.LogDebug("notifying the nhibernate installers that they have been configured");
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("notifying the nhibernate installers that they have been configured");
 
 			installed.Run(x => x.Instance.Registered(x.Factory));
 
-			if (logger.IsEnabled(LogLevel.Debug))
-				logger.LogDebug("Initialized NHibernateFacility");
+			if (_Logger.IsEnabled(LogLevel.Debug))
+				_Logger.LogDebug("Initialized NHibernateFacility");
 		}
 
 		private void RegisterStatelessSession(IContainer container, Data x, uint index, bool registerAsDefault = false)
@@ -339,7 +331,7 @@ namespace DryIoc.Facilities.NHibernate
 			//		return s;
 			//	});
 
-			var localFlushMode = flushMode;
+			var localFlushMode = _FlushMode;
 			var sessionFactoryKey = x.Instance.SessionFactoryKey;
 			var nameAndLifeStyle = GetNameAndLifeStyle(index, sessionFactoryKey);
 
@@ -359,7 +351,7 @@ namespace DryIoc.Facilities.NHibernate
 							  "there are only three supported lifestyles; per transaction, per web request and transient");
 			Contract.Ensures(Contract.Result<Tuple<string, IReuse>>() != null);
 
-			switch (defaultLifeStyle)
+			switch (_DefaultLifeStyle)
 			{
 				case DefaultSessionLifeStyleOption.SessionPerTransaction:
 					if (index == 0)
