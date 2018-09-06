@@ -14,19 +14,17 @@
 
 using System;
 using DryIoc.Transactions;
-using NHibernate;
 using NUnit.Framework;
 
 namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 {
 	public class ServiceWithProtectedMethodInTransaction
 	{
-		private readonly ISessionFactory factory;
+		private readonly ISessionManager _SessionManager;
 
-		public ServiceWithProtectedMethodInTransaction(ISessionFactory factory)
+		public ServiceWithProtectedMethodInTransaction(ISessionManager sessionManager)
 		{
-			if (factory == null) throw new ArgumentNullException(nameof(factory));
-			this.factory = factory;
+			_SessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
 		}
 
 		public void Do()
@@ -37,7 +35,7 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 
 		protected void ReadAgain(Guid id)
 		{
-			using (var s = factory.OpenSession())
+			using (var s = _SessionManager.OpenSession())
 			{
 				var t = s.Load<Thing>(id);
 				Assert.That(t.Id, Is.EqualTo(id));
@@ -47,10 +45,8 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 		[Transaction]
 		protected virtual Guid SaveIt()
 		{
-			using (var s = factory.OpenSession())
-			{
-				return (Guid)s.Save(new Thing(45.0));
-			}
+			var session = _SessionManager.OpenSession();
+			return (Guid)session.Save(new Thing(45.0));
 		}
 	}
 }
