@@ -18,6 +18,7 @@ using DryIoc.Transactions;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using NHibernate;
+using NHibernate.AdoNet;
 
 namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 {
@@ -58,11 +59,11 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 
 		private FluentConfiguration BuildFluent()
 		{
-			var connectionString = ConfigurationManager.ConnectionStrings["test"];
+			var connectionString = AppConfig.TestConnectionString;
 			Contract.Assume(connectionString != null, "please set the \"test\" connection string in app.config");
 
 			return Fluently.Configure()
-				.Database(SQLiteConfiguration.Standard.ConnectionString(connectionString.ConnectionString))
+				.Database(MsSqlConfiguration.MsSql2012.ConnectionString(connectionString))
 				.Mappings(m => m.FluentMappings.AddFromAssemblyOf<ThingMap>());
 		}
 

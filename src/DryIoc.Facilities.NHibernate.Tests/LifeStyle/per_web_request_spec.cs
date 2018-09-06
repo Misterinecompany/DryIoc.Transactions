@@ -16,8 +16,8 @@ using System;
 using DryIoc.Facilities.AutoTx;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Testing;
+using DryIoc.Facilities.AutoTx.Utils;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
-using DryIoc.Microsoft.DependencyInjection;
 using NHibernate;
 using NUnit.Framework;
 
@@ -30,8 +30,9 @@ namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 		[SetUp]
 		public void SetUp()
 		{
-			container = new Container().WithDependencyInjectionAdapter(); // the same configuration as for ASP.NET Core (test per web-request life style)
-			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton);
+			//container = new Container().WithDependencyInjectionAdapter(); // the same configuration as for ASP.NET Core (test per web-request life style)
+			container = new Container(); // use normal Container because rule .WithFactorySelector(Rules.SelectLastRegisteredFactory()) overrides registration configuration
+			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 			container.AddAutoTx();
 			container.AddNHibernate(DefaultSessionLifeStyleOption.SessionPerWebRequest);
 
@@ -60,7 +61,7 @@ namespace DryIoc.Facilities.NHibernate.Tests.LifeStyle
 			}
 			catch (InvalidOperationException e)
 			{
-				Assert.That(e.Message, Does.Contain("without matching scope"));
+				Assert.That(e.Message, Does.Contain("No current scope available"));
 			}
 		}
 

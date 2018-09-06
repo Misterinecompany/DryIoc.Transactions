@@ -188,7 +188,7 @@ CREATE TABLE [dbo].[Thing] (
 		private SqlConnection GetConnection()
 		{
 			Console.WriteLine("CREATE CONNECTION");
-			var connection = new SqlConnection(ConfigurationManager.ConnectionStrings["test"].ConnectionString);
+			var connection = new SqlConnection(AppConfig.TestConnectionString);
 			Console.WriteLine("OPEN CONNECTION");
 			connection.Open();
 			return connection;

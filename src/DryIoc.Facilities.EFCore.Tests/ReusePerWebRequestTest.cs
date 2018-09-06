@@ -17,7 +17,6 @@ using DryIoc.Facilities.AutoTx;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Testing;
 using DryIoc.Facilities.EFCore.Tests.TestClasses;
-using DryIoc.Microsoft.DependencyInjection;
 using NUnit.Framework;
 
 namespace DryIoc.Facilities.EFCore.Tests
@@ -29,8 +28,9 @@ namespace DryIoc.Facilities.EFCore.Tests
 		[SetUp]
 		public void SetUp()
 		{
-			container = new Container().WithDependencyInjectionAdapter(); // the same configuration as for ASP.NET Core (test per web-request life style)
-			container.Register<IEFCoreInstaller, ExampleInstaller>(Reuse.Singleton);
+			//container = new Container().WithDependencyInjectionAdapter(); // the same configuration as for ASP.NET Core (test per web-request life style)
+			container = new Container(); // use normal Container because rule .WithFactorySelector(Rules.SelectLastRegisteredFactory()) overrides registration configuration
+			container.Register<IEFCoreInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 			container.AddAutoTx();
 			container.AddEFCore(DefaultLifeStyleOption.PerWebRequest);
 
@@ -59,7 +59,7 @@ namespace DryIoc.Facilities.EFCore.Tests
 			}
 			catch (InvalidOperationException e)
 			{
-				Assert.That(e.Message, Does.Contain("without matching scope"));
+				Assert.That(e.Message, Does.Contain("No current scope available"));
 			}
 		}
 
