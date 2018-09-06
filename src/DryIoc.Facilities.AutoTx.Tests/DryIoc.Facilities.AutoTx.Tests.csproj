@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>DryIoc.Facilities.AutoTx.Tests</AssemblyName>
     <PackageId>DryIoc.Facilities.AutoTx.Tests</PackageId>
   </PropertyGroup>
@@ -37,7 +37,7 @@
     <PackageReference Include="NLog.Extensions.Logging" Version="1.2.1" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
-    <PackageReference Include="SharpTestsEx.MVC" Version="1.1.1" />
+    <PackageReference Include="SharpTestsEx" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DryIoc.Facilities.AutoTx\DryIoc.Facilities.AutoTx.csproj" />
