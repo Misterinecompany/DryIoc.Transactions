@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using System;
-using DryIoc.Facilities.AutoTx;
+using DryIoc.Facilities.AutoTx.Errors;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.EFCore.Tests.TestClasses;
 using NUnit.Framework;

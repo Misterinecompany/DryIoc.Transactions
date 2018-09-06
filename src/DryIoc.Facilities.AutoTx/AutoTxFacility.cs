@@ -30,7 +30,7 @@ namespace DryIoc.Facilities.AutoTx
 	///</summary>
 	public class AutoTxFacility
 	{
-		public void Init(IContainer container)
+		public void Init(IContainer container, AmbientTransactionOption ambientTransaction)
 		{
 			ILogger _Logger = NullLogger.Instance;
 
@@ -78,6 +78,12 @@ namespace DryIoc.Facilities.AutoTx
 			// calls a static .Net/Mono framework method, and it's the responsibility of
 			// that framework method to keep track of the call context.
 			container.Register<IActivityManager, AsyncLocalActivityManager>(Reuse.Singleton);
+
+			// configuration
+			container.UseInstance(new AutoTxOptions
+			{
+				AmbientTransaction = ambientTransaction,
+			});
 
 			var componentInspector = new TransactionalComponentInspector(container);
 			

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using DryIoc.Facilities.AutoTx.Errors;
 using DryIoc.Transactions;
 using Microsoft.Extensions.Logging;
 

@@ -15,6 +15,7 @@
 using System;
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
+using DryIoc.Facilities.AutoTx.Errors;
 using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.AutoTx.Testing;
 using DryIoc.Facilities.AutoTx.Tests.Extensions;

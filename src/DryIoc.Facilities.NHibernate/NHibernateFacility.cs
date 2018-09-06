@@ -145,7 +145,7 @@ namespace DryIoc.Facilities.NHibernate
 				// get logger factory
 				var loggerFactory = container.Resolve<ILoggerFactory>();
 				// get logger
-				logger = loggerFactory.CreateLogger(typeof(AutoTxFacility));
+				logger = loggerFactory.CreateLogger(typeof(NHibernateFacility));
 			}
 
 			if (logger.IsEnabled(LogLevel.Debug))

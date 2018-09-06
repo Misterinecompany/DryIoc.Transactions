@@ -32,9 +32,8 @@ namespace DryIoc.Transactions.Internal
 	/// </summary>
 	public sealed class TxScope : IDisposable
 	{
-		readonly ILogger _Logger;
-
-		private readonly System.Transactions.Transaction prev;
+		private readonly ILogger _Logger;
+		private readonly System.Transactions.Transaction _Prev;
 
 		/// <summary>
 		/// 	A TxScope sets the ambient transaction for the duration of its lifetime and then re-assigns the previous value.
@@ -44,11 +43,22 @@ namespace DryIoc.Transactions.Internal
 		/// 	the <see cref = "ITransactionManager" /> will take care of setting the 
 		/// 	correct static properties for you.
 		/// </summary>
-		public TxScope(System.Transactions.Transaction curr, ILogger logger)
+		public TxScope(System.Transactions.Transaction curr, AmbientTransactionOption ambientTransaction, ILogger logger)
 		{
 			_Logger = logger;
-			prev = System.Transactions.Transaction.Current;
-			System.Transactions.Transaction.Current = curr;
+			_Prev = System.Transactions.Transaction.Current;
+
+			switch (ambientTransaction)
+			{
+				case AmbientTransactionOption.Enabled:
+					System.Transactions.Transaction.Current = curr;
+					break;
+				case AmbientTransactionOption.Disabled:
+					System.Transactions.Transaction.Current = null;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(ambientTransaction), ambientTransaction, null);
+			}
 		}
 
 		public void Dispose()
@@ -67,7 +77,7 @@ namespace DryIoc.Transactions.Internal
 
 				return;
 			}
-			System.Transactions.Transaction.Current = prev;
+			System.Transactions.Transaction.Current = _Prev;
 		}
 	}
 }

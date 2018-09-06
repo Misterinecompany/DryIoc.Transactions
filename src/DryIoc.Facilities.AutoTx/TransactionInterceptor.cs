@@ -45,11 +45,12 @@ namespace DryIoc.Facilities.AutoTx
 		private InterceptorState _State;
 		private readonly IContainer _Container;
 		private readonly ITransactionMetaInfoStore _Store;
+		private readonly AutoTxOptions _AutoTxOptions;
 		private readonly ILoggerFactory _LoggerFactory;
 		private readonly ILogger _Logger;
 		private Maybe<TransactionalClassMetaInfo> _MetaInfo;
 
-		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store, ParentServiceRequestInfo parentServiceRequestInfo, ILoggerFactory loggerFactory)
+		public TransactionInterceptor(IContainer container, ITransactionMetaInfoStore store, ParentServiceRequestInfo parentServiceRequestInfo, AutoTxOptions autoTxOptions, ILoggerFactory loggerFactory)
 		{
 			Contract.Requires(container != null, "container must be non null");
 			Contract.Requires(store != null, "store must be non null");
@@ -57,6 +58,7 @@ namespace DryIoc.Facilities.AutoTx
 
 			_Container = container;
 			_Store = store;
+			_AutoTxOptions = autoTxOptions;
 			_LoggerFactory = loggerFactory;
 			_Logger = loggerFactory.CreateLogger(GetType());
 			_State = InterceptorState.Constructed;
@@ -95,7 +97,7 @@ namespace DryIoc.Facilities.AutoTx
 						if (_Logger.IsEnabled(LogLevel.Information))
 							_Logger.LogInformation("supressing ambient transaction");
 
-						using (new TxScope(null, _LoggerFactory.CreateChildLogger("TxScope", GetType())))
+						using (new TxScope(null, _AutoTxOptions.AmbientTransaction, _LoggerFactory.CreateChildLogger("TxScope", GetType())))
 							invocation.Proceed();
 					}
 					else invocation.Proceed();
@@ -109,6 +111,9 @@ namespace DryIoc.Facilities.AutoTx
 
 				if (mTxData.Value.ShouldFork)
 				{
+					if (_AutoTxOptions.AmbientTransaction == AmbientTransactionOption.Disabled)
+						throw new TransactionException("Forking is not supported if ambient transactions are disabled");
+
 					var task = ForkCase(invocation, mTxData.Value);
 					txManagerC.EnlistDependentTask(task);
 				}
@@ -124,7 +129,7 @@ namespace DryIoc.Facilities.AutoTx
 		{
 			Contract.Requires(transaction.State == TransactionState.Active);
 
-			using (new TxScope(transaction.Inner, _LoggerFactory.CreateChildLogger("TxScope", GetType())))
+			using (new TxScope(transaction.Inner, _AutoTxOptions.AmbientTransaction, _LoggerFactory.CreateChildLogger("TxScope", GetType())))
 			{
 				var localIdentifier = transaction.LocalIdentifier;
 

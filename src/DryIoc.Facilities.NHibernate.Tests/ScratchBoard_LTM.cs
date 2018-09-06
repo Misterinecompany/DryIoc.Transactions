@@ -17,6 +17,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.Transactions;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using DryIoc.Transactions;
 using DryIoc.Transactions.Internal;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
@@ -89,7 +90,7 @@ CREATE TABLE [dbo].[Thing] (
 		public void ExplicitTransaction()
 		{
 			using (var t = new CommittableTransaction())
-			using (new TxScope(t, NullLogger.Instance))
+			using (new TxScope(t, AmbientTransactionOption.Enabled, NullLogger.Instance))
 			{
 				using (var c = GetConnection())
 				using (var cmd = c.CreateCommand())
@@ -108,7 +109,7 @@ CREATE TABLE [dbo].[Thing] (
 		public void ExplicitTransactionWithDependentTransaction()
 		{
 			using (var t = new CommittableTransaction())
-			using (new TxScope(t, NullLogger.Instance))
+			using (new TxScope(t, AmbientTransactionOption.Enabled, NullLogger.Instance))
 			{
 				Console.WriteLine("T1 STATUS: {0}", t.TransactionInformation.Status);
 
@@ -122,7 +123,7 @@ CREATE TABLE [dbo].[Thing] (
 				}
 
 				using (var t2 = t.DependentClone(DependentCloneOption.RollbackIfNotComplete))
-				using (new TxScope(t2, NullLogger.Instance))
+				using (new TxScope(t2, AmbientTransactionOption.Enabled, NullLogger.Instance))
 				using (var c = GetConnection())
 				using (var cmd = c.CreateCommand())
 				{
@@ -161,7 +162,7 @@ CREATE TABLE [dbo].[Thing] (
 		public void RetryOnFailure()
 		{
 			using (var t = new CommittableTransaction())
-			using (new TxScope(t, NullLogger.Instance))
+			using (new TxScope(t, AmbientTransactionOption.Enabled, NullLogger.Instance))
 			{
 				t.EnlistVolatile(new ThrowingResource(true), EnlistmentOptions.EnlistDuringPrepareRequired);
 
