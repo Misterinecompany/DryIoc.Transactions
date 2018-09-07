@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks><!--Multiple targets because of incompatibility of DryIoc.IReuse interface on different frameworks-->
     <AssemblyName>DryIoc.Facilities.AutoTx</AssemblyName>
     <PackageId>DryIoc.Facilities.AutoTx</PackageId>
 	<CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
@@ -62,6 +62,9 @@
       <Link>CastleKey.snk</Link>
     </None>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
+    <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.6.1" />

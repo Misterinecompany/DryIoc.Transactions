@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Linq.Expressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+#if NET461
+using Expr = FastExpressionCompiler.ExpressionInfo;
+#else
+using Expr = System.Linq.Expressions.Expression;
+#endif
 
 namespace DryIoc.Facilities.AutoTx.Lifestyles
 {
@@ -21,7 +25,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 		public object Name => null;
 
-		public Expression Apply(Request request, Expression serviceFactoryExpr)
+		public Expr Apply(Request request, Expr serviceFactoryExpr)
 		{
 			return GetInnerReuse(request).Apply(request, serviceFactoryExpr);
 		}
@@ -31,7 +35,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 			return GetInnerReuse(request).CanApply(request);
 		}
 
-		public abstract Expression ToExpression(Func<object, Expression> fallbackConverter);
+		public abstract Expr ToExpression(Func<object, Expr> fallbackConverter);
 
 		private T GetInnerReuse(Request request)
 		{
@@ -88,7 +92,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 	public class WrapperPerTransactionReuse : WrapperReuseBase<PerTransactionReuse>
 	{
-		public override Expression ToExpression(Func<object, Expression> fallbackConverter)
+		public override Expr ToExpression(Func<object, Expr> fallbackConverter)
 		{
 			return PerTransactionReuse.PerTransactionReuseExpr.Value;
 		}
@@ -96,7 +100,7 @@ namespace DryIoc.Facilities.AutoTx.Lifestyles
 
 	public class WrapperPerTopTransactionReuse : WrapperReuseBase<PerTopTransactionReuse>
 	{
-		public override Expression ToExpression(Func<object, Expression> fallbackConverter)
+		public override Expr ToExpression(Func<object, Expr> fallbackConverter)
 		{
 			return PerTopTransactionReuse.PerTopTransactionReuseExpr.Value;
 		}
