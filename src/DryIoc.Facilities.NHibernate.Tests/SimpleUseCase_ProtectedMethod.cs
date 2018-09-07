@@ -60,13 +60,14 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			return c;
 		}
 
-		[Test]
-		public void Register_Run()
+		[TestCase(AmbientTransactionOption.Enabled)]
+		[TestCase(AmbientTransactionOption.Disabled)]
+		public void Register_Run_AmbientEnabled(AmbientTransactionOption ambientTransaction)
 		{
 			c.Register<ServiceWithProtectedMethodInTransaction>(Reuse.Singleton);
 
 			c.AddAutoTx();
-			c.AddNHibernate();
+			c.AddNHibernate(ambientTransaction);
 
 			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
 

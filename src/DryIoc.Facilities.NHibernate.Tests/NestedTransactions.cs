@@ -22,15 +22,23 @@ using NUnit.Framework;
 
 namespace DryIoc.Facilities.NHibernate.Tests
 {
+	[TestFixture(AmbientTransactionOption.Enabled)]
+	[TestFixture(AmbientTransactionOption.Disabled)]
 	internal class NestedTransactions : EnsureSchema
 	{
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+		private readonly AmbientTransactionOption _AmbientTransaction;
 		private Container container;
+
+		public NestedTransactions(AmbientTransactionOption ambientTransaction)
+		{
+			_AmbientTransaction = ambientTransaction;
+		}
 
 		[SetUp]
 		public void SetUp()
 		{
-			container = ContainerBuilder.Create();
+			container = ContainerBuilder.Create(_AmbientTransaction);
 		}
 
 		[TearDown]
@@ -83,10 +91,12 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			int thingCount = x.Service.GetThingsCount();
 
 			//Act
-			try{
+			try
+			{
 				x.Service.RunAndFail();
 			}
-			catch{
+			catch
+			{
 			}
 
 			//Assert

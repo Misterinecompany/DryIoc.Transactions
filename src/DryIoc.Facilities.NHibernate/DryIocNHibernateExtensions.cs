@@ -1,4 +1,5 @@
 ﻿using DryIoc.Facilities.NHibernate.Errors;
+using DryIoc.Transactions;
 
 namespace DryIoc.Facilities.NHibernate
 {
@@ -22,6 +23,12 @@ namespace DryIoc.Facilities.NHibernate
 		public static void AddNHibernate(this IContainer container, DefaultSessionLifeStyleOption defaultLifeStyle)
 		{
 			var nhibernateFacility = new NHibernateFacility(defaultLifeStyle);
+			nhibernateFacility.Init(container);
+		}
+
+		public static void AddNHibernate(this IContainer container, AmbientTransactionOption ambientTransaction)
+		{
+			var nhibernateFacility = new NHibernateFacility(ambientTransaction: ambientTransaction);
 			nhibernateFacility.Init(container);
 		}
 	}

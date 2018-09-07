@@ -56,7 +56,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 
 			c.AddNLogLogging();
 			c.AddAutoTx();
-			c.AddNHibernate();
+			c.AddNHibernate(AmbientTransactionOption.Enabled);
 
 			c.Register<ReproClass>(Reuse.Singleton);
 

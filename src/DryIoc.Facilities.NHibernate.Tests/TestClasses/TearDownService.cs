@@ -12,30 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Diagnostics.Contracts;
 using DryIoc.Transactions;
-using NHibernate;
 using NLog;
 
 namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 {
 	public class TearDownService
 	{
+		private readonly ISessionManager _SessionManager;
 		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-		private readonly Func<ISession> session;
 
-		public TearDownService(Func<ISession> session)
+		public TearDownService(ISessionManager sessionManager)
 		{
-			Contract.Requires(session != null);
-			this.session = session;
+			Contract.Requires(sessionManager != null);
+			_SessionManager = sessionManager;
 		}
 
 		[Transaction]
 		public virtual void ClearThings()
 		{
 			logger.Debug("clearing things");
-			session().Delete("from Thing");
+			_SessionManager.OpenSession().Delete("from Thing");
 		}
 	}
 }

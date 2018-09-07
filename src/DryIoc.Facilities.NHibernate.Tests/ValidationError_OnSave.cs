@@ -30,29 +30,37 @@ namespace DryIoc.Facilities.NHibernate.Tests
 {
 	using ITransaction = global::NHibernate.ITransaction;
 
+	[TestFixture(AmbientTransactionOption.Enabled)]
+	[TestFixture(AmbientTransactionOption.Disabled)]
 	internal class ValidationError_OnSave : EnsureSchema
 	{
-		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-		private Container container;
+		private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
+		private readonly AmbientTransactionOption _AmbientTransaction;
+		private Container _Container;
+
+		public ValidationError_OnSave(AmbientTransactionOption ambientTransaction)
+		{
+			_AmbientTransaction = ambientTransaction;
+		}
 
 		[SetUp]
 		public void SetUp()
 		{
-			container = ContainerBuilder.Create();
+			_Container = ContainerBuilder.Create(_AmbientTransaction);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			container.Dispose();
+			_Container.Dispose();
 		}
 
 		[Test]
 		public void RunTest()
 		{
-			logger.Debug("starting test run");
+			_Logger.Debug("starting test run");
 
-			using (var x = container.ResolveScope<Test>())
+			using (var x = _Container.ResolveScope<Test>())
 			{
 				x.Service.Run();
 			}
@@ -61,7 +69,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 
 	internal static class ContainerBuilder
 	{
-		public static Container Create()
+		public static Container Create(AmbientTransactionOption ambientTransaction)
 		{
 			var container = new Container();
 			container.UseInstance<INHibernateInstaller>(new ExampleInstaller(new ThrowingInterceptor()));
@@ -70,7 +78,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			container.Register<NestedTransactionService>(Reuse.Transient);
 
 			container.AddAutoTx();
-			container.AddNHibernate();
+			container.AddNHibernate(ambientTransaction);
 
 			return container;
 		}

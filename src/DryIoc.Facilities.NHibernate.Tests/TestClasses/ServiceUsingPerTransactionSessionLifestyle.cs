@@ -22,14 +22,14 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 {
 	public class ServiceUsingPerTransactionSessionLifestyle
 	{
-		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-		private readonly Func<ISession> getSession;
-		private Guid id;
+		private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
+		private readonly Func<ISession> _GetSession;
+		private Guid _Id;
 
 		public ServiceUsingPerTransactionSessionLifestyle(Func<ISession> getSession)
 		{
 			Contract.Requires(getSession != null);
-			this.getSession = getSession;
+			_GetSession = getSession;
 		}
 
 		// a bit of documentation
@@ -63,14 +63,14 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 		[Transaction]
 		public virtual void SaveNewThing()
 		{
-			logger.Debug("save new thing");
+			_Logger.Debug("save new thing");
 
-			using (var session = getSession())
+			using (var session = _GetSession())
 			{
 				// at KTH this is an arbitrary number
-				id = (Guid)session.Save(new Thing(17.0));
+				_Id = (Guid)session.Save(new Thing(17.0));
 
-				logger.Debug("exiting using-block of session");
+				_Logger.Debug("exiting using-block of session");
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 		public virtual Thing LoadNewThing()
 		{
 			// be aware how I'm not manually disposing the ISession here; I could, but it would make no difference
-			return getSession().Get<Thing>(id);
+			return _GetSession().Get<Thing>(_Id);
 		}
 	}
 }

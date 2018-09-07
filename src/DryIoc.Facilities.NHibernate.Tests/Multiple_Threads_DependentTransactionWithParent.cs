@@ -40,7 +40,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 			container.Register<INHibernateInstaller, ExampleInstaller>(Reuse.Singleton, FactoryMethod.ConstructorWithResolvableArguments);
 			container.Register<ThreadedService>(Reuse.Transient);
 			container.AddAutoTx();
-			container.AddNHibernate();
+			container.AddNHibernate(AmbientTransactionOption.Enabled);
 		}
 
 		[TearDown]

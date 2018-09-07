@@ -74,7 +74,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 
 			c.AddNLogLogging();
 			c.AddAutoTx();
-			c.AddNHibernate();
+			c.AddNHibernate(AmbientTransactionOption.Enabled);
 
 			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
 

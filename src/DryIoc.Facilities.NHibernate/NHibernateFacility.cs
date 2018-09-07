@@ -78,7 +78,7 @@ namespace DryIoc.Facilities.NHibernate
 		/// <param name = "flushMode">The session flush mode</param>
 		/// <param name = "ambientTransaction">Configure how to handle transactions</param>
 		public NHibernateFacility(DefaultSessionLifeStyleOption defaultLifeStyle = DefaultSessionLifeStyleOption.SessionPerTransaction,
-			FlushMode flushMode = FlushMode.Auto, AmbientTransactionOption ambientTransaction = AmbientTransactionOption.Enabled)
+			FlushMode flushMode = FlushMode.Auto, AmbientTransactionOption ambientTransaction = AmbientTransactionOption.Disabled)
 		{
 			_DefaultLifeStyle = defaultLifeStyle;
 			_FlushMode = flushMode;
