@@ -48,7 +48,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageOutputPath>..\..\build\</PackageOutputPath>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Product>DryIoc Transactions</Product>
     <Authors>Henrik Feldt</Authors>
     <Company />

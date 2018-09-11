@@ -43,7 +43,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\buildscripts\CastleKey.snk</AssemblyOriginatorKeyFile>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Company>Henrik Feldt</Company>
     <Description>A library for making it easier to deal with NHibernate and Transactions</Description>
     <Copyright>(c) 2015 by Henrik Feldt</Copyright>
