@@ -23,28 +23,36 @@ using NUnit.Framework;
 
 namespace DryIoc.Facilities.NHibernate.Tests
 {
+	[TestFixture(AmbientTransactionOption.Enabled)]
+	[TestFixture(AmbientTransactionOption.Disabled)]
 	public class SimpleUseCase_SingleSave : EnsureSchema
 	{
-		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-		private Container c;
+		private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
+		private readonly AmbientTransactionOption _AmbientTransaction;
+		private Container _Container;
+
+		public SimpleUseCase_SingleSave(AmbientTransactionOption ambientTransaction)
+		{
+			_AmbientTransaction = ambientTransaction;
+		}
 
 		[SetUp]
 		public void SetUp()
 		{
-			c = GetContainer();
+			_Container = GetContainer(_AmbientTransaction);
 		}
 
 		[TearDown]
 		public void TearDown()
 		{
-			logger.Debug("running tear-down, removing components");
+			_Logger.Debug("running tear-down, removing components");
 
-			using (var s = c.ResolveScope<TearDownService>())
+			using (var s = _Container.ResolveScope<TearDownService>())
 			{
 				s.Service.ClearThings();
 			}
 
-			c.Dispose();
+			_Container.Dispose();
 		}
 
 		[Test]
@@ -56,15 +64,16 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		public void SavingWith_PerTransaction_Lifestyle()
 		{
 			// given
-			using (var scope = c.ResolveScope<ServiceUsingPerTransactionSessionLifestyle>())
+			using (var scope = _Container.ResolveScope<ServiceUsingPerTransactionSessionLifestyle>())
 			{
 				// then
+				scope.Service.AmbientTransactionOption = _AmbientTransaction;
 				scope.Service.SaveNewThing();
 				Assert.That(scope.Service.LoadNewThing(), Is.Not.Null, "because it was saved by the previous method call");
 			}
 		}
 
-		private static Container GetContainer()
+		private static Container GetContainer(AmbientTransactionOption ambientTransaction)
 		{
 			var c = new Container();
 
@@ -74,7 +83,7 @@ namespace DryIoc.Facilities.NHibernate.Tests
 
 			c.AddNLogLogging();
 			c.AddAutoTx();
-			c.AddNHibernate(AmbientTransactionOption.Enabled);
+			c.AddNHibernate(ambientTransaction);
 
 			Assert.That(c.IsRegistered(typeof(ITransactionManager)));
 

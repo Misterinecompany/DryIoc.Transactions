@@ -25,6 +25,7 @@ using NHibernate.SqlCommand;
 using NHibernate.Type;
 using NLog;
 using NUnit.Framework;
+using TransactionException = System.Transactions.TransactionException;
 
 namespace DryIoc.Facilities.NHibernate.Tests
 {
@@ -86,12 +87,12 @@ namespace DryIoc.Facilities.NHibernate.Tests
 
 	internal class ThrowingInterceptor : IInterceptor
 	{
-		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+		private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
 
 		public bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState,
 														 string[] propertyNames, IType[] types)
 		{
-			logger.Debug("throwing validation exception");
+			_Logger.Debug("throwing validation exception");
 
 			throw new ApplicationException("imaginary validation error");
 		}
@@ -189,30 +190,34 @@ namespace DryIoc.Facilities.NHibernate.Tests
 
 	public class Test
 	{
-		private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-		private readonly ISessionManager sessionManager;
-		private Guid thingId;
+		private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
+		private readonly ISessionManager _SessionManager;
+		private Guid _ThingId;
 
 		public Test(ISessionManager sessionManager)
 		{
-			this.sessionManager = sessionManager;
+			_SessionManager = sessionManager;
 		}
-
 		
 		public virtual void Run()
 		{
-			logger.Debug("run invoked");
+			_Logger.Debug("run invoked");
 
 			SaveNewThing();
 			try
 			{
-				logger.Debug("chaning thing which will throw");
+				_Logger.Debug("chaning thing which will throw");
 
 				ChangeThing();
 			}
 			catch (TransactionAbortedException)
 			{
 				// this exception is expected - it is thrown by the validator
+			}
+			catch (TransactionException)
+			{
+				// this exception is expected - it is thrown by the validator
+				// this exception is throw when using explicit transactions, because Commit action fails
 			}
 
 			// loading a new thing, in a new session!!
@@ -240,18 +245,18 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[Transaction]
 		protected virtual void SaveNewThing()
 		{
-			var s = sessionManager.OpenSession();
+			var s = _SessionManager.OpenSession();
 			var thing = new Thing(18.0);
-			thingId = (Guid)s.Save(thing);
+			_ThingId = (Guid)s.Save(thing);
 		}
 
 		[Transaction]
 		protected virtual void SaveNewThingWithFollowingError()
 		{
-			using (var s = sessionManager.OpenSession())
+			using (var s = _SessionManager.OpenSession())
 			{
 				var thing = new Thing(37.0);
-				thingId = (Guid)s.Save(thing);
+				_ThingId = (Guid)s.Save(thing);
 				s.Flush();
 
 				throw new InvalidOperationException("Artificial error after saving item");
@@ -261,23 +266,23 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[Transaction]
 		protected virtual void ChangeThing()
 		{
-			var s = sessionManager.OpenSession();
-			var thing = s.Load<Thing>(thingId);
+			var s = _SessionManager.OpenSession();
+			var thing = s.Load<Thing>(_ThingId);
 			thing.Value = 19.0;
 		}
 
 		//Removed Transaction attribute, Transaction is not needed to load a thing
 		protected virtual Thing LoadThing()
 		{
-			var s = sessionManager.OpenSession(); // we are expecting this to be a new session
-			return s.Load<Thing>(thingId);
+			var s = _SessionManager.OpenSession(); // we are expecting this to be a new session
+			return s.Load<Thing>(_ThingId);
 		}
 
 		[Transaction]
 		protected virtual Thing GetThing()
 		{
-			var s = sessionManager.OpenSession();
-			return s.QueryOver<Thing>().Where(x => x.Id == thingId).SingleOrDefault();
+			var s = _SessionManager.OpenSession();
+			return s.QueryOver<Thing>().Where(x => x.Id == _ThingId).SingleOrDefault();
 		}
 	}
 }

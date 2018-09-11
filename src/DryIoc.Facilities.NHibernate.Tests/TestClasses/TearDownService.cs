@@ -33,7 +33,9 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 		public virtual void ClearThings()
 		{
 			logger.Debug("clearing things");
-			_SessionManager.OpenSession().Delete("from Thing");
+			var session = _SessionManager.OpenSession();
+				
+			session.Delete("from Thing");
 		}
 	}
 }

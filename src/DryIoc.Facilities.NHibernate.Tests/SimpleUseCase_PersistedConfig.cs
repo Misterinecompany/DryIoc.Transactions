@@ -17,12 +17,15 @@ using DryIoc.Facilities.AutoTx.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.Extensions;
 using DryIoc.Facilities.NHibernate.Tests.Framework;
 using DryIoc.Facilities.NHibernate.Tests.TestClasses;
+using NLog;
 using NUnit.Framework;
 
 namespace DryIoc.Facilities.NHibernate.Tests
 {
 	public class SimpleUseCase_PersistedConfig : EnsureSchema
 	{
+		private static readonly Logger _Logger = LogManager.GetCurrentClassLogger();
+
 		[SetUp]
 		public void SetUp()
 		{
@@ -34,6 +37,11 @@ namespace DryIoc.Facilities.NHibernate.Tests
 		[Test]
 		public void CacheFile_Is_Created()
 		{
+#if NETCOREAPP
+			_Logger.Warn("System.Type serializing doesn't work on .NET Core platform");
+			Assert.Fail("System.Type serializing doesn't work on .NET Core platform");
+#endif
+
 			using (var c = new Container())
 			{
 				c.Register<INHibernateInstaller, PersistingInstaller>(Reuse.Singleton);

@@ -32,6 +32,8 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 			_GetSession = getSession;
 		}
 
+		public AmbientTransactionOption AmbientTransactionOption { get; set; }
+
 		// a bit of documentation
 		/// <remarks>
 		/// 	<para>This method and the next demonstrate how you COULD use the factory delegate.
@@ -71,6 +73,11 @@ namespace DryIoc.Facilities.NHibernate.Tests.TestClasses
 				_Id = (Guid)session.Save(new Thing(17.0));
 
 				_Logger.Debug("exiting using-block of session");
+
+				if (AmbientTransactionOption == AmbientTransactionOption.Disabled)
+				{
+					session.Flush();
+				}
 			}
 		}
 
