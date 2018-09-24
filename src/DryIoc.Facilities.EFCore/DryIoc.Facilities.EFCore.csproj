@@ -5,7 +5,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>DryIoc.Facilities.EFCore</AssemblyName>
     <PackageId>DryIoc.Facilities.EFCore</PackageId>
-    <Version>0.2.0</Version>
+    <Version>0.2.1</Version>
     <Company>Henrik Feldt</Company>
     <Description>A library for making it easier to deal with Entity Framework Core and Transactions</Description>
     <Authors>Henrik Feldt</Authors>
