@@ -218,7 +218,7 @@ namespace DryIoc.Facilities.NHibernate
 					RegisterStatelessSession(container, x, 2);
 
 					container.Register<ISessionManager>(Reuse.Singleton,
-						Made.Of(() => new SessionManager(Arg.Index<Func<ISession>>(0), Arg.Of<ITransactionManager>(), Arg.Of<ISessionStore>(), Arg.Of<AutoTxOptions>()),
+						Made.Of(() => new SessionManager(Arg.Index<Func<ISession>>(0), Arg.Of<ITransactionManager>(), Arg.Of<ISessionStore>(), Arg.Of<AutoTxOptions>(), Arg.Of<ILogger>()),
 							request =>
 							{
 								var factory = container.Resolve<ISessionFactory>(x.Instance.SessionFactoryKey);

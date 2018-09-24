@@ -19,6 +19,7 @@ using DryIoc.Facilities.AutoTx;
 using DryIoc.Facilities.NHibernate.Errors;
 using DryIoc.Facilities.NHibernate.UnitOfWork;
 using DryIoc.Transactions;
+using Microsoft.Extensions.Logging;
 using NHibernate;
 
 namespace DryIoc.Facilities.NHibernate
@@ -36,6 +37,7 @@ namespace DryIoc.Facilities.NHibernate
 		private readonly ITransactionManager _TransactionManager;
 		private readonly ISessionStore _SessionStore;
 		private readonly AutoTxOptions _AutoTxOptions;
+		private readonly ILogger _Logger;
 
 		/// <summary>
 		/// 	Constructor.
@@ -44,7 +46,8 @@ namespace DryIoc.Facilities.NHibernate
 		/// <param name="transactionManager"></param>
 		/// <param name="sessionStore"></param>
 		/// <param name="autoTxOptions"></param>
-		public SessionManager(Func<ISession> getSession, ITransactionManager transactionManager, ISessionStore sessionStore, AutoTxOptions autoTxOptions)
+		/// <param name="logger"></param>
+		public SessionManager(Func<ISession> getSession, ITransactionManager transactionManager, ISessionStore sessionStore, AutoTxOptions autoTxOptions, ILogger logger)
 		{
 			Contract.Requires(getSession != null);
 			Contract.Ensures(this._GetSession != null);
@@ -53,6 +56,7 @@ namespace DryIoc.Facilities.NHibernate
 			_TransactionManager = transactionManager;
 			_SessionStore = sessionStore;
 			_AutoTxOptions = autoTxOptions;
+			_Logger = logger;
 		}
 
 		ISession ISessionManager.OpenSession()
@@ -105,7 +109,15 @@ namespace DryIoc.Facilities.NHibernate
 		/// <param name="e">Just event stuff</param>
 		void Inner_TransactionCompleted(object sender, TransactionEventArgs e)
 		{
-			FinishStoredSession(e.Transaction.TransactionInformation.Status);
+			try
+			{
+				FinishStoredSession(e.Transaction.TransactionInformation.Status);
+			}
+			catch (HibernateException exception)
+			{
+				_Logger.LogWarning(exception, "Error in the O-R persistence layer in NHibernate");
+				throw;
+			}
 		}
 
 		/// <summary>
